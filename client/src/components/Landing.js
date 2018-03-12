@@ -4,7 +4,7 @@ const Landing = () => {
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>BURPY!!!!!!!!!!</h1>
-      주류 음료 검색
+      배포!!!
     </div>
   );
 };
