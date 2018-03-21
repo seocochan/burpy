@@ -1,16 +1,22 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-const Dashboard = () => {
-  return (
-    <div>
-      <div className="fixed-action-btn">
-        <Link to="/" className="btn-floating btn-large red">
-          <i className="material-icons">add</i>
-        </Link>
+class Dashboard extends Component {
+  render() {
+    return (
+      <div>
+        메인화면
       </div>
-    </div>
-  );
-};
+    );
+  }
+}
 
-export default Dashboard;
+function mapStateToProps(state) {
+  return {
+
+  };
+}
+
+export default connect(
+  mapStateToProps,
+)(Dashboard);
