@@ -10,20 +10,19 @@ class Header extends Component {
       case false:
         return (
           <li>
-            <a href="/auth/google">Login With Google</a>
+            <a href="/auth/google">로그인</a>
           </li>
         );
       default:
         // 로그인 상태인 경우
         return [
           <li key="1" style={{ margin: '0 10px' }}>
-            헤더내용추가
+            <a href="/wishlist">찜목록</a>
           </li>,
           <li key="2">
-            <a href="/api/logout">Logout</a>
+            <a href="/api/logout">로그아웃</a>
           </li>
         ];
-      // 리스트를 렌더할 때에는 고유한 key를 지정해야 한다.
     }
   }
 

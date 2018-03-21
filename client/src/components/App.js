@@ -6,6 +6,7 @@ import * as actions from '../actions';
 import Header from './Header';
 import Landing from './Landing';
 import Dashboard from './Dashboard';
+import Wishlist from './Wishlist';
 
 class App extends Component {
   componentDidMount() {
@@ -20,6 +21,7 @@ class App extends Component {
             <Header />
             <Route exact path="/" component={Landing} />
             <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/wishlist" component={Wishlist} />
           </div>
         </BrowserRouter>
       </div>

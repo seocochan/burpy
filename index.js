@@ -24,8 +24,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// authRoutes.js의 export 부분에서 함수를 받고, 그 함수에 app을 전달함.
+// 여기에 라우터 번들 추가
 require('./routes/authRoutes')(app);
+require('./routes/userRoutes')(app);
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
