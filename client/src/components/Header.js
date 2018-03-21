@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import SearchBar from './SearchBar';
 
 class Header extends Component {
   renderContent() {
@@ -16,6 +17,9 @@ class Header extends Component {
       default:
         // 로그인 상태인 경우
         return [
+          <li key="0">
+            <SearchBar />
+          </li>,
           <li key="1" style={{ margin: '0 10px' }}>
             <a href="/wishlist">찜목록</a>
           </li>,
@@ -30,14 +34,12 @@ class Header extends Component {
     return (
       <nav>
         <div className="nav-wrapper">
-          <Link
-            to={this.props.auth ? '/' : '/'}
-            // 로고 클릭시 로그인 상태면 survey(-> / )로, 아니면 초기화면으로
-            className="left brand-logo"
-          >
+          <Link to="/" className="left brand-logo">
             Burpy
           </Link>
-          <ul className="right">{this.renderContent()}</ul>
+          <ul className="right" class="right hide-on-med-and-down">
+            {this.renderContent()}
+          </ul>
         </div>
       </nav>
     );

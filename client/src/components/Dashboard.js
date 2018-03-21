@@ -12,11 +12,7 @@ class Dashboard extends Component {
 }
 
 function mapStateToProps(state) {
-  return {
-
-  };
+  return {};
 }
 
-export default connect(
-  mapStateToProps,
-)(Dashboard);
+export default connect(mapStateToProps)(Dashboard);
