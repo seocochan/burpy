@@ -5,7 +5,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div>
-        메인화면
+        <h3>메인화면</h3>
       </div>
     );
   }

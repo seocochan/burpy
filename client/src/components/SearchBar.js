@@ -1,30 +1,31 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import * as actions from '../actions';
+import { Field, reduxForm } from 'redux-form';
 
 class SearchBar extends Component {
+  onSubmit(values) {
+    console.log(values);
+  }
+
   render() {
+    const { handleSubmit } = this.props;
+
     return (
-      <div class="center row">
-        <div class="col s12 ">
-          <div class="row" id="search-bar">
-            <div class="input-field col s6 s12">
-              <i class="material-icons prefix">search</i>
-              <input
-                type="text"
-                placeholder="검색"
-                id="autocomplete-input"
-                class="autocomplete"
-              />
-            </div>
-          </div>
-        </div>
+      <div>
+        <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+          <Field
+            name="search"
+            type="text"
+            placeholder="검색"
+            component="input"
+          />
+        </form>
       </div>
     );
   }
 }
 
-function mapStateToProps(state) {
-  return {};
-}
-
-export default connect(mapStateToProps)(SearchBar);
+export default reduxForm({
+  form: 'SearchForm'
+})(connect(null, actions)(SearchBar));
