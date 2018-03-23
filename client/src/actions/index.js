@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { FETCH_USER, DELETE_WISHLIST_ITEM, FETCH_SEARCH_ITEMS } from './types';
+import {
+  FETCH_USER,
+  DELETE_WISHLIST_ITEM,
+  UPDATE_SEARCH,
+  FETCH_SEARCH_ITEMS
+} from './types';
 // import * as types from './types';
 
 export const fetchUser = () => async dispatch => {
@@ -15,8 +20,12 @@ export const deleteWishlistItem = id => async dispatch => {
   dispatch({ type: DELETE_WISHLIST_ITEM, payload: res.data });
 };
 
+export const updateSearch = search => dispatch => {
+  dispatch({ type: UPDATE_SEARCH, payload: search });
+};
+
 export const fetchSearchItems = query => async dispatch => {
-  console.log(query);
+  console.log('검색요청:', query);
   const res = await axios.get('/api/search_result');
 
   dispatch({ type: FETCH_SEARCH_ITEMS, payload: res.data });

@@ -4,9 +4,13 @@ import { withRouter } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
 import * as actions from '../actions';
 
+// TODO: 
+// 폼의 입력상태를 항상 store의 search화 동기화 하기
+
 class SearchBar extends Component {
   onSubmit(values) {
     this.props.history.push(`/search?q=${values.search}`);
+    this.props.updateSearch(values.search);
   }
 
   render() {
