@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import { withRouter } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
+import * as actions from '../actions';
 
 class SearchBar extends Component {
   onSubmit(values) {
-    console.log(values);
+    this.props.history.push(`/search?q=${values.search}`);
   }
 
   render() {
@@ -28,4 +29,4 @@ class SearchBar extends Component {
 
 export default reduxForm({
   form: 'SearchForm'
-})(connect(null, actions)(SearchBar));
+})(withRouter(connect(null, actions)(SearchBar)));

@@ -5,6 +5,7 @@ import * as actions from '../actions';
 
 import Header from './Header';
 import Home from './Home';
+import SearchResult from './SearchResult';
 import Wishlist from './Wishlist';
 
 class App extends Component {
@@ -19,6 +20,7 @@ class App extends Component {
           <div>
             <Header />
             <Route exact path="/" component={Home} />
+            <Route exact path="/search" component={SearchResult} />
             <Route exact path="/wishlist" component={Wishlist} />
           </div>
         </BrowserRouter>
