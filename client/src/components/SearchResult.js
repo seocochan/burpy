@@ -13,19 +13,20 @@ class SearchResult extends Component {
     // 검색바를 통하지 않고 URL에 직접 쿼리한 경우 처리
     if (word !== this.props.search) {
       this.props.updateSearch(word);
+    } else {
+      const query = { word: this.props.search }; // 검색어, 필터값을 담을 객체
+      this.props.fetchSearchItems(query);
     }
   }
 
   componentDidUpdate() {
-    const query = { word: this.props.search }; // 검색어, 필터값을 담을 객체
+    const query = { word: this.props.search };
     this.props.fetchSearchItems(query);
   }
 
   componentWillUnmount() {
     this.props.updateSearch('');
   }
-
-  // TODO: 컴포넌트가 unmount 될 때 검색인풋의 값을 지우는 처리 추가
 
   renderList() {
     // DB 쿼리 액션의 결과로 갱신된 state를 리스트로 출력하는 함수
@@ -36,7 +37,6 @@ class SearchResult extends Component {
       </div>
     );
   }
-
 
   render() {
     return (
