@@ -5,18 +5,14 @@ class Dashboard extends Component {
   render() {
     return (
       <div>
-        메인화면
+        <h3>메인화면</h3>
       </div>
     );
   }
 }
 
 function mapStateToProps(state) {
-  return {
-
-  };
+  return {};
 }
 
-export default connect(
-  mapStateToProps,
-)(Dashboard);
+export default connect(mapStateToProps)(Dashboard);

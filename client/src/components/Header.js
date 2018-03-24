@@ -1,45 +1,106 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import SearchBar from './SearchBar';
 
-class Header extends Component {
-  renderContent() {
-    switch (this.props.auth) {
-      case null:
-        return;
-      case false:
-        return (
-          <li>
-            <a href="/auth/google">로그인</a>
-          </li>
-        );
-      default:
-        // 로그인 상태인 경우
-        return [
-          <li key="1" style={{ margin: '0 10px' }}>
-            <a href="/wishlist">찜목록</a>
-          </li>,
-          <li key="2">
-            <a href="/api/logout">로그아웃</a>
-          </li>
-        ];
-    }
+import { withStyles } from 'material-ui/styles';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Typography from 'material-ui/Typography';
+import IconButton from 'material-ui/IconButton';
+import MenuIcon from 'material-ui-icons/Menu';
+import AccountCircle from 'material-ui-icons/AccountCircle';
+import Menu, { MenuItem } from 'material-ui/Menu';
+
+const styles = {
+  root: {
+    flexGrow: 1
+  },
+  flex: {
+    flex: 1
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20
   }
+};
+
+class Header2 extends Component {
+  state = {
+    anchorE1: null
+  };
+
+  handleMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  };
 
   render() {
+    const { classes } = this.props;
+    const { anchorEl } = this.state;
+    const open = Boolean(anchorEl);
+
     return (
-      <nav>
-        <div className="nav-wrapper">
-          <Link
-            to={this.props.auth ? '/' : '/'}
-            // 로고 클릭시 로그인 상태면 survey(-> / )로, 아니면 초기화면으로
-            className="left brand-logo"
-          >
-            Burpy
-          </Link>
-          <ul className="right">{this.renderContent()}</ul>
-        </div>
-      </nav>
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="Menu"
+            >
+              <Link to="/" style={{ color: '#fff' }}>
+                <MenuIcon />
+              </Link>
+            </IconButton>
+            <Typography
+              variant="title"
+              color="inherit"
+              className={classes.flex}
+            >
+              BURPY
+            </Typography>
+            <SearchBar />
+            {this.props.auth && (
+              <div>
+                <IconButton
+                  aria-owns={open ? 'menu-appbar' : null}
+                  aria-haspopup="true"
+                  onClick={this.handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right'
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right'
+                  }}
+                  open={open}
+                  onClose={this.handleClose}
+                >
+                  <MenuItem onClick={this.handleClose}>
+                    <Link to="/wishlist">찜 목록</Link>
+                  </MenuItem>
+                  <MenuItem onClick={this.handleClose}>내 정보</MenuItem>
+                  <MenuItem onClick={this.handleClose}>
+                    <a href="/api/logout">로그아웃</a>
+                  </MenuItem>
+                </Menu>
+              </div>
+            )}
+          </Toolbar>
+        </AppBar>
+      </div>
     );
   }
 }
@@ -48,4 +109,4 @@ function mapStateToProps({ auth }) {
   return { auth };
 }
 
-export default connect(mapStateToProps)(Header);
+export default withStyles(styles)(connect(mapStateToProps)(Header2));
