@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  googleID: String,
-  credits: { type: Number, default: 0 }
+  googleId: String,
+  credits: { type: Number, default: 0 },
+  wishlist: [{ productId: Number, name: String }]
 });
 
-mongoose.model('users', userSchema);
+const User = mongoose.model('users', userSchema);
+module.exports = User;

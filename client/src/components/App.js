@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 
 import Header from './Header';
-import Landing from './Landing';
-import Dashboard from './Dashboard';
+import Home from './Home';
+import SearchResult from './SearchResult';
+import Wishlist from './Wishlist';
+import ProductPage from './ProductPage'
 
 class App extends Component {
   componentDidMount() {
@@ -14,12 +16,14 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div>
         <BrowserRouter>
-          <div className="container">
+          <div>
             <Header />
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/" component={Home} />
+            <Route exact path="/search" component={SearchResult} />
+            <Route exact path="/wishlist" component={Wishlist} />
+            <Route exact path="/product/:id" component={ProductPage} />
           </div>
         </BrowserRouter>
       </div>
