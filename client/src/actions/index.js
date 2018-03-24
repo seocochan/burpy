@@ -15,7 +15,6 @@ export const fetchUser = () => async dispatch => {
 
 export const deleteWishlistItem = id => async dispatch => {
   const res = await axios.delete(`/api/wishlist/${id}`);
-  console.log(res.data);
 
   dispatch({ type: DELETE_WISHLIST_ITEM, payload: res.data });
 };
@@ -25,8 +24,7 @@ export const updateSearch = search => dispatch => {
 };
 
 export const fetchSearchItems = query => async dispatch => {
-  console.log('검색요청:', query);
-  const res = await axios.get('/api/search_result');
+  const res = await axios.get(`/api/search_result${query}`);
 
   dispatch({ type: FETCH_SEARCH_ITEMS, payload: res.data });
 };

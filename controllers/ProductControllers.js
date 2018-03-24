@@ -2,18 +2,23 @@ const Product = require('../models/Product');
 
 module.exports = {
   async fetchSearchItems(req, res) {
-    console.log('요청받음');
+    const { query } = req;
+    // 상품의 특정 필드만 추출하는 쿼리 작성 (productId, name)
+    // 결과는 객체 배열
 
-    // 저장 테스트
-    const item = await new Product({
-      productId: 1,
-      name: "기린",
-      category: "맥주",
-      details: "무난하다. 4캔 만원."
-    }).save()
-    console.log(item);
+    console.log(query.q);
 
-    const payload = [{첫번째: 1}, {두번째: 2}];
-    res.send(payload);
+    Product.find({ name: { $regex: query.q } })
+      .select({
+        productId: 1,
+        name: 1
+      })
+      .exec((err, doc) => {
+        if (err) {
+          console.warn(err);
+          console.log(JSON.stringify(doc));
+        }
+        res.send(doc);
+      });
   }
 };

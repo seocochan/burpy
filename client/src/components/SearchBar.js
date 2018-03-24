@@ -10,8 +10,12 @@ import * as actions from '../actions';
 class SearchBar extends Component {
   onSubmit(values) {
     this.props.history.push(`/search?q=${values.search}`);
-    this.props.updateSearch(values.search);
   }
+
+  // async onSubmit(values) {
+  //   await this.props.updateSearch(values.search);
+  //   this.props.history.push(`/search?q=${values.search}`);
+  // }
 
   render() {
     const { handleSubmit } = this.props;
