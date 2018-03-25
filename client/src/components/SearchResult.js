@@ -5,13 +5,14 @@ import { withRouter, Link } from 'react-router-dom';
 import * as actions from '../actions';
 import queryString from 'query-string';
 
-// 쿼리 형태는 리디북스 참고
-
 class SearchResult extends Component {
+  // 이 컴포넌트가 mount, update 됐을 때 url 쿼리를 값으로 가져오는 함수.
   setQueryToParams(props) {
     this.query = props.location.search;
     const parsed = queryString.parse(this.query);
-    this.word = parsed.q;
+    this.word = parsed.q; // 검색어
+    this.order = parsed.order; // 정렬 기준
+    this.filter = parsed.filter; // 기타 필터
   }
 
   componentWillMount() {
@@ -26,10 +27,10 @@ class SearchResult extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // 검색 URL 쿼리가 변경되었을 때, 혹은
-    // searchResult가 변경되었을 때 리렌더링
+    // 검색 결과 배열의 내용이나 순서가 변경되었는지 확인
+    const a = _.isEqual(nextProps.searchResult.sort(), this.props.searchResult.sort());
 
-    const a = _.isEqual(nextProps.searchResult, this.props.searchResult);
+    // URL 쿼리가 변경되었는지 확인
     const b = nextProps.location.search === this.props.location.search;
 
     if (a && b) {
@@ -42,16 +43,23 @@ class SearchResult extends Component {
     }
   }
 
-  onClick(value) {
-    this.props.history.push(`/search?q=${value}&p=123`);
-    // p=임의의 파라메터
+  onClickSort(standard) {
+    // p1을 변경하고 현재 word, p2를 가져오고 리디렉트
+    this.props.history.push(`/search?q=${this.word}&order=${standard}&filter=${this.filter}`);
+  }
+
+  onClickFilter() {
+    // p2를 변경하고 현재 word, p1을 가져오고 리디렉트
+    this.props.history.push(`/search?q=${this.word}&order=${this.order}&filter=${true}`);
   }
 
   renderList() {
+    console.log(this.props.searchResult);
     return _.map(this.props.searchResult, item => {
       return (
         <li key={item.productId}>
           <Link to={`/product/${item.productId}`}>{item.name}</Link>
+          평점: {item.avgScore}
         </li>
       );
     });
@@ -64,7 +72,10 @@ class SearchResult extends Component {
         <ul>{this.renderList()}</ul>
         필터적용시 URL 파라메터 변경 및 리렌더링 테스트
         <p />
-        <button onClick={this.onClick.bind(this, this.word)}>필터</button>
+        <button onClick={this.onClickSort.bind(this, 'name')}>이름순</button>
+        <button onClick={this.onClickSort.bind(this, 'avgScore')}>평점순</button>
+        <p />
+        <button onClick={this.onClickFilter.bind(this)}>필터 테스트</button>
       </div>
     );
   }
