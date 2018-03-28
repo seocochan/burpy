@@ -44,12 +44,10 @@ class SearchResult extends Component {
   }
 
   onClickSort(standard) {
-    // p1을 변경하고 현재 word, p2를 가져오고 리디렉트
     this.props.history.push(`/search?q=${this.word}&order=${standard}&filter=${this.filter}`);
   }
 
   onClickFilter() {
-    // p2를 변경하고 현재 word, p1을 가져오고 리디렉트
     this.props.history.push(`/search?q=${this.word}&order=${this.order}&filter=${true}`);
   }
 
