@@ -10,10 +10,6 @@ import * as actions from '../actions';
 class SearchBar extends Component {
   onSubmit(values) {
     this.props.history.push(`/search?q=${values.search}`);
-<<<<<<< HEAD
-    this.props.updateSearch(values.search);
-=======
->>>>>>> seoco
   }
 
   render() {
