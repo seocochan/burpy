@@ -7,7 +7,8 @@ import Header from './Header';
 import Home from './Home';
 import SearchResult from './SearchResult';
 import Wishlist from './Wishlist';
-import ProductPage from './ProductPage'
+import ProductPage from './ProductPage';
+import ProductEdit from './productEdit/ProductEdit';
 
 class App extends Component {
   componentDidMount() {
@@ -24,6 +25,8 @@ class App extends Component {
             <Route exact path="/search" component={SearchResult} />
             <Route exact path="/wishlist" component={Wishlist} />
             <Route exact path="/product/:id" component={ProductPage} />
+            <Route exact path="/new/product" component={ProductEdit} />
+            <Route exact path="/edit/product/:id" component={ProductEdit} />
           </div>
         </BrowserRouter>
       </div>

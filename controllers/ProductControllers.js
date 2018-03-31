@@ -7,11 +7,11 @@ module.exports = {
     console.log(`정렬기준: ${query.order}, 필터: ${query.filter}`);
 
     // order값이 있으면 적용, 없으면 id로 정렬
-    const sortStandard = query.order ? query.order : 'productId';
+    const sortStandard = query.order ? query.order : '_id';
 
     Product.find({ name: { $regex: query.q } })
       .select({
-        productId: 1,
+        _id: 1,
         name: 1,
         avgScore: 1
       })
@@ -23,5 +23,16 @@ module.exports = {
         }
         res.send(doc);
       });
+  },
+
+  async addProduct(req, res) {
+    const foo = () => {
+      console.log('hi');
+    };
+
+    console.log(req.body);
+    
+    const newProduct = await new Product(req.body).save();
+    res.send(newProduct);
   }
 };

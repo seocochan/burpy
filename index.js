@@ -1,21 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 require('./models/User');
-// 생성된 model이 사용될 passport 이전에 임포트
 require('./sevices/passport');
 
+// DB 설정
 mongoose.Promise = global.Promise;
 mongoose.connect(keys.mongoURI);
+const connection = mongoose.connection;
+autoIncrement.initialize(connection);
 
+// express 설정
 const app = express();
-
 app.use(bodyParser.json());
 app.use(
-  // app.use를 통해 미들웨어 지정
   cookieSession({
     maxAge: 30 * 24 * 60 * 60 * 1000,
     keys: [keys.cookieKey]
@@ -24,11 +26,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 여기에 라우터 번들 추가
+// 라우터 번들 설정
 require('./routes/authRoutes')(app);
 require('./routes/userRoutes')(app);
 require('./routes/productRoutes')(app);
 
+// 빌드 설정
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 
