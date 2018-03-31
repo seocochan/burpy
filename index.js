@@ -30,6 +30,7 @@ app.use(passport.session());
 require('./routes/authRoutes')(app);
 require('./routes/userRoutes')(app);
 require('./routes/productRoutes')(app);
+require('./routes/reviewRoutes')(app);
 
 // 빌드 설정
 if (process.env.NODE_ENV === 'production') {

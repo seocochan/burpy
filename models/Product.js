@@ -6,7 +6,8 @@ const productSchema = new Schema({
   name: String,
   category: String,
   details: String,
-  avgScore: { type: Number, default: 0 }
+  avgScore: { type: Number, default: 0 },
+  reviews: [{ type: Schema.Types.ObjectId, ref: 'reviews' }]
 });
 
 productSchema.plugin(autoIncrement.plugin, 'products');

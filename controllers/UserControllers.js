@@ -25,5 +25,12 @@ module.exports = {
       }
       res.send(doc);
     });
+  },
+
+  fetchMyProduct(req, res) {
+    // req.user로 유저 찾기
+    // reviews 필드 추출
+    // populate하여 ref된 review 객체 전체(배열) 가져오기
+    console.log('get my product');
   }
 };
