@@ -1,13 +1,16 @@
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 const { Schema } = mongoose;
 
 const productSchema = new Schema({
-  productId: Number,
   name: String,
   category: String,
   details: String,
-  avgScore: Number
+  avgScore: { type: Number, default: 0 },
+  reviews: [{ type: Schema.Types.ObjectId, ref: 'reviews' }]
 });
+
+productSchema.plugin(autoIncrement.plugin, 'products');
 
 const Product = mongoose.model('products', productSchema);
 module.exports = Product;

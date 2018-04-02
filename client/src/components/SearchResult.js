@@ -28,7 +28,10 @@ class SearchResult extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     // 검색 결과 배열의 내용이나 순서가 변경되었는지 확인
-    const a = _.isEqual(nextProps.searchResult.sort(), this.props.searchResult.sort());
+    const a = _.isEqual(
+      nextProps.searchResult.sort(),
+      this.props.searchResult.sort()
+    );
 
     // URL 쿼리가 변경되었는지 확인
     const b = nextProps.location.search === this.props.location.search;
@@ -44,19 +47,22 @@ class SearchResult extends Component {
   }
 
   onClickSort(standard) {
-    this.props.history.push(`/search?q=${this.word}&order=${standard}&filter=${this.filter}`);
+    this.props.history.push(
+      `/search?q=${this.word}&order=${standard}&filter=${this.filter}`
+    );
   }
 
   onClickFilter() {
-    this.props.history.push(`/search?q=${this.word}&order=${this.order}&filter=${true}`);
+    this.props.history.push(
+      `/search?q=${this.word}&order=${this.order}&filter=${true}`
+    );
   }
 
   renderList() {
-    console.log(this.props.searchResult);
     return _.map(this.props.searchResult, item => {
       return (
-        <li key={item.productId}>
-          <Link to={`/product/${item.productId}`}>{item.name}</Link>
+        <li key={item._id}>
+          <Link to={`/product/${item._id}`}>{item.name}</Link>
           평점: {item.avgScore}
         </li>
       );
@@ -71,9 +77,13 @@ class SearchResult extends Component {
         필터적용시 URL 파라메터 변경 및 리렌더링 테스트
         <p />
         <button onClick={this.onClickSort.bind(this, 'name')}>이름순</button>
-        <button onClick={this.onClickSort.bind(this, 'avgScore')}>평점순</button>
+        <button onClick={this.onClickSort.bind(this, 'avgScore')}>
+          평점순
+        </button>
         <p />
         <button onClick={this.onClickFilter.bind(this)}>필터 테스트</button>
+        <p />
+        <Link to="/new/product">상품 등록하기</Link>
       </div>
     );
   }
