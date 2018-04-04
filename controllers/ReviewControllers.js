@@ -4,18 +4,31 @@ const Product = require('../models/Product');
 
 module.exports = {
   fetchReviews(req, res) {
-    console.log('get reviews');
+    User.findById(req.user._id)
+      .populate({
+        path: 'reviews',
+        populate: { path: 'productId' }
+      })
+      .exec((err, doc) => {
+        res.send(doc.reviews);
+      });
   },
 
-  addReview(req, res) {
-    // TODO: 여기에 테스트 데이터 추가 쿼리 작성
-    // 일단 미들웨어 없이 만들기
-    // user는 req에서 가져오기
-    // product는 하드코딩으로 지정하기 (1, 2, 3)
-    // score, content 입력 후 저장
+  async addReview(req, res) {
     // 다되면 MyProduct 컴포넌트에서 User.populate로 찍어보기
+    const userId = req.user._id;
+    const productId = 1; // req.body.product._id
+    const score = 4.0; // req.body.score
+    const content = '에에에에엥'; // req.body.content
 
-    console.log('add review');
+    const newReview = await new Review({
+      userId,
+      productId,
+      score,
+      content
+    }).save();
+
+    res.send(newReview);
   },
 
   updateReview(req, res) {
