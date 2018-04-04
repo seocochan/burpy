@@ -26,10 +26,6 @@ module.exports = {
   },
 
   async addProduct(req, res) {
-    const foo = () => {
-      console.log('hi');
-    };
-
     console.log(req.body);
     
     const newProduct = await new Product(req.body).save();
