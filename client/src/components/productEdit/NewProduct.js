@@ -5,8 +5,10 @@ import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductField from './ProductField';
 import productFormFields from './productFormFields';
+import Icon from 'material-ui/Icon';
+import Button from 'material-ui/Button';
 
-class ProductEdit extends Component {
+class NewProduct extends Component {
   state = { isDone: false };
 
   renderFields() {
@@ -33,10 +35,13 @@ class ProductEdit extends Component {
   render() {
     return (
       <div>
-        상품등록
+        상품 등록
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderFields()}
-          <button type="submit">완료</button>
+          <Button variant="raised" color="primary" type="submit">
+            완료
+            <Icon>send</Icon>
+          </Button>
           {this.state.isDone && <Redirect to={`/product/${this.id}`} />}
         </form>
       </div>
@@ -55,4 +60,4 @@ export default reduxForm({
   validate,
   form: 'productForm',
   destroyOnUnmount: true
-})(ProductEdit);
+})(NewProduct);
