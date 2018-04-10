@@ -15,26 +15,10 @@ module.exports = {
   },
 
   async addReview(req, res) {
-<<<<<<< HEAD
-    // 다되면 MyProduct 컴포넌트에서 User.populate로 찍어보기
-    const userId = req.user._id;
-    const productId = 1; // req.body.product._id
-    const score = 4.0; // req.body.score
-    const content = '에에에에엥'; // req.body.content
-
-    const newReview = await new Review({
-      userId,
-      productId,
-      score,
-      content
-    }).save();
-
-=======
     const userId = req.user._id;
     const values = { userId, ...req.body };
 
     const newReview = await new Review(values).save();
->>>>>>> seoco-review
     res.send(newReview);
   },
 
