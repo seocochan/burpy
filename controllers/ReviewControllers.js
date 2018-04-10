@@ -15,6 +15,7 @@ module.exports = {
   },
 
   async addReview(req, res) {
+<<<<<<< HEAD
     // 다되면 MyProduct 컴포넌트에서 User.populate로 찍어보기
     const userId = req.user._id;
     const productId = 1; // req.body.product._id
@@ -28,14 +29,43 @@ module.exports = {
       content
     }).save();
 
+=======
+    const userId = req.user._id;
+    const values = { userId, ...req.body };
+
+    const newReview = await new Review(values).save();
+>>>>>>> seoco-review
     res.send(newReview);
   },
 
   updateReview(req, res) {
-    console.log('update review');
+    const { id } = req.params;
+    const { body } = req;
+
+    Review.findByIdAndUpdate(id, body, { new: true }).exec((err, doc) => {
+      res.send(doc);
+    });
   },
 
   removeReview(req, res) {
-    console.log('remove review');
+    const { id } = req.params;
+
+    Review.findOne({ _id: id }, (err, doc) => {
+      doc.remove(err => {
+        if (err) {
+          console.warn(err);
+          res.status(410).send('리뷰 제거 실패');
+        }
+        res.status(200).send(id);
+      });
+    });
+  },
+
+  fetchOneReview(req, res) {
+    const { id } = req.params;
+
+    Review.findById(id).exec((err, doc) => {
+      res.send(doc);
+    });
   }
 };

@@ -10,6 +10,8 @@ import Wishlist from './Wishlist';
 import MyProducts from './MyProducts';
 import ProductPage from './ProductPage';
 import ProductEdit from './productEdit/ProductEdit';
+import NewReview from './reviewEdit/NewReview';
+import EditReview from './reviewEdit/EditReview';
 
 class App extends Component {
   componentDidMount() {
@@ -29,6 +31,8 @@ class App extends Component {
             <Route exact path="/product/:id" component={ProductPage} />
             <Route exact path="/new/product" component={ProductEdit} />
             <Route exact path="/edit/product/:id" component={ProductEdit} />
+            <Route exact path="/new/review/:id" component={NewReview} />
+            <Route exact path="/edit/review/:id" component={EditReview} />
           </div>
         </BrowserRouter>
       </div>

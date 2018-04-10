@@ -1,33 +1,47 @@
-import _ from 'lodash';
 import axios from 'axios';
 import React, { Component } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
-import ProductField from './ProductField';
-import productFormFields from './productFormFields';
+import CommentField from './CommentField';
+import ScoreField from './ScoreField';
 import Icon from 'material-ui/Icon';
 import Button from 'material-ui/Button';
 
-class ProductEdit extends Component {
-  state = { isDone: false };
+class NewReview extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isDone: false
+    };
+
+    this.productId = this.props.match.params.id;
+  }
 
   renderFields() {
-    return _.map(productFormFields, ({ label, name }) => {
-      return (
+    return (
+      <div>
         <Field
-          key={name}
-          component={ProductField}
+          key="comment"
+          component={CommentField}
           type="text"
-          label={label}
-          name={name}
+          label="내용"
+          name="comment"
         />
-      );
-    });
+        <Field
+          key="score"
+          component={ScoreField}
+          type="text"
+          label="평점"
+          name="score"
+        />
+      </div>
+    );
   }
 
   async onSubmit(values) {
-    const res = await axios.post('/api/product', values);
-    this.id = res.data._id;
+    const { productId } = this;
+    const payload = { productId, ...values };
+    const res = await axios.post('/api/review', payload);
 
     this.setState({ isDone: true });
   }
@@ -35,14 +49,14 @@ class ProductEdit extends Component {
   render() {
     return (
       <div>
-        상품등록
+        리뷰등록
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderFields()}
           <Button variant="raised" color="primary" type="submit">
             완료
             <Icon>send</Icon>
           </Button>
-          {this.state.isDone && <Redirect to={`/product/${this.id}`} />}
+          {this.state.isDone && <Redirect to={`/product/${this.productId}`} />}
         </form>
       </div>
     );
@@ -58,6 +72,6 @@ function validate(values) {
 
 export default reduxForm({
   validate,
-  form: 'productForm',
+  form: 'reviewForm',
   destroyOnUnmount: true
-})(ProductEdit);
+})(NewReview);
