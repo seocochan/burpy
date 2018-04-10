@@ -15,11 +15,13 @@ class EditReview extends Component {
     };
 
     this.reviewId = this.props.match.params.id;
+    this.productId = '';
   }
 
   async componentDidMount() {
     const res = await axios.get(`/api/review/${this.reviewId}`);
     const { comment, score } = res.data;
+    this.productId = res.data.productId;
     this.props.initialize({ comment, score });
   }
 
