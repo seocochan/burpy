@@ -8,7 +8,7 @@ import productFormFields from './productFormFields';
 import Icon from 'material-ui/Icon';
 import Button from 'material-ui/Button';
 
-class ProductEdit extends Component {
+class NewProduct extends Component {
   state = { isDone: false };
 
   renderFields() {
@@ -35,7 +35,7 @@ class ProductEdit extends Component {
   render() {
     return (
       <div>
-        상품등록
+        상품 등록
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderFields()}
           <Button variant="raised" color="primary" type="submit">
@@ -60,4 +60,4 @@ export default reduxForm({
   validate,
   form: 'productForm',
   destroyOnUnmount: true
-})(ProductEdit);
+})(NewProduct);

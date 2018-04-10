@@ -9,7 +9,8 @@ import SearchResult from './SearchResult';
 import Wishlist from './Wishlist';
 import MyProducts from './MyProducts';
 import ProductPage from './ProductPage';
-import ProductEdit from './productEdit/ProductEdit';
+import NewProduct from './productEdit/NewProduct';
+import EditProduct from './productEdit/EditProduct';
 import NewReview from './reviewEdit/NewReview';
 import EditReview from './reviewEdit/EditReview';
 
@@ -29,8 +30,8 @@ class App extends Component {
             <Route exact path="/wishlist" component={Wishlist} />
             <Route exact path="/my-products" component={MyProducts} />
             <Route exact path="/product/:id" component={ProductPage} />
-            <Route exact path="/new/product" component={ProductEdit} />
-            <Route exact path="/edit/product/:id" component={ProductEdit} />
+            <Route exact path="/new/product" component={NewProduct} />
+            <Route exact path="/edit/product/:id" component={EditProduct} />
             <Route exact path="/new/review/:id" component={NewReview} />
             <Route exact path="/edit/review/:id" component={EditReview} />
           </div>
