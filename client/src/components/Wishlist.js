@@ -1,24 +1,38 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import * as actions from '../actions';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 class Wishlist extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      wishlist: {}
+    };
+  }
+
+  fetchWishlist() {
+    axios.get('/api/wishlist').then(res => {
+      this.setState({ wishlist: res.data });
+    });
+  }
+
   componentDidMount() {
-    // TODO: 각 productId를 조회하여 정보를 fetch하는 액션
-    // this.props.fetchWishlistItems();
+    this.fetchWishlist();
   }
 
   onDeleteClick(id) {
-    this.props.deleteWishlistItem(id);
+    axios.delete(`/api/wishlist/${id}`).then(() => this.fetchWishlist());
   }
 
   renderList() {
-    return _.map(this.props.wishlist, item => {
+    return _.map(this.state.wishlist, item => {
       return (
         <li key={item.productId}>
-          {item.name}
-          <button onClick={this.onDeleteClick.bind(this, item.productId)}>
+          <Link to={`/product/${item.productId._id}`}>
+            {item.productId.name}
+          </Link>
+          <button onClick={this.onDeleteClick.bind(this, item.productId._id)}>
             삭제
           </button>
         </li>
@@ -36,11 +50,4 @@ class Wishlist extends Component {
   }
 }
 
-function mapStateToProps({ auth }) {
-  return {
-    // auth가 로딩 완료되어 null이 아닐때 wishlist를 가져옴.
-    wishlist: auth ? auth.wishlist : null
-  };
-}
-
-export default connect(mapStateToProps, actions)(Wishlist);
+export default Wishlist;
