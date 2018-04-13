@@ -7,8 +7,9 @@ class ToggleButton extends Component {
     this.state = {
       isToggleOn: Boolean
     };
+
     this.wishlist = [];
-    this.handleClick = this.handleClick.bind(this, props.value.id);
+    this.handleClick = this.handleClick.bind(this, props.productId);
   }
 
   componentWillMount() {
@@ -20,7 +21,7 @@ class ToggleButton extends Component {
       this.wishlist = res.data;
       if (this.wishlist !== []) {
         for (var i = 0; i < this.wishlist.length; i++) {
-          if (this.wishlist[i].productId._id == this.props.value.id) {
+          if (this.wishlist[i].productId._id == this.props.productId) {
             this.setState({ isToggleOn: false });
           } else {
             this.setState({ isToggleOn: true });

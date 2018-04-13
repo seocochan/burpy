@@ -51,5 +51,34 @@ module.exports = {
     Review.findById(id).exec((err, doc) => {
       res.send(doc);
     });
+  },
+
+  fetchMyReview(req, res) {
+    const productId = req.params.id;
+    const userId = req.user._id;
+
+    Review.findOne({ userId, productId })
+      .populate('userId')
+      .exec((err, doc) => {
+        if (err) {
+          res.status(404).send('조회 실패');
+        }
+        res.status(200).send(doc);
+      });
+  },
+
+  fetchProductReviews(req, res) {
+    const productId = req.params.id;
+    const userId = req.user._id;
+
+    // FIX: dateAdded 순으로 정렬
+    Review.find({ productId, userId: { $ne: userId } })
+      .populate('userId')
+      .exec((err, doc) => {
+        if (err) {
+          res.status(404).send('조회 실패');
+        }
+        res.status(200).send(doc);
+      });
   }
 };

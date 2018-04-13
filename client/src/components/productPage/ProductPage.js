@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import ToggleButton from './ToggleButton';
+import WishButton from './WishButton';
+import MyReview from './MyReview';
+import ProductReviews from './ProductReviews';
 
 class ProductPage extends Component {
   constructor(props) {
@@ -8,11 +10,13 @@ class ProductPage extends Component {
     this.state = {
       product: {}
     };
+
+    this.productId = props.match.params.id;
   }
 
   componentDidMount() {
-    const { id } = this.props.match.params;
-    axios.get(`/api/product/${id}`).then(res => {
+    // const { id } = this.props.match.params;
+    axios.get(`/api/product/${this.productId}`).then(res => {
       this.setState({ product: res.data });
     });
   }
@@ -24,8 +28,13 @@ class ProductPage extends Component {
         <div>
           <ul>
             <li>{this.state.product.name}</li>
+            <WishButton productId={this.productId} />
+            <hr />
+            <h4>상품 정보</h4>
             <li>{this.state.product.details}</li>
-            <ToggleButton value={this.props.match.params} />
+            <hr />
+            <MyReview productId={this.productId} />
+            <ProductReviews productId={this.productId} />
           </ul>
         </div>
       </div>

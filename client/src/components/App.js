@@ -8,7 +8,7 @@ import Home from './Home';
 import SearchResult from './SearchResult';
 import Wishlist from './Wishlist';
 import MyProducts from './MyProducts';
-import ProductPage from './ProductPage';
+import ProductPage from './productPage/ProductPage';
 import NewProduct from './productEdit/NewProduct';
 import EditProduct from './productEdit/EditProduct';
 import NewReview from './reviewEdit/NewReview';
