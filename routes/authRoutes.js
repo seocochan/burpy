@@ -1,4 +1,5 @@
 const passport = require('passport');
+const AuthControllers = require('../controllers/AuthControllers');
 
 module.exports = app => {
   app.get(
@@ -8,22 +9,11 @@ module.exports = app => {
       scope: ['profile', 'email']
     })
   );
-
   app.get(
     '/auth/google/callback',
     passport.authenticate('google'),
-    (req, res) => {
-      res.redirect('/');
-    }
+    AuthControllers.callback
   );
-
-  app.get('/api/logout', (req, res) => {
-    req.logout();
-    // logout은 passport 미들웨어에 의해 정의됨.
-    res.redirect('/');
-  });
-
-  app.get('/api/current_user', (req, res) => {
-    res.send(req.user);
-  });
+  app.get('/api/logout', AuthControllers.logout);
+  app.get('/api/current_user', AuthControllers.currentUser);
 };

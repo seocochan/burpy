@@ -4,8 +4,15 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 
 import Header from './Header';
-import Landing from './Landing';
-import Dashboard from './Dashboard';
+import Home from './Home';
+import SearchResult from './SearchResult';
+import Wishlist from './Wishlist';
+import MyProducts from './MyProducts';
+import ProductPage from './productPage/ProductPage';
+import NewProduct from './productEdit/NewProduct';
+import EditProduct from './productEdit/EditProduct';
+import NewReview from './reviewEdit/NewReview';
+import EditReview from './reviewEdit/EditReview';
 
 class App extends Component {
   componentDidMount() {
@@ -14,12 +21,19 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div>
         <BrowserRouter>
-          <div className="container">
+          <div>
             <Header />
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/" component={Home} />
+            <Route exact path="/search" component={SearchResult} />
+            <Route exact path="/wishlist" component={Wishlist} />
+            <Route exact path="/my-products" component={MyProducts} />
+            <Route exact path="/product/:id" component={ProductPage} />
+            <Route exact path="/new/product" component={NewProduct} />
+            <Route exact path="/edit/product/:id" component={EditProduct} />
+            <Route exact path="/new/review/:id" component={NewReview} />
+            <Route exact path="/edit/review/:id" component={EditReview} />
           </div>
         </BrowserRouter>
       </div>
