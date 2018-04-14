@@ -3,13 +3,11 @@ const Product = require('../models/Product');
 module.exports = {
   async fetchSearchItems(req, res) {
     const { query } = req;
-    console.log('검색어', query.q);
-    console.log(`정렬기준: ${query.order}, 필터: ${query.filter}`);
+    const q = query.q ? { name: { $regex: query.q } } : {}; // 검색어가 지정되지 않은 경우 처리
+    const category = query.category ? { category: query.category } : {}; // 필터가 지정되지 않은 경우 처리
+    const sortStandard = query.order ? query.order : '_id'; // order값이 있으면 적용, 없으면 id로 정렬
 
-    // order값이 있으면 적용, 없으면 id로 정렬
-    const sortStandard = query.order ? query.order : '_id';
-
-    Product.find({ name: { $regex: query.q } })
+    Product.find({ ...q, ...category })
       .select({
         _id: 1,
         name: 1,
@@ -32,7 +30,7 @@ module.exports = {
       if (!product) return res.status(404).json({ error: 'product not found' });
     }).then(product => res.send(product));
   },
-  
+
   async addProduct(req, res) {
     console.log(req.body);
 

@@ -4,15 +4,20 @@ import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import * as actions from '../actions';
 import queryString from 'query-string';
+import { InputLabel } from 'material-ui/Input';
+import { MenuItem } from 'material-ui/Menu';
+import { FormControl } from 'material-ui/Form';
+import Select from 'material-ui/Select';
 
 class SearchResult extends Component {
   // 이 컴포넌트가 mount, update 됐을 때 url 쿼리를 값으로 가져오는 함수.
   setQueryToParams(props) {
     this.query = props.location.search;
     const parsed = queryString.parse(this.query);
-    this.word = parsed.q; // 검색어
-    this.order = parsed.order; // 정렬 기준
-    this.filter = parsed.filter; // 기타 필터
+
+    this.word = parsed.q || ''; // 검색어
+    this.order = parsed.order || ''; // 정렬 기준
+    this.category = parsed.category || ''; // 분류 필터
   }
 
   componentWillMount() {
@@ -46,15 +51,19 @@ class SearchResult extends Component {
     }
   }
 
+  componentWillUnmount() {
+    // TODO: 여기에 searchResult를 비우는 액션 호출 (정의 필요)
+  }
+
   onClickSort(standard) {
     this.props.history.push(
-      `/search?q=${this.word}&order=${standard}&filter=${this.filter}`
+      `/search?q=${this.word}&order=${standard}&category=${this.category}`
     );
   }
 
-  onClickFilter() {
+  onChangeCategory(e) {
     this.props.history.push(
-      `/search?q=${this.word}&order=${this.order}&filter=${true}`
+      `/search?q=${this.word}&order=${this.order}&category=${e.target.value}`
     );
   }
 
@@ -69,19 +78,52 @@ class SearchResult extends Component {
     });
   }
 
-  render() {
+  renderSortButtons() {
     return (
       <div>
-        <h3>"{this.word}" 검색 결과</h3>
-        <ul>{this.renderList()}</ul>
-        필터적용시 URL 파라메터 변경 및 리렌더링 테스트
-        <p />
         <button onClick={this.onClickSort.bind(this, 'name')}>이름순</button>
         <button onClick={this.onClickSort.bind(this, 'avgScore')}>
           평점순
         </button>
-        <p />
-        <button onClick={this.onClickFilter.bind(this)}>필터 테스트</button>
+      </div>
+    );
+  }
+
+  renderCategoryFilter() {
+    return (
+      <form
+        autoComplete="off"
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap'
+        }}
+      >
+        <FormControl style={{ minWidth: '300' }}>
+          <InputLabel htmlFor="age-simple">분류</InputLabel>
+          <Select
+            value={this.category || ''}
+            onChange={this.onChangeCategory.bind(this)}
+          >
+            <MenuItem value={''}>
+              <em>None</em>
+            </MenuItem>
+            <MenuItem value={'맥주'}>맥주</MenuItem>
+            <MenuItem value={'소주'}>소주</MenuItem>
+            <MenuItem value={'탄산음료'}>탄산음료</MenuItem>
+            <MenuItem value={'커피'}>커피</MenuItem>
+          </Select>
+        </FormControl>
+      </form>
+    );
+  }
+
+  render() {
+    return (
+      <div>
+        <h3>"{this.word}" 검색 결과</h3>
+        {this.renderCategoryFilter()}
+        {this.renderSortButtons()}
+        <ul>{this.renderList()}</ul>
         <p />
         <Link to="/new/product">상품 등록하기</Link>
       </div>

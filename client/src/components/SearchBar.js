@@ -9,7 +9,7 @@ import * as actions from '../actions';
 
 class SearchBar extends Component {
   onSubmit(values) {
-    this.props.history.push(`/search?q=${values.search}`);
+    this.props.history.push(`/search?q=${values.search || ''}`);
   }
 
   render() {
