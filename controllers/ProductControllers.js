@@ -32,9 +32,34 @@ module.exports = {
   },
 
   async addProduct(req, res) {
-    console.log(req.body);
-
     const newProduct = await new Product(req.body).save();
     res.send(newProduct);
+  },
+
+  async fetchPredictedItems(req, res) {
+    /*
+    @input:
+    [10, 18, 3, 4, 2]
+
+    @output:
+      [
+        {"_id": 10, "name": "하이네켄", "category": "맥주", "avgScore": 3.0},
+        {"_id": 18, "name": "맥심 티오피", "category": "커피", "avgScore": 2.8},
+        ...    // 5 items
+      ]
+    */
+
+    Product.aggregate([
+      { $match: { _id: { $in: req.body } } },
+      { $addFields: { __order: { $indexOfArray: [req.body, '$_id'] } } },
+      { $sort: { __order: 1 } },
+      { $project: { _id: 1, name: 1, category: 1, avgScore: 1 } }
+    ]).exec((err, doc) => {
+      if (err) {
+        console.warn(err);
+        console.log(JSON.stringify(doc));
+      }
+      res.send(doc);
+    });
   }
 };

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import * as actions from '../actions';
-import queryString from 'query-string';
+import queryString from 'qs';
 import { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
 import { FormControl } from 'material-ui/Form';
@@ -13,7 +13,7 @@ class SearchResult extends Component {
   // 이 컴포넌트가 mount, update 됐을 때 url 쿼리를 값으로 가져오는 함수.
   setQueryToParams(props) {
     this.query = props.location.search;
-    const parsed = queryString.parse(this.query);
+    const parsed = queryString.parse(this.query, { ignoreQueryPrefix: true });
 
     this.word = parsed.q || ''; // 검색어
     this.order = parsed.order || ''; // 정렬 기준
