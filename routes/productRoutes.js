@@ -7,4 +7,5 @@ module.exports = app => {
   app.get('/api/product/:id', ProductControllers.fetchProductInfo);
   app.get('/api/product/:id/my_review', ReviewControllers.fetchMyReview);
   app.get('/api/product/:id/reviews', ReviewControllers.fetchProductReviews);
+  app.post('/api/predict', ProductControllers.fetchPredictedItems);
 };
