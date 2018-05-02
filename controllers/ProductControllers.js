@@ -37,21 +37,11 @@ module.exports = {
   },
 
   async fetchPredictedItems(req, res) {
-    /*
-    @input:
-    [10, 18, 3, 4, 2]
-
-    @output:
-      [
-        {"_id": 10, "name": "하이네켄", "category": "맥주", "avgScore": 3.0},
-        {"_id": 18, "name": "맥심 티오피", "category": "커피", "avgScore": 2.8},
-        ...    // 5 items
-      ]
-    */
+    const { list } = req.body;
 
     Product.aggregate([
-      { $match: { _id: { $in: req.body } } },
-      { $addFields: { __order: { $indexOfArray: [req.body, '$_id'] } } },
+      { $match: { _id: { $in: list } } },
+      { $addFields: { __order: { $indexOfArray: [list, '$_id'] } } },
       { $sort: { __order: 1 } },
       { $project: { _id: 1, name: 1, category: 1, avgScore: 1 } }
     ]).exec((err, doc) => {
@@ -59,7 +49,7 @@ module.exports = {
         console.warn(err);
         console.log(JSON.stringify(doc));
       }
-      res.send(doc);
+      res.send({ result: doc });
     });
   }
 };
