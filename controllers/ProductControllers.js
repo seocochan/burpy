@@ -37,6 +37,7 @@ module.exports = {
   },
 
   async fetchPredictedItems(req, res) {
+    console.log(req.body);
     const { list } = req.body;
 
     Product.aggregate([
