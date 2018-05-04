@@ -33,9 +33,11 @@ class SearchResult extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     // 검색 결과 배열의 내용이나 순서가 변경되었는지 확인
+    // isEqual()은 원소가 같은 배열도 순서가 다르면 다른 것으로 인식하기 때문에 sort() 필요
+    // sort()는 원본을 바꾸기 때문에 slice()로 복제한 배열을 참조
     const a = _.isEqual(
-      nextProps.searchResult.sort(),
-      this.props.searchResult.sort()
+      nextProps.searchResult.slice().sort(),
+      this.props.searchResult.slice().sort()
     );
 
     // URL 쿼리가 변경되었는지 확인
