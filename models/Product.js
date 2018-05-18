@@ -7,6 +7,7 @@ const productSchema = new Schema({
   category: String,
   details: String,
   avgScore: { type: Number, default: 0 },
+  avgTaste: [{ type: Number }],
   reviews: [{ type: Schema.Types.ObjectId, ref: 'reviews' }]
 });
 
