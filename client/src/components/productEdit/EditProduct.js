@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import axios from 'axios';
 import React, { Component } from 'react';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, initialize } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductField from './ProductField';
 import productFormFields from './productFormFields';
@@ -12,16 +12,18 @@ class EditProduct extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDone: false
+      isDone: false,
     };
 
-    // this.id = props.match.params.id;
+    this.id = props.match.params.id;
+    console.log(this.id)
   }
 
-  componentDidMount() {
-    // TODO: 여기에 상품 정보 GET하는 요청 추가
+  async componentDidMount() {
+    const res = await axios.get(`/api/product/${this.id}`);
+    const { category,name,details } = res.data;
+    this.props.initialize({ category,name,details });
   }
-  
 
   renderFields() {
     return _.map(productFormFields, ({ label, name }) => {
@@ -38,8 +40,8 @@ class EditProduct extends Component {
   }
 
   async onSubmit(values) {
-    // const res = await axios.put('/api/product/아이디', values);
-    // this.id = res.data._id;
+    const res = await axios.put(`/api/product/${this.id}`, values);
+    this.id = res.data._id;
 
     this.setState({ isDone: true });
   }

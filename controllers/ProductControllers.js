@@ -28,7 +28,9 @@ module.exports = {
     Product.findOne({ _id }, (err, product) => {
       if (err) return res.status(500).json({ error: err });
       if (!product) return res.status(404).json({ error: 'product not found' });
-    }).then(product => res.send(product));
+    })
+    .populate('reviews')
+    .then(product => res.send(product));
   },
 
   async addProduct(req, res) {
@@ -36,5 +38,14 @@ module.exports = {
 
     const newProduct = await new Product(req.body).save();
     res.send(newProduct);
+  },
+
+  updateProduct(req,res){
+    const {id} = req.params;
+    const {body} = req;
+
+    Product.findByIdAndUpdate(id,body,{new : true}).exec((err,doc)=>{
+      res.send(doc);
+    });
   }
 };

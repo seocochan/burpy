@@ -3,6 +3,9 @@ import axios from 'axios';
 import WishButton from './WishButton';
 import MyReview from './MyReview';
 import ProductReviews from './ProductReviews';
+import {Button,IconButton} from 'material-ui';
+import {Link} from 'react-router-dom';
+import { Edit } from "material-ui-icons";
 
 class ProductPage extends Component {
   constructor(props) {
@@ -21,6 +24,16 @@ class ProductPage extends Component {
     });
   }
 
+  renderButton(){
+    return(
+          <IconButton aria-label="Edit">
+            <Link to={`/edit/product/${this.productId}`}>
+              <Edit />
+            </Link>
+          </IconButton>
+    )
+  }
+
   render() {
     return (
       <div>
@@ -30,8 +43,9 @@ class ProductPage extends Component {
             <li>{this.state.product.name}</li>
             <WishButton productId={this.productId} />
             <hr />
-            <h4>상품 정보</h4>
+            <h4>상품 정보  {this.renderButton()}</h4>
             <li>{this.state.product.details}</li>
+            <li>{this.state.product.avgScore}</li>
             <hr />
             <MyReview productId={this.productId} />
             <ProductReviews productId={this.productId} />

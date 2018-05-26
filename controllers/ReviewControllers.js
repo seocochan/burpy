@@ -4,11 +4,13 @@ const Product = require('../models/Product');
 
 module.exports = {
   fetchReviews(req, res) {
+    const sortReview = req.order ? req.order : 'dateAdded'
     User.findById(req.user._id)
       .populate({
         path: 'reviews',
         populate: { path: 'productId' }
       })
+      .sort(sortReview)
       .exec((err, doc) => {
         res.send(doc.reviews);
       });

@@ -2,8 +2,10 @@ const User = require('../models/User');
 
 module.exports = {
   fetchWishlist(req, res) {
+    const sortWishlist = req.order ? req.order : 'wishlist.date'
     User.findById(req.user._id)
       .populate('wishlist.productId')
+      .sort(sortWishlist)
       .exec((err, doc) => {
         res.send(doc.wishlist);
       });
@@ -29,8 +31,8 @@ module.exports = {
   },
 
   addWishlist(req, res) {
-    const userId = req.user._id;
-    const productId = req.params.id;
+    const userId = req.user._id;         //User객채의 ._id를 조회할떄 사용함
+    const productId = req.params.id;    //url의 id를 받아온다.
 
     User.findByIdAndUpdate(
       userId,
@@ -48,6 +50,22 @@ module.exports = {
       }
       res.send(doc.wishlist);
     });
+  },
+
+  myInfo(req,res){
+    const userId = req.user._id;
+    User.findByIdAndUpdate(userId)
+    .exec((err,doc)=>{
+      res.send(doc);
+    })
+  },
+  updateInfo(req,res){
+    const {id} = req.params;
+    const {body} = req;
+    User.findByIdAndUpdate(id,body,{new:true}).exec((err,doc)=>{
+      res.send(doc);
+    })
+
   },
 
   fetchMyProduct(req, res) {

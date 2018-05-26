@@ -13,6 +13,10 @@ import NewProduct from './productEdit/NewProduct';
 import EditProduct from './productEdit/EditProduct';
 import NewReview from './reviewEdit/NewReview';
 import EditReview from './reviewEdit/EditReview';
+import Myinfo from './Info/Myinfo';
+import Editmyinfo from './Info/Editmyinfo';
+import EditGender from './Info/EditGender';
+import EditBirthday from './Info/EditBirthday';
 
 class App extends Component {
   componentDidMount() {
@@ -34,6 +38,10 @@ class App extends Component {
             <Route exact path="/edit/product/:id" component={EditProduct} />
             <Route exact path="/new/review/:id" component={NewReview} />
             <Route exact path="/edit/review/:id" component={EditReview} />
+            <Route exact path="/myinfo" component={Myinfo}/>
+            <Route exact path="/edit/name/:id" component={Editmyinfo}/>
+            <Route exact path="/edit/gender/:id" component={EditGender}/>
+            <Route exact path="/edit/Birthday/:id" component={EditBirthday}/>
           </div>
         </BrowserRouter>
       </div>

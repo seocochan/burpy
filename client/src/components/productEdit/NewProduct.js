@@ -7,9 +7,15 @@ import ProductField from './ProductField';
 import productFormFields from './productFormFields';
 import Icon from 'material-ui/Icon';
 import Button from 'material-ui/Button';
+import { InputLabel } from 'material-ui/Input';
+import { MenuItem } from 'material-ui/Menu';
+import { FormControl } from 'material-ui/Form';
+import Select from 'material-ui/Select';
 
 class NewProduct extends Component {
-  state = { isDone: false };
+  state = { 
+    isDone: false
+   };
 
   renderFields() {
     return _.map(productFormFields, ({ label, name }) => {
@@ -28,10 +34,10 @@ class NewProduct extends Component {
   async onSubmit(values) {
     const res = await axios.post('/api/product', values);
     this.id = res.data._id;
-
     this.setState({ isDone: true });
+    console.log(values)
   }
-
+  
   render() {
     return (
       <div>
@@ -52,6 +58,16 @@ class NewProduct extends Component {
 function validate(values) {
   const errors = {};
   // TODO: 여기에 validation 구현
+  const requiredFields = [
+    'name',
+    'details',
+    'catergory'
+  ]
+  requiredFields.forEach(field=>{
+    if(!values[field]){
+      errors[field]='Required'
+    }
+  })
 
   return errors;
 }

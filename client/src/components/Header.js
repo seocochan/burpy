@@ -89,6 +89,9 @@ class Header2 extends Component {
                   onClose={this.handleClose}
                 >
                   <MenuItem onClick={this.handleClose}>
+                    <Link to="/myinfo">내 정보</Link>
+                  </MenuItem>
+                  <MenuItem onClick={this.handleClose}>
                     <Link to="/wishlist">찜 목록</Link>
                   </MenuItem>
                   <MenuItem onClick={this.handleClose}>
