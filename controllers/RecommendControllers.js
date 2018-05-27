@@ -4,8 +4,7 @@ const Review = require('../models/Review');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const keys = require('../config/keys');
-const url = 'http://localhost:8000';
-// const url = keys.ICServerURL;
+const url = keys.ICServerURL;
 
 module.exports = {
   async trainOneUserRequest(req, res) {
