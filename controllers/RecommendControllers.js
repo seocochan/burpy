@@ -3,46 +3,60 @@ const mongoose = require('mongoose');
 const Review = require('../models/Review');
 const User = require('../models/User');
 const Product = require('../models/Product');
-
-const url = 'http://localhost:8000';
+const keys = require('../config/keys');
+const url = keys.ICServerURL;
 
 module.exports = {
   async trainOneUserRequest(req, res) {
-    console.log('requesting train for one user...');
-
     const { id } = req.params;
     const fetched = await fetchTrainData(id);
     const payload = { id, data: processTrainData(fetched) };
     const dataRes = await axios.post(`${url}/train_data/`, payload);
     console.log(dataRes.data);
-    const trainRes = await axios.post(`${url}/train/`, id);
+    const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
     console.log(trainRes.data);
 
-    res.send('training is done');
+    res.send('train has done');
   },
 
   async predictOneUserRequest(req, res) {
-    console.log('requesting predict for one user...');
-
     const { id } = req.params;
     const fetched = await fetchPredictData(id);
     const payload = { id, data: fetched };
     const dataRes = await axios.post(`${url}/predict_data/`, payload);
     console.log(dataRes.data);
-    const predictRes = await axios.post(`${url}/predict/`, id);
+    const predictRes = await axios.post(`${url}/predict/`, [{ _id: id }]);
     console.log(predictRes.data);
 
-    res.send('prediction is done');
+    res.send('predict has done');
   },
 
-  trainAllUserRequest(req, res) {
-    // 1. 전체 유저 목록 쿼리
-    // 2. trainOneUserRequest를 반복 수행
+  async trainAllUserRequest(req, res) {
+    const userList = await fetchUserList();
+    for (const { _id } of userList) {
+      const fetched = await fetchTrainData(_id);
+      const payload = { id: _id, data: processTrainData(fetched) };
+      const dataRes = await axios.post(`${url}/train_data/`, payload);
+      console.log(dataRes.data);
+    }
+    const trainRes = await axios.post(`${url}/train/`, userList);
+    console.log(trainRes.data);
+
+    res.send('train has done');
   },
 
-  predictAllUserRequest(req, res) {
-    // 1. 전체 유저 목록 쿼리
-    // 2. predictOneUserRequest를 반복 수행
+  async predictAllUserRequest(req, res) {
+    const userList = await fetchUserList();
+    for (const { _id } of userList) {
+      const fetched = await fetchPredictData(_id);
+      const payload = { id: _id, data: fetched };
+      const dataRes = await axios.post(`${url}/predict_data/`, payload);
+      console.log(dataRes.data);
+    }
+    const predictRes = await axios.post(`${url}/predict/`, userList);
+    console.log(predictRes.data);
+
+    res.send('predict has done');
   },
 
   async fetchRecommendItems(req, res) {
@@ -52,6 +66,18 @@ module.exports = {
     res.send(result.data);
   }
 };
+
+const fetchUserList = () =>
+  new Promise(resolve => {
+    User.find({ 'reviews.9': { $exists: true } })
+      .select({ _id: 1 })
+      .exec((err, doc) => {
+        if (!err) {
+          resolve(doc);
+          console.log('user list has been fetched');
+        }
+      });
+  });
 
 const fetchTrainData = userId =>
   new Promise(resolve => {
@@ -65,7 +91,7 @@ const fetchTrainData = userId =>
       .exec((err, doc) => {
         if (!err) {
           resolve(doc);
-          console.log('train data has fetched');
+          console.log('train data has been fetched');
         }
       });
   });
@@ -101,7 +127,7 @@ const fetchPredictData = userId =>
     ]).exec((err, doc) => {
       if (!err) {
         resolve(doc);
-        console.log('predict data has fetched');
+        console.log('predict data has been fetched');
       }
     });
   });
@@ -115,6 +141,6 @@ const processTrainData = data => {
     };
   });
 
-  console.log('train data has processed');
+  console.log('train data has been processed');
   return processed;
 };
