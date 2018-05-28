@@ -13,8 +13,9 @@ module.exports = {
     const payload = { id, data: processTrainData(fetched) };
     const dataRes = await axios.post(`${url}/train_data/`, payload);
     console.log(dataRes.data);
-    const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
-    console.log(trainRes.data);
+    axios.post(`${url}/train/`, [{ _id: id }]);
+    // const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
+    // console.log(trainRes.data);
 
     res.send('train has done');
   },
