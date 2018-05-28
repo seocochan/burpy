@@ -39,8 +39,9 @@ module.exports = {
       const dataRes = await axios.post(`${url}/train_data/`, payload);
       console.log(dataRes.data);
     }
-    const trainRes = await axios.post(`${url}/train/`, userList, {timeout: 60000});
-    console.log(trainRes.data);
+    axios.post(`${url}/train/`, userList);
+    // const trainRes = await axios.post(`${url}/train/`, userList, {timeout: 60000});
+    // console.log(trainRes.data);
 
     res.send('train has done');
   },
