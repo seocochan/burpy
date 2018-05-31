@@ -18,14 +18,15 @@ class Myinfo extends Component{
 
     componentDidMount(){
         axios.get('/api/myinfo').then(res=>{
-            const { name } = res.data;
+            const { name,gender,birthday } = res.data;
             this.UserId = res.data._id;
-            this.props.initialize({name});
+            this.props.initialize({name,gender,birthday});
         });
     }
 
     renderMyinfo(){
         return (
+            <div>
             <Field
               key="name"
               component={InfoField}
@@ -33,6 +34,22 @@ class Myinfo extends Component{
               label="이름"
               name="name"
             />
+
+            <Field
+            key="gender"
+            component={InfoField}
+            type="text"
+            label="성별"
+            name="gender"
+            />
+            <Field
+              key="birthday"
+              component={InfoField}
+              type="text"
+              label="생일"
+              name="birthday"
+            />
+          </div>
           );
     }
 

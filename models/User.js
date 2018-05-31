@@ -13,7 +13,7 @@ const userSchema = new Schema({
     }
   ],
   reviews: [{ type: Schema.Types.ObjectId, ref: 'reviews' }],
-  birthday : {type : Number, default : null},
+  birthday : {type : Date, default : null},
   gender : {type : String, default : null}
 });
 

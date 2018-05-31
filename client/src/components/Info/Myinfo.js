@@ -21,39 +21,25 @@ class Myinfo extends Component{
         });
     }
 
-    renderNameButton(){
+    renderEditButton(){
         return(
               <IconButton aria-label="Edit">
-                <Link to={`/edit/name/${this.state.Info._id}`}>
+                <Link to={`/edit/info/${this.state.Info._id}`}>
                   <Edit />
                 </Link>
               </IconButton>
         )
       }
-      renderGenderButton(){
-          return(
-            <IconButton aria-label="Edit">
-            <Link to={`/edit/gender/${this.state.Info._id}`}>
-              <Edit />
-            </Link>
-          </IconButton>
-          )
-      }
-      renderBirthdayButton(){
-        return(
-            <IconButton aria-label="Edit">
-            <Link to={`/edit/Birthday/${this.state.Info._id}`}>
-              <Edit />
-            </Link>
-          </IconButton>
-          )
-      }
     render(){
         return(
             <div>
-                <li>이름 : {this.state.Info.name} {this.renderNameButton()}</li>
-                <li>성별 : {this.state.Info.gender==null ? '추가로 입력하세요.' : this.state.Info.gender} {this.renderGenderButton()}</li>
-                <li>생일 : {this.state.Info.birthday==null ? '추가로 입력하세요.' : this.state.Info.birthday} {this.renderBirthdayButton()}</li>
+                <li>이름 : {this.state.Info.name}</li>
+                <br/>
+                <li>성별 : {this.state.Info.gender==null ? '추가로 입력하세요.' : this.state.Info.gender}</li>
+                <br/>
+                <li>생일 : {this.state.Info.birthday==null ? '추가로 입력하세요.' : this.state.Info.birthday}</li>
+                <br/>
+                <p>{this.renderEditButton()}</p>
 
             </div>
 
