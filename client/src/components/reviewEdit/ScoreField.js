@@ -13,7 +13,7 @@ export default ({input, label}) => {
       <label>{label}</label>
       <Rating
         {...input}
-        fractions={2}
+        fractions={1}
         initialRating={parseFloat(input.value)}
       />
     </div>
