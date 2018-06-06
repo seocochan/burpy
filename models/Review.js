@@ -7,6 +7,7 @@ const reviewSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'users' },
   productId: { type: Number, ref: 'products' },
   score: { type: Number, required: true },
+  taste: [{ type: Number }],
   comment: String,
   dateAdded: { type: Date, default: Date.now() }
 });
