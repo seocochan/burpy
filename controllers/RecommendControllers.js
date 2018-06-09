@@ -82,7 +82,7 @@ const fetchUserList = () =>
 const fetchTrainData = userId =>
   new Promise(resolve => {
     Review.find({ userId })
-      .populate({ path: 'productId', select: { _id: 1, avgTaste: 1 } })
+      .populate({ path: 'productId', select: { _id: 1, avgTaste: 1 } }) // @TODO: 여기에 match-category 조건 추가
       .select({
         _id: 0,
         productId: 1,
