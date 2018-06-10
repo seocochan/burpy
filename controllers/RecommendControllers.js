@@ -111,6 +111,7 @@ const fetchPredictData = userId =>
       {
         $group: {
           _id: '$_id',
+          category: { $first: '$category' },
           avgTaste: { $first: '$avgTaste' },
           reviews: { $push: '$reviews' }
         }
@@ -122,8 +123,19 @@ const fetchPredictData = userId =>
           }
         }
       },
-      { $project: { _id: 0, productId: '$_id', avgTaste: 1 } },
-      { $sort: { productId: 1 } }
+      { $project: { _id: 0, productId: '$_id', category: 1, avgTaste: 1 } },
+      { $sort: { productId: 1 } },
+      {
+        $group: {
+          _id: '$category',
+          items: {
+            $push: '$$ROOT'
+          }
+        }
+      },
+      { $project: { 'items.category': 0 } },
+      { $project: { _id: 0, category: '$_id', items: 1 } },
+      { $sort: { category: 1 } }
     ]).exec((err, doc) => {
       if (!err) {
         resolve(doc);
