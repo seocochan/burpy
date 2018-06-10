@@ -5,8 +5,15 @@ import {reduxForm,Field,initialize} from 'redux-form';
 import Icon from 'material-ui/Icon';
 import Button from 'material-ui/Button';
 import { Redirect } from 'react-router';
+import SelectField from './SelectField';
+import Select from 'material-ui';
+import DateField from './DateField';
+import momentLocaliser from 'react-widgets-moment'
+import moment from 'moment';
+import configure from 'react-widgets/lib/configure'
 
-
+moment.locale('en')
+momentLocaliser()
 class Myinfo extends Component{
     constructor(props){
         super(props);
@@ -20,13 +27,14 @@ class Myinfo extends Component{
         axios.get('/api/myinfo').then(res=>{
             const { name,gender,birthday } = res.data;
             this.UserId = res.data._id;
-            this.props.initialize({name,gender,birthday});
+            this.props.initialize({name,gender});
         });
     }
 
     renderMyinfo(){
         return (
             <div>
+                <div>
             <Field
               key="name"
               component={InfoField}
@@ -34,21 +42,25 @@ class Myinfo extends Component{
               label="이름"
               name="name"
             />
-
+                </div>
+                <div>
+            <label>성별</label>
             <Field
             key="gender"
-            component={InfoField}
-            type="text"
-            label="성별"
+            component={SelectField}
             name="gender"
+            data={['male','female']}
             />
+                </div>
+                <div>
+            <label>생일</label>
             <Field
               key="birthday"
-              component={InfoField}
-              type="text"
-              label="생일"
+              component={DateField}
+              showTime = {true}
               name="birthday"
             />
+                </div>
           </div>
           );
     }
