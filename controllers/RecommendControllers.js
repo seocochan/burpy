@@ -11,10 +11,11 @@ module.exports = {
     const { id } = req.params;
     const fetched = await fetchTrainData(id);
     const payload = { id, data: processTrainData(fetched) };
-    const dataRes = await axios.post(`${url}/train_data/`, payload);
-    console.log(dataRes.data);
-    const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
-    console.log(trainRes.data);
+    console.dir(payload, {depth: null});
+    // const dataRes = await axios.post(`${url}/train_data/`, payload);
+    // console.log(dataRes.data);
+    // const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
+    // console.log(trainRes.data);
 
     res.send('train has done');
   },
@@ -23,10 +24,11 @@ module.exports = {
     const { id } = req.params;
     const fetched = await fetchPredictData(id);
     const payload = { id, data: fetched };
-    const dataRes = await axios.post(`${url}/predict_data/`, payload);
-    console.log(dataRes.data);
-    const predictRes = await axios.post(`${url}/predict/`, [{ _id: id }]);
-    console.log(predictRes.data);
+    console.dir(payload, {depth: null});
+    // const dataRes = await axios.post(`${url}/predict_data/`, payload);
+    // console.log(dataRes.data);
+    // const predictRes = await axios.post(`${url}/predict/`, [{ _id: id }]);
+    // console.log(predictRes.data);
 
     res.send('predict has done');
   },
@@ -81,19 +83,46 @@ const fetchUserList = () =>
 
 const fetchTrainData = userId =>
   new Promise(resolve => {
-    Review.find({ userId })
-      .populate({ path: 'productId', select: { _id: 1, avgTaste: 1 } }) // @TODO: 여기에 match-category 조건 추가
-      .select({
-        _id: 0,
-        productId: 1,
-        score: 1
-      })
-      .exec((err, doc) => {
-        if (!err) {
-          resolve(doc);
-          console.log('train data has been fetched');
+    Review.aggregate([
+      {
+        $lookup: {
+          from: Product.collection.name,
+          localField: 'productId',
+          foreignField: '_id',
+          as: 'productId'
         }
-      });
+      },
+      { $unwind: { path: '$productId' } },
+      {
+        $project: {
+          'productId.productId': '$productId._id',
+          'productId.avgTaste': 1,
+          'productId.category': 1,
+          score: 1,
+          userId: 1
+        }
+      },
+      { $sort: { 'productId.productId': 1 } },
+      {
+        $match: {
+          userId: mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
+        $group: {
+          _id: '$productId.category',
+          items: { $push: { product: '$productId', score: '$score' } }
+        }
+      },
+      { $project: { 'items.product.category': 0 } },
+      { $project: { _id: 0, category: '$_id', items: 1 } },
+      { $sort: { category: 1 } }
+    ]).exec((err, doc) => {
+      if (!err) {
+        resolve(doc);
+        console.log('train data has been fetched');
+      }
+    });
   });
 
 const fetchPredictData = userId =>
@@ -145,12 +174,17 @@ const fetchPredictData = userId =>
   });
 
 const processTrainData = data => {
-  const processed = data.map(item => {
-    return {
-      productId: item.productId._id,
-      avgTaste: item.productId.avgTaste,
-      score: item.score
-    };
+  let processed = [];
+
+  data.forEach(c => {
+    const items = c.items.map(i => {
+      return {
+        productId: i.product.productId,
+        avgTaste: i.product.avgTaste,
+        score: i.score
+      }
+    });
+    processed.push({category: c.category, items});
   });
 
   console.log('train data has been processed');
