@@ -6,6 +6,7 @@ import * as actions from '../actions';
 import Header from './Header';
 import Home from './Home';
 import SearchResult from './SearchResult';
+import Recommend from './Recommend';
 import Wishlist from './Wishlist';
 import MyProducts from './MyProducts';
 import ProductPage from './productPage/ProductPage';
@@ -27,6 +28,7 @@ class App extends Component {
             <Header />
             <Route exact path="/" component={Home} />
             <Route exact path="/search" component={SearchResult} />
+            <Route exact path="/recommend" component={Recommend} />
             <Route exact path="/wishlist" component={Wishlist} />
             <Route exact path="/my-products" component={MyProducts} />
             <Route exact path="/product/:id" component={ProductPage} />
