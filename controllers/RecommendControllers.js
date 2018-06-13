@@ -11,11 +11,11 @@ module.exports = {
     const { id } = req.params;
     const fetched = await fetchTrainData(id);
     const payload = { id, data: processTrainData(fetched) };
-    console.dir(payload, {depth: null});
-    // const dataRes = await axios.post(`${url}/train_data/`, payload);
-    // console.log(dataRes.data);
-    // const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
-    // console.log(trainRes.data);
+    console.dir(payload, { depth: null });
+    const dataRes = await axios.post(`${url}/train_data/`, payload);
+    console.log(dataRes.data);
+    const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
+    console.log(trainRes.data);
 
     res.send('train has done');
   },
@@ -24,11 +24,11 @@ module.exports = {
     const { id } = req.params;
     const fetched = await fetchPredictData(id);
     const payload = { id, data: fetched };
-    console.dir(payload, {depth: null});
-    // const dataRes = await axios.post(`${url}/predict_data/`, payload);
-    // console.log(dataRes.data);
-    // const predictRes = await axios.post(`${url}/predict/`, [{ _id: id }]);
-    // console.log(predictRes.data);
+    console.dir(payload, { depth: null });
+    const dataRes = await axios.post(`${url}/predict_data/`, payload);
+    console.log(dataRes.data);
+    const predictRes = await axios.post(`${url}/predict/`, [{ _id: id }]);
+    console.log(predictRes.data);
 
     res.send('predict has done');
   },
@@ -62,8 +62,8 @@ module.exports = {
   },
 
   async fetchRecommendItems(req, res) {
-    const { id } = req.params;
-    const result = await axios.post(`${url}/predict_result/`, id);
+    const userId = req.user._id;
+    const result = await axios.post(`${url}/predict_result/`, userId);
 
     res.send(result.data);
   }
@@ -182,9 +182,9 @@ const processTrainData = data => {
         productId: i.product.productId,
         avgTaste: i.product.avgTaste,
         score: i.score
-      }
+      };
     });
-    processed.push({category: c.category, items});
+    processed.push({ category: c.category, items });
   });
 
   console.log('train data has been processed');
