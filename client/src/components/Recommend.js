@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import category from '../productCategoryDict';
 
@@ -22,13 +23,14 @@ class Recommend extends Component {
     return _.map(category, c => {
       if (recommended.hasOwnProperty(c.eng) && recommended[c.eng]) {
         let itemList = [];
-        // FIX: 3개가 아니라 전체를 돌도록 수정(백엔드에서 3개로 제한할 예정)
-        for (let i = 0; i < 3; i++) {
-          const item = recommended[c.eng][i];
 
-          // FIX: item의 이름도 출력하도록 수정
-          itemList.push(<li key={item.id}>{item.score}</li>);
-        }
+        recommended[c.eng].forEach(item => {
+          itemList.push(
+            <li key={item.id}>
+              <Link to={`/product/${item.id}`}>{item.name}</Link>
+              {` / 예상 평점: ${item.score}`}
+            </li>);
+        });
 
         return (
           <div key={c.eng}>
