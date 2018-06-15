@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const axios = require('axios');
 const mongoose = require('mongoose');
 const Review = require('../models/Review');
@@ -11,7 +12,6 @@ module.exports = {
     const { id } = req.params;
     const fetched = await fetchTrainData(id);
     const payload = { id, data: processTrainData(fetched) };
-    console.dir(payload, { depth: null });
     const dataRes = await axios.post(`${url}/train_data/`, payload);
     console.log(dataRes.data);
     const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
@@ -24,7 +24,6 @@ module.exports = {
     const { id } = req.params;
     const fetched = await fetchPredictData(id);
     const payload = { id, data: fetched };
-    console.dir(payload, { depth: null });
     const dataRes = await axios.post(`${url}/predict_data/`, payload);
     console.log(dataRes.data);
     const predictRes = await axios.post(`${url}/predict/`, [{ _id: id }]);
@@ -63,16 +62,41 @@ module.exports = {
 
   async fetchRecommendItems(req, res) {
     const userId = req.user._id;
-    const result = await axios.post(`${url}/predict_result/`, userId);
+    const response = await axios.post(`${url}/predict_result/`, userId);
+    const predict = JSON.parse(response.data);
 
-    res.send(result.data);
+    let result = {};
+    for (const [category, _items] of Object.entries(predict)) {
+      const items = _items.slice(0, 3); // 상위 3개 결과로 제한
+      result[category] = [];
+
+      const list = items.map(item => item.id);
+      const fetchedItems = await Product.aggregate([
+        { $match: { _id: { $in: list } } },
+        { $addFields: { __order: { $indexOfArray: [list, '$_id'] } } },
+        { $sort: { __order: 1 } },
+        { $project: { _id: 0, name: 1, avgScore: 1 } }
+      ]);
+
+      items.forEach((item, i) => {
+        result[category].push({ ...item, ...fetchedItems[i] });
+      });
+    }
+
+    res.send(result);
   }
 };
 
 const fetchUserList = () =>
   new Promise(resolve => {
-    User.find({ 'reviews.9': { $exists: true } })
-      .select({ _id: 1 })
+    User.find({
+      'reviews.9': {
+        $exists: true
+      }
+    })
+      .select({
+        _id: 1
+      })
       .exec((err, doc) => {
         if (!err) {
           resolve(doc);
@@ -92,7 +116,11 @@ const fetchTrainData = userId =>
           as: 'productId'
         }
       },
-      { $unwind: { path: '$productId' } },
+      {
+        $unwind: {
+          path: '$productId'
+        }
+      },
       {
         $project: {
           'productId.productId': '$productId._id',
@@ -102,7 +130,11 @@ const fetchTrainData = userId =>
           userId: 1
         }
       },
-      { $sort: { 'productId.productId': 1 } },
+      {
+        $sort: {
+          'productId.productId': 1
+        }
+      },
       {
         $match: {
           userId: mongoose.Types.ObjectId(userId)
@@ -111,12 +143,31 @@ const fetchTrainData = userId =>
       {
         $group: {
           _id: '$productId.category',
-          items: { $push: { product: '$productId', score: '$score' } }
+          items: {
+            $push: {
+              product: '$productId',
+              score: '$score'
+            }
+          }
         }
       },
-      { $project: { 'items.product.category': 0 } },
-      { $project: { _id: 0, category: '$_id', items: 1 } },
-      { $sort: { category: 1 } }
+      {
+        $project: {
+          'items.product.category': 0
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          category: '$_id',
+          items: 1
+        }
+      },
+      {
+        $sort: {
+          category: 1
+        }
+      }
     ]).exec((err, doc) => {
       if (!err) {
         resolve(doc);
@@ -136,24 +187,50 @@ const fetchPredictData = userId =>
           as: 'reviews'
         }
       },
-      { $unwind: { path: '$reviews', preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: '$reviews',
+          preserveNullAndEmptyArrays: true
+        }
+      },
       {
         $group: {
           _id: '$_id',
-          category: { $first: '$category' },
-          avgTaste: { $first: '$avgTaste' },
-          reviews: { $push: '$reviews' }
+          category: {
+            $first: '$category'
+          },
+          avgTaste: {
+            $first: '$avgTaste'
+          },
+          reviews: {
+            $push: '$reviews'
+          }
         }
       },
       {
         $match: {
           reviews: {
-            $not: { $elemMatch: { userId: mongoose.Types.ObjectId(userId) } }
+            $not: {
+              $elemMatch: {
+                userId: mongoose.Types.ObjectId(userId)
+              }
+            }
           }
         }
       },
-      { $project: { _id: 0, productId: '$_id', category: 1, avgTaste: 1 } },
-      { $sort: { productId: 1 } },
+      {
+        $project: {
+          _id: 0,
+          productId: '$_id',
+          category: 1,
+          avgTaste: 1
+        }
+      },
+      {
+        $sort: {
+          productId: 1
+        }
+      },
       {
         $group: {
           _id: '$category',
@@ -162,9 +239,23 @@ const fetchPredictData = userId =>
           }
         }
       },
-      { $project: { 'items.category': 0 } },
-      { $project: { _id: 0, category: '$_id', items: 1 } },
-      { $sort: { category: 1 } }
+      {
+        $project: {
+          'items.category': 0
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          category: '$_id',
+          items: 1
+        }
+      },
+      {
+        $sort: {
+          category: 1
+        }
+      }
     ]).exec((err, doc) => {
       if (!err) {
         resolve(doc);
