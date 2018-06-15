@@ -34,14 +34,14 @@ class Recommend extends Component {
 
         return (
           <div key={c.eng}>
-            <h2>{c.eng}</h2>
+            <h2>{c.kor}</h2>
             <ul>{itemList}</ul>
           </div>
         );
       } else {
         return (
           <div key={c.eng}>
-            <h2>{c.eng}</h2>
+            <h2>{c.kor}</h2>
             <ul>아직 추천 상품이 없습니다. 더 많은 리뷰를 등록하세요.</ul>
           </div>
         );
