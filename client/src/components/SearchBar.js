@@ -5,6 +5,7 @@ import * as actions from '../actions';
 import { Field, reduxForm } from 'redux-form';
 import { withStyles } from '@material-ui/core/styles';
 import { Input, TextField } from '@material-ui/core';
+import { amber } from '@material-ui/core/colors';
 
 class SearchBar extends Component {
   onSubmit(values) {
@@ -16,9 +17,6 @@ class SearchBar extends Component {
   renderTextField = ({ className, input, label, meta: { touched, error }, ...custom }) => (
     <TextField
       className={className}
-      hintText={label}
-      floatingLabelText={label}
-      errorText={touched && error}
       {...input}
       {...custom}
     />
@@ -53,8 +51,8 @@ const styles = theme => ({
     margin: theme.spacing.unit
   },
   textField: {
-    // backgroundColor: '#fff',
-    background: 'rgba(1, 1, 1, 0.1)',
+    backgroundColor: amber[300],
+    //background: 'rgba(1, 1, 1, 0.1)',
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 180
