@@ -1,18 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import SearchBar from './SearchBar';
+import { withStyles } from '@material-ui/core/styles';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  MenuItem,
+  Menu
+} from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import { AccountCircle } from '@material-ui/icons';
 
-import { withStyles } from 'material-ui/styles';
-import AppBar from 'material-ui/AppBar';
-import Toolbar from 'material-ui/Toolbar';
-import Typography from 'material-ui/Typography';
-import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
-import AccountCircle from 'material-ui-icons/AccountCircle';
-import Menu, { MenuItem } from 'material-ui/Menu';
-
-const styles = {
+const styles = theme => ({
   root: {
     flexGrow: 1
   },
@@ -23,11 +25,11 @@ const styles = {
     marginLeft: -12,
     marginRight: 20
   }
-};
+});
 
-class Header2 extends Component {
+class Header extends Component {
   state = {
-    anchorE1: null
+    anchorEl: null
   };
 
   handleMenu = event => {
@@ -39,22 +41,22 @@ class Header2 extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
-
+    console.log(open);
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="fixed">
           <Toolbar>
             <IconButton
               className={classes.menuButton}
               color="inherit"
               aria-label="Menu"
+              component={Link}
+              to="/"
             >
-              <Link to="/" style={{ color: '#fff' }}>
-                <MenuIcon />
-              </Link>
+              <MenuIcon />
             </IconButton>
             <Typography
               variant="title"
@@ -64,7 +66,7 @@ class Header2 extends Component {
               BURPY
             </Typography>
             <SearchBar />
-            {this.props.auth && (
+            {auth && (
               <div>
                 <IconButton
                   aria-owns={open ? 'menu-appbar' : null}
@@ -88,17 +90,33 @@ class Header2 extends Component {
                   open={open}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={this.handleClose}>
-                    <Link to="/recommend">추천 상품</Link>
+                  <MenuItem
+                    onClick={this.handleClose}
+                    component={Link}
+                    to="/recommend"
+                  >
+                    추천 상품
                   </MenuItem>
-                  <MenuItem onClick={this.handleClose}>
-                    <Link to="/wishlist">찜 목록</Link>
+                  <MenuItem
+                    onClick={this.handleClose}
+                    component={Link}
+                    to="/wishlist"
+                  >
+                    찜 목록
                   </MenuItem>
-                  <MenuItem onClick={this.handleClose}>
-                    <Link to="/my-products">내 상품</Link>
+                  <MenuItem
+                    onClick={this.handleClose}
+                    component={Link}
+                    to="/my-products"
+                  >
+                    내 상품
                   </MenuItem>
-                  <MenuItem onClick={this.handleClose}>
-                    <a href="/api/logout">로그아웃</a>
+                  <MenuItem
+                    onClick={this.handleClose}
+                    component="a"
+                    href="/api/logout"
+                  >
+                    로그아웃
                   </MenuItem>
                 </Menu>
               </div>
@@ -114,4 +132,4 @@ function mapStateToProps({ auth }) {
   return { auth };
 }
 
-export default withStyles(styles)(connect(mapStateToProps)(Header2));
+export default withStyles(styles)(connect(mapStateToProps)(Header));
