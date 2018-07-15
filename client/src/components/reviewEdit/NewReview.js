@@ -1,13 +1,14 @@
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { reduxForm, Field, FieldArray, initialize } from 'redux-form';
 import { Redirect } from 'react-router';
+import category from '../../productCategoryDict';
 import CommentField from './CommentField';
 import ScoreField from './ScoreField';
 import TasteField from './TasteField';
-import Icon from 'material-ui/Icon';
-import Button from 'material-ui/Button';
-import category from '../../productCategoryDict';
+import { withStyles } from '@material-ui/core/styles';
+import { Send } from '@material-ui/icons';
+import { Button } from '@material-ui/core';
 
 class NewReview extends Component {
   constructor(props) {
@@ -31,7 +32,7 @@ class NewReview extends Component {
 
   renderFields() {
     return (
-      <div>
+      <Fragment>
         <Field
           key="comment"
           component={CommentField}
@@ -47,7 +48,7 @@ class NewReview extends Component {
           name="score"
         />
         <FieldArray name="taste" component={this.renderTastes} />
-      </div>
+      </Fragment>
     );
   }
 
@@ -84,23 +85,31 @@ class NewReview extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const { product } = this.state;
 
     return (
-      <div>
+      <Fragment>
         리뷰등록
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {product && this.renderFields()}
           <Button variant="raised" color="primary" type="submit">
+            <Send className={classes.icon} />
             완료
-            <Icon>send</Icon>
           </Button>
           {this.state.isDone && <Redirect to={`/product/${this.productId}`} />}
         </form>
-      </div>
+      </Fragment>
     );
   }
 }
+
+const styles = theme => ({
+  icon: {
+    marginRight: theme.spacing.unit,
+    fontSize: 20
+  }
+});
 
 function validate(values) {
   const errors = {};
@@ -113,4 +122,4 @@ export default reduxForm({
   validate,
   form: 'reviewForm',
   destroyOnUnmount: true
-})(NewReview);
+})(withStyles(styles)(NewReview));

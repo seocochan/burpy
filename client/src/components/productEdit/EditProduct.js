@@ -5,8 +5,9 @@ import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductField from './ProductField';
 import productFormFields from './productFormFields';
-import Icon from 'material-ui/Icon';
-import Button from 'material-ui/Button';
+import { withStyles } from '@material-ui/core/styles';
+import { Button } from '@material-ui/core';
+import { Send } from '@material-ui/icons';
 
 class EditProduct extends Component {
   constructor(props) {
@@ -21,7 +22,6 @@ class EditProduct extends Component {
   componentDidMount() {
     // TODO: 여기에 상품 정보 GET하는 요청 추가
   }
-  
 
   renderFields() {
     return _.map(productFormFields, ({ label, name }) => {
@@ -45,14 +45,16 @@ class EditProduct extends Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div>
         상품 수정
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderFields()}
           <Button variant="raised" color="primary" type="submit">
+            <Send className={classes.icon} />
             완료
-            <Icon>send</Icon>
           </Button>
           {this.state.isDone && <Redirect to={`/product/${this.id}`} />}
         </form>
@@ -60,6 +62,13 @@ class EditProduct extends Component {
     );
   }
 }
+
+const styles = theme => ({
+  icon: {
+    marginRight: theme.spacing.unit,
+    fontSize: 20
+  }
+});
 
 function validate(values) {
   const errors = {};
@@ -72,4 +81,4 @@ export default reduxForm({
   validate,
   form: 'productForm',
   destroyOnUnmount: true
-})(EditProduct);
+})(withStyles(styles)(EditProduct));
