@@ -76,6 +76,12 @@ class Header extends Component {
                   마이바
                 </ListItem>
                 <Divider />
+                <ListItem button component={Link} to="/wishlist">
+                  찜목록
+                </ListItem>
+                <ListItem button component="a" href="/api/logout">
+                  로그아웃
+                </ListItem>
               </div>
             </List>
           </div>
