@@ -2,7 +2,6 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const mongoose = require('mongoose');
 const keys = require('../config/keys');
-const secret = require('../config/secret');
 
 const FacebookStrategy = require('passport-facebook').Strategy;
 const NaverStrategy = require('passport-naver').Strategy;
@@ -48,8 +47,8 @@ passport.use(
 
 passport.use(
   new TwitterStrategy({
-    consumerKey : secret.federation.twitter.client_id,
-    consumerSecret : secret.federation.twitter.secret_id,
+    consumerKey : keys.twitterClientID,
+    consumerSecret : keys.twitterClientSecret,
     callbackURL : '/auth/twitter/callback',
     proxy : true
   },
@@ -70,8 +69,8 @@ passport.use(
 
 passport.use(
   new NaverStrategy({
-    clientID : secret.federation.naver.client_id,
-    clientSecret : secret.federation.naver.secret_id,
+    clientID : keys.naverClientID,
+    clientSecret : keys.naverClientSecret,
     callbackURL : '/auth/login/naver/callback',
     proxy : true
   },
