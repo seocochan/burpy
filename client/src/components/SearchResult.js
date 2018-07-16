@@ -1,13 +1,17 @@
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import * as actions from '../actions';
 import queryString from 'qs';
-import { InputLabel } from 'material-ui/Input';
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
-import Select from 'material-ui/Select';
+import { withStyles } from '@material-ui/core/styles';
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText
+} from '@material-ui/core';
 
 class SearchResult extends Component {
   // 이 컴포넌트가 mount, update 됐을 때 url 쿼리를 값으로 가져오는 함수.
@@ -92,28 +96,27 @@ class SearchResult extends Component {
   }
 
   renderCategoryFilter() {
+    const { classes } = this.props;
+
     return (
-      <form
-        autoComplete="off"
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap'
-        }}
-      >
-        <FormControl style={{ minWidth: '300' }}>
-          <InputLabel htmlFor="age-simple">분류</InputLabel>
+      <form autoComplete="off">
+        <FormControl className={classes.formControl}>
+          <InputLabel htmlFor="category">분류</InputLabel>
           <Select
             value={this.category || ''}
             onChange={this.onChangeCategory.bind(this)}
           >
             <MenuItem value={''}>
-              <em>None</em>
+              <em>전체</em>
             </MenuItem>
             <MenuItem value={'맥주'}>맥주</MenuItem>
-            <MenuItem value={'소주'}>소주</MenuItem>
-            <MenuItem value={'탄산음료'}>탄산음료</MenuItem>
+            <MenuItem value={'위스키'}>위스키</MenuItem>
+            <MenuItem value={'기타 주류'}>기타 주류</MenuItem>
+            <MenuItem value={'탄산 음료'}>탄산 음료</MenuItem>
             <MenuItem value={'커피'}>커피</MenuItem>
+            <MenuItem value={'기타 음료'}>기타 음료</MenuItem>
           </Select>
+          <FormHelperText>원하는 분류를 선택하세요</FormHelperText>
         </FormControl>
       </form>
     );
@@ -121,20 +124,35 @@ class SearchResult extends Component {
 
   render() {
     return (
-      <div>
+      <Fragment>
         <h3>"{this.word}" 검색 결과</h3>
         {this.renderCategoryFilter()}
         {this.renderSortButtons()}
         <ul>{this.renderList()}</ul>
         <p />
         <Link to="/new/product">상품 등록하기</Link>
-      </div>
+      </Fragment>
     );
   }
 }
+
+const styles = theme => ({
+  formControl: {
+    margin: theme.spacing.unit,
+    width: '9rem',
+    minWidth: 180
+  }
+});
 
 function mapStateToProps({ searchResult }) {
   return { searchResult };
 }
 
-export default withRouter(connect(mapStateToProps, actions)(SearchResult));
+export default withStyles(styles)(
+  withRouter(
+    connect(
+      mapStateToProps,
+      actions
+    )(SearchResult)
+  )
+);

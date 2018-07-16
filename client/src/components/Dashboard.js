@@ -1,12 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import SearchBar from './SearchBar';
 
 class Dashboard extends Component {
   render() {
     return (
-      <div>
+      <Fragment>
         <h3>메인화면</h3>
-      </div>
+        <SearchBar />
+      </Fragment>
     );
   }
 }

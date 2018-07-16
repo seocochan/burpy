@@ -14,6 +14,26 @@ module.exports = app => {
     passport.authenticate('google'),
     AuthControllers.callback
   );
+  app.get('/auth/twitter', passport.authenticate('twitter'));
+  app.get(
+    '/auth/twitter/callback',
+    passport.authenticate('twitter', { failureRedirect: '/login' }),
+    (req, res) => {
+      res.redirect('/');
+    }
+  );
+  app.get(
+    '/auth/login/naver',
+    passport.authenticate('naver', {
+      scope: ['profile', 'email']
+    })
+  );
+  app.get(
+    '/auth/login/naver/callback',
+    passport.authenticate('naver'),
+    AuthControllers.callback
+  );
+
   app.get('/api/logout', AuthControllers.logout);
   app.get('/api/current_user', AuthControllers.currentUser);
 };

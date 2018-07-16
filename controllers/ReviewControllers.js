@@ -4,11 +4,13 @@ const Product = require('../models/Product');
 
 module.exports = {
   fetchReviews(req, res) {
+    const sortReview = req.order ? req.order : 'dateAdded';
     User.findById(req.user._id)
       .populate({
         path: 'reviews',
         populate: { path: 'productId' }
       })
+      .sort(sortReview)
       .exec((err, doc) => {
         res.send(doc.reviews);
       });
@@ -19,28 +21,35 @@ module.exports = {
     const values = { userId, ...req.body };
 
     const newReview = await new Review(values).save();
-    res.send(newReview);
+    const Avg = await fetchScore(newReview.productId);
+    const productScore = await fetchProduct(newReview.productId, Avg);
+    res.send(productScore);
   },
 
-  updateReview(req, res) {
+  async updateReview(req, res) {
     const { id } = req.params;
     const { body } = req;
-
-    Review.findByIdAndUpdate(id, body, { new: true }).exec((err, doc) => {
-      res.send(doc);
+    const updatereview = await Review.findByIdAndUpdate(id, body, {
+      new: true
     });
+    const Avg = await fetchScore(updatereview.productId);
+    const productScore = await fetchProduct(updatereview.productId, Avg);
+    res.send(productScore);
   },
 
   removeReview(req, res) {
     const { id } = req.params;
 
     Review.findOne({ _id: id }, (err, doc) => {
-      doc.remove(err => {
+      doc.remove(async err => {
         if (err) {
           console.warn(err);
           res.status(410).send('리뷰 제거 실패');
         }
-        res.status(200).send(id);
+        //res.status(200).send(id);
+        const Avg = await fetchScore(doc.productId);
+        const productScore = await fetchProduct(doc.productId, Avg);
+        res.send(productScore);
       });
     });
   },
@@ -82,3 +91,36 @@ module.exports = {
       });
   }
 };
+
+const fetchScore = Id =>
+  new Promise(resolve => {
+    Review.aggregate([
+      { $match: { productId: Id } },
+      {
+        $group: {
+          _id: '',
+          scoreavg: { $avg: '$score' }
+        }
+      }
+    ]).exec((err, doc) => {
+      if (!err) {
+        console.log('doc', doc);
+        if (doc.length == 0) {
+          resolve('0');
+        } else {
+          resolve(doc[0].scoreavg);
+        }
+      }
+    });
+  });
+
+const fetchProduct = (Id, score) =>
+  new Promise(resolve => {
+    Product.findByIdAndUpdate(Id, { avgScore: score }, { new: true }).exec(
+      (err, doc) => {
+        if (!err) {
+          resolve(doc);
+        }
+      }
+    );
+  });

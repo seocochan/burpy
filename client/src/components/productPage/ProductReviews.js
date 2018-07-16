@@ -23,7 +23,7 @@ class ProductReviews extends Component {
       return _.map(this.state.reviews, item => {
         return (
           <li key={item._id}>
-            ID: {item.userId.googleId}
+            ID: {item.userId.name}
             평점: {item.score}
             코멘트: {item.comment}
           </li>

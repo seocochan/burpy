@@ -5,5 +5,5 @@ module.exports = app => {
   app.get('/api/train', RecommendControllers.trainAllUserRequest);
   app.get('/api/predict/:id', RecommendControllers.predictOneUserRequest);
   app.get('/api/predict', RecommendControllers.predictAllUserRequest);
-  app.get('/api/recommend/:id', RecommendControllers.fetchRecommendItems);
+  app.get('/api/recommend', RecommendControllers.fetchRecommendItems);
 };

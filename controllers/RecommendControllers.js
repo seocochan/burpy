@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const axios = require('axios');
 const mongoose = require('mongoose');
 const Review = require('../models/Review');
@@ -62,17 +63,42 @@ module.exports = {
   },
 
   async fetchRecommendItems(req, res) {
-    const { id } = req.params;
-    const result = await axios.post(`${url}/predict_result/`, id);
+    const userId = req.user._id;
+    const response = await axios.post(`${url}/predict_result/`, userId);
+    const predict = JSON.parse(response.data);
 
-    res.send(result.data);
+    let result = {};
+    for (const [category, _items] of Object.entries(predict)) {
+      const items = _items.slice(0, 3); // 상위 3개 결과로 제한
+      result[category] = [];
+
+      const list = items.map(item => item.id);
+      const fetchedItems = await Product.aggregate([
+        { $match: { _id: { $in: list } } },
+        { $addFields: { __order: { $indexOfArray: [list, '$_id'] } } },
+        { $sort: { __order: 1 } },
+        { $project: { _id: 0, name: 1, avgScore: 1 } }
+      ]);
+
+      items.forEach((item, i) => {
+        result[category].push({ ...item, ...fetchedItems[i] });
+      });
+    }
+
+    res.send(result);
   }
 };
 
 const fetchUserList = () =>
   new Promise(resolve => {
-    User.find({ 'reviews.9': { $exists: true } })
-      .select({ _id: 1 })
+    User.find({
+      'reviews.9': {
+        $exists: true
+      }
+    })
+      .select({
+        _id: 1
+      })
       .exec((err, doc) => {
         if (!err) {
           resolve(doc);
@@ -83,19 +109,73 @@ const fetchUserList = () =>
 
 const fetchTrainData = userId =>
   new Promise(resolve => {
-    Review.find({ userId })
-      .populate({ path: 'productId', select: { _id: 1, avgTaste: 1 } })
-      .select({
-        _id: 0,
-        productId: 1,
-        score: 1
-      })
-      .exec((err, doc) => {
-        if (!err) {
-          resolve(doc);
-          console.log('train data has been fetched');
+    Review.aggregate([
+      {
+        $lookup: {
+          from: Product.collection.name,
+          localField: 'productId',
+          foreignField: '_id',
+          as: 'productId'
         }
-      });
+      },
+      {
+        $unwind: {
+          path: '$productId'
+        }
+      },
+      {
+        $project: {
+          'productId.productId': '$productId._id',
+          'productId.avgTaste': 1,
+          'productId.category': 1,
+          score: 1,
+          userId: 1
+        }
+      },
+      {
+        $sort: {
+          'productId.productId': 1
+        }
+      },
+      {
+        $match: {
+          userId: mongoose.Types.ObjectId(userId)
+        }
+      },
+      {
+        $group: {
+          _id: '$productId.category',
+          items: {
+            $push: {
+              product: '$productId',
+              score: '$score'
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          'items.product.category': 0
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          category: '$_id',
+          items: 1
+        }
+      },
+      {
+        $sort: {
+          category: 1
+        }
+      }
+    ]).exec((err, doc) => {
+      if (!err) {
+        resolve(doc);
+        console.log('train data has been fetched');
+      }
+    });
   });
 
 const fetchPredictData = userId =>
@@ -109,23 +189,75 @@ const fetchPredictData = userId =>
           as: 'reviews'
         }
       },
-      { $unwind: { path: '$reviews', preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: '$reviews',
+          preserveNullAndEmptyArrays: true
+        }
+      },
       {
         $group: {
           _id: '$_id',
-          avgTaste: { $first: '$avgTaste' },
-          reviews: { $push: '$reviews' }
+          category: {
+            $first: '$category'
+          },
+          avgTaste: {
+            $first: '$avgTaste'
+          },
+          reviews: {
+            $push: '$reviews'
+          }
         }
       },
       {
         $match: {
           reviews: {
-            $not: { $elemMatch: { userId: mongoose.Types.ObjectId(userId) } }
+            $not: {
+              $elemMatch: {
+                userId: mongoose.Types.ObjectId(userId)
+              }
+            }
           }
         }
       },
-      { $project: { _id: 0, productId: '$_id', avgTaste: 1 } },
-      { $sort: { productId: 1 } }
+      {
+        $project: {
+          _id: 0,
+          productId: '$_id',
+          category: 1,
+          avgTaste: 1
+        }
+      },
+      {
+        $sort: {
+          productId: 1
+        }
+      },
+      {
+        $group: {
+          _id: '$category',
+          items: {
+            $push: '$$ROOT'
+          }
+        }
+      },
+      {
+        $project: {
+          'items.category': 0
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          category: '$_id',
+          items: 1
+        }
+      },
+      {
+        $sort: {
+          category: 1
+        }
+      }
     ]).exec((err, doc) => {
       if (!err) {
         resolve(doc);
@@ -135,12 +267,17 @@ const fetchPredictData = userId =>
   });
 
 const processTrainData = data => {
-  const processed = data.map(item => {
-    return {
-      productId: item.productId._id,
-      avgTaste: item.productId.avgTaste,
-      score: item.score
-    };
+  let processed = [];
+
+  data.forEach(c => {
+    const items = c.items.map(i => {
+      return {
+        productId: i.product.productId,
+        avgTaste: i.product.avgTaste,
+        score: i.score
+      };
+    });
+    processed.push({ category: c.category, items });
   });
 
   console.log('train data has been processed');

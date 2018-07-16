@@ -1,10 +1,11 @@
 import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import axios from 'axios';
-import Rating from 'react-rating';
-import { Button, IconButton, Paper } from 'material-ui';
-import { Delete, Edit } from 'material-ui-icons';
 import { Link } from 'react-router-dom';
+import Rating from 'react-rating';
+import { withStyles } from '@material-ui/core/styles';
+import { Button, IconButton, Paper } from '@material-ui/core';
+import { Delete, Edit } from '@material-ui/icons';
 
 class MyReview extends Component {
   constructor(props) {
@@ -33,26 +34,28 @@ class MyReview extends Component {
   }
 
   renderMyReview() {
+    const { classes } = this.props;
+
     if (this.hasReview) {
       const review = this.state.myReview;
 
       return (
-        <div>
+        <Fragment>
           <Rating
             readonly
             fractions={2}
             initialRating={parseFloat(review.score)}
           />
-          <Paper elevation={4} style={{ width: '70%', margin: 'auto' }}>
+          <Paper elevation={4} className={classes.paper}>
             {review.comment}
           </Paper>
-        </div>
+        </Fragment>
       );
     } else {
       return (
-        <div>
+        <Fragment>
           <p>아직 내 리뷰가 없습니다.</p>
-        </div>
+        </Fragment>
       );
     }
   }
@@ -60,30 +63,33 @@ class MyReview extends Component {
   renderButtons() {
     if (this.hasReview) {
       return (
-        <div>
+        <Fragment>
           <IconButton
             aria-label="Delete"
             onClick={() => this.handleDelete(this.state.myReview._id)}
           >
             <Delete />
           </IconButton>
-          <IconButton aria-label="Edit">
-            <Link to={`/edit/review/${this.reviewId}`}>
-              <Edit />
-            </Link>
+          <IconButton
+            aria-label="Edit"
+            component={Link}
+            to={`/edit/review/${this.reviewId}`}
+          >
+            <Edit />
           </IconButton>
-        </div>
+        </Fragment>
       );
     } else {
       return (
-        <div>
-          <Button variant="raised" size="small">
-            <Link to={`/new/review/${this.productId}`}>
-              <Edit />
-              리뷰 등록
-            </Link>
-          </Button>
-        </div>
+        <Button
+          variant="raised"
+          size="small"
+          component={Link}
+          to={`/new/review/${this.productId}`}
+        >
+          <Edit />
+          리뷰 등록
+        </Button>
       );
     }
   }
@@ -93,13 +99,20 @@ class MyReview extends Component {
     this.hasReview && (this.reviewId = this.state.myReview._id);
 
     return (
-      <div>
+      <Fragment>
         <h4>내 리뷰</h4>
         {this.renderMyReview()}
         {this.renderButtons()}
-      </div>
+      </Fragment>
     );
   }
 }
 
-export default MyReview;
+const styles = theme => ({
+  paper: {
+    width: '70%',
+    margin: 'auto'
+  }
+});
+
+export default withStyles(styles)(MyReview);

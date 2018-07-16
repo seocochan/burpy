@@ -1,10 +1,5 @@
 import React from 'react';
-import Rating from 'react-rating';
-
-// 참조
-// https://github.com/dreyescat/react-rating 
-// https://redux-form.com/7.2.3/docs/api/field.md/#usage 
-// https://stackoverflow.com/questions/45157197/how-to-integrate-react-rating-w-redux-form 
+import Rating from 'react-rating'; 
 
 export default ({input, label}) => {
   
