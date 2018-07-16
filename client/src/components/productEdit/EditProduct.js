@@ -38,6 +38,37 @@ class EditProduct extends Component {
       );
     });
   }
+  /*
+  renderFields(){
+    return(
+      <div>
+        <div>
+          <Field
+          key = "category"
+          component = {ProductField}
+          type="text"
+          label="종류"
+          name = "category"/>
+        </div>
+        <div>
+          <Field
+          key="name"
+          component={ProductField}
+          type="text"
+          label="이름"
+          name="name"/>
+        </div>
+        <div>
+          <Field
+          key="details"
+          component={ProductField}
+          type="text"
+          label="설명"
+          name="name"/>
+        </div>
+      </div>
+    )
+  }*/
 
   async onSubmit(values) {
     const res = await axios.put(`/api/product/${this.id}`, values);

@@ -7,7 +7,7 @@ export default ({ input : {onChange,value}, showTime }) => {
     <div>
       <DatePicker
       onChange = {onChange}
-      //format = "DD MMM YYYY"
+      format = "DD MMM YYYY"
       time = {showTime}
       value = {!value? null: new Date(value)}
       />

@@ -11,8 +11,10 @@ import DateField from './DateField';
 import momentLocaliser from 'react-widgets-moment'
 import moment from 'moment';
 import configure from 'react-widgets/lib/configure'
+import DropdownList from './DropdownField'
+import 'react-widgets/dist/css/react-widgets.css'
 
-moment.locale('en')
+moment.locale('ko')
 momentLocaliser()
 class Myinfo extends Component{
     constructor(props){
@@ -57,7 +59,7 @@ class Myinfo extends Component{
             <Field
               key="birthday"
               component={DateField}
-              showTime = {true}
+              showTime = {false}
               name="birthday"
             />
                 </div>
