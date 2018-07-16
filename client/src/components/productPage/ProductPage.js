@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import WishButton from './WishButton';
 import MyReview from './MyReview';
 import ProductReviews from './ProductReviews';
 import category from '../../productCategoryDict';
+import { withStyles } from '@material-ui/core/styles';
+import { Edit } from '@material-ui/icons';
+import { Button, IconButton } from '@material-ui/core';
 
 class ProductPage extends Component {
   constructor(props) {
@@ -23,6 +27,7 @@ class ProductPage extends Component {
 
   renderBasicInfos() {
     const { product } = this.state;
+    const { classes } = this.props;
 
     return (
       <div>
@@ -34,7 +39,15 @@ class ProductPage extends Component {
             <WishButton productId={this.productId} />
             <hr />
             <h4>상품 정보</h4>
+            <IconButton
+              aria-label="edit"
+              component={Link}
+              to={`/edit/product/${this.productId}`}
+            >
+              <Edit className={classes.icon} />
+            </IconButton>
             <li>{product.details}</li>
+            <li>{product.avgScore}</li>
             <hr />
             <MyReview productId={this.productId} />
             <ProductReviews productId={this.productId} />
@@ -49,7 +62,11 @@ class ProductPage extends Component {
     const taste = category[product.category].params;
 
     return taste.map((item, i) => {
-      return <li key={i}>{item}: {product.avgTaste[i]}</li>;
+      return (
+        <li key={i}>
+          {item}: {product.avgTaste[i]}
+        </li>
+      );
     });
   }
 
@@ -65,4 +82,11 @@ class ProductPage extends Component {
   }
 }
 
-export default ProductPage;
+const styles = theme => ({
+  icon: {
+    marginRight: theme.spacing.unit,
+    fontSize: 20
+  }
+});
+
+export default withStyles(styles)(ProductPage);

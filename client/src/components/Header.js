@@ -76,8 +76,11 @@ class Header extends Component {
                   마이바
                 </ListItem>
                 <Divider />
+                <ListItem button component={Link} to="/my-info">
+                  내 정보
+                </ListItem>
                 <ListItem button component={Link} to="/wishlist">
-                  찜목록
+                  찜 목록
                 </ListItem>
                 <ListItem button component="a" href="/api/logout">
                   로그아웃
@@ -143,6 +146,13 @@ class Header extends Component {
                     open={open}
                     onClose={this.handleClose}
                   >
+                    <MenuItem
+                      onClick={this.handleClose}
+                      component={Link}
+                      to="/my-info"
+                    >
+                      내 정보
+                    </MenuItem>
                     <MenuItem
                       onClick={this.handleClose}
                       component={Link}

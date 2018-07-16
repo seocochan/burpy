@@ -14,6 +14,7 @@ class Wishlist extends Component {
   fetchWishlist() {
     axios.get('/api/wishlist').then(res => {
       this.setState({ wishlist: res.data });
+      console.log(res.data);
     });
   }
 

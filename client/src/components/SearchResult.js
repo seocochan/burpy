@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import * as actions from '../actions';
 import queryString from 'qs';
-import withStyles from 'material-ui/styles/withStyles';
+import { withStyles } from '@material-ui/core/styles';
 import {
   FormControl,
   InputLabel,
