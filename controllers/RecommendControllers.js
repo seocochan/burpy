@@ -33,13 +33,15 @@ module.exports = {
   },
 
   async trainAllUserRequest(req, res) {
-    const userList = await fetchUserList();
-    for (const { _id } of userList) {
-      const fetched = await fetchTrainData(_id);
-      const payload = { id: _id, data: processTrainData(fetched) };
+    const userList = processUserList(await fetchUserList());
+
+    for (const { id, trainable } of userList) {
+      const fetched = await fetchTrainData(id, trainable);
+      const payload = { id, data: processTrainData(fetched) };
       const dataRes = await axios.post(`${url}/train_data/`, payload);
       console.log(dataRes.data);
     }
+
     const trainRes = await axios.post(`${url}/train/`, userList);
     console.log(trainRes.data);
 
@@ -47,13 +49,15 @@ module.exports = {
   },
 
   async predictAllUserRequest(req, res) {
-    const userList = await fetchUserList();
-    for (const { _id } of userList) {
-      const fetched = await fetchPredictData(_id);
-      const payload = { id: _id, data: fetched };
+    const userList = processUserList(await fetchUserList());
+
+    for (const { id, trainable } of userList) {
+      const fetched = await fetchPredictData(id, trainable);
+      const payload = { id, data: fetched };
       const dataRes = await axios.post(`${url}/predict_data/`, payload);
       console.log(dataRes.data);
     }
+
     const predictRes = await axios.post(`${url}/predict/`, userList);
     console.log(predictRes.data);
 
@@ -87,25 +91,42 @@ module.exports = {
   }
 };
 
+// 참고: https://stackoverflow.com/questions/42456436/mongodb-aggregate-nested-group
 const fetchUserList = () =>
   new Promise(resolve => {
-    User.find({
-      'reviews.9': {
-        $exists: true
-      }
-    })
-      .select({
-        _id: 1
-      })
-      .exec((err, doc) => {
-        if (!err) {
-          resolve(doc);
-          console.log('user list has been fetched');
+    Review.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user'
         }
-      });
+      },
+      { $unwind: { path: '$user' } },
+      {
+        $group: {
+          _id: { userId: '$userId', category: '$category' },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id.userId',
+          items: {
+            $push: { category: '$_id.category', count: '$count' }
+          }
+        }
+      }
+    ]).exec((err, doc) => {
+      if (!err) {
+        resolve(doc);
+        console.log('user list has been fetched');
+      }
+    });
   });
 
-const fetchTrainData = userId =>
+const fetchTrainData = (userId, categories) =>
   new Promise(resolve => {
     Review.aggregate([
       {
@@ -119,6 +140,11 @@ const fetchTrainData = userId =>
       {
         $unwind: {
           path: '$productId'
+        }
+      },
+      {
+        $match: {
+          category: { $in: categories }
         }
       },
       {
@@ -176,7 +202,7 @@ const fetchTrainData = userId =>
     });
   });
 
-const fetchPredictData = userId =>
+const fetchPredictData = (userId, categories) =>
   new Promise(resolve => {
     Product.aggregate([
       {
@@ -191,6 +217,11 @@ const fetchPredictData = userId =>
         $unwind: {
           path: '$reviews',
           preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          category: { $in: categories }
         }
       },
       {
@@ -263,6 +294,26 @@ const fetchPredictData = userId =>
       }
     });
   });
+
+const processUserList = data => {
+  let processed = [];
+
+  data.forEach(u => {
+    const trainable = [];
+
+    u.items.map(i => {
+      if (i.count >= 10) {
+        trainable.push(i.category);
+      }
+    });
+
+    if (trainable.length != 0) {
+      processed.push({ id: u._id, trainable });
+    }
+  });
+
+  return processed;
+};
 
 const processTrainData = data => {
   let processed = [];
