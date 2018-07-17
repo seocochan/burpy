@@ -21,19 +21,19 @@ module.exports = {
     const values = { userId, ...req.body };
 
     const newReview = await new Review(values).save();
-    const Avg = await fetchScore(newReview.productId);
-    const productScore = await fetchProduct(newReview.productId, Avg);
+    const avgScore = await fetchScore(newReview.productId);
+    const productScore = await fetchProduct(newReview.productId, avgScore);
     res.send(productScore);
   },
 
   async updateReview(req, res) {
     const { id } = req.params;
     const { body } = req;
-    const updatereview = await Review.findByIdAndUpdate(id, body, {
+    const updatedReview = await Review.findByIdAndUpdate(id, body, {
       new: true
     });
-    const Avg = await fetchScore(updatereview.productId);
-    const productScore = await fetchProduct(updatereview.productId, Avg);
+    const avgScore = await fetchScore(updatedReview.productId);
+    const productScore = await fetchProduct(updatedReview.productId, avgScore);
     res.send(productScore);
   },
 
