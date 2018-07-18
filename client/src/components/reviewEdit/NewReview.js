@@ -78,7 +78,8 @@ class NewReview extends Component {
 
   async onSubmit(values) {
     const { productId } = this;
-    const payload = { productId, ...values };
+    const { category } = this.state.product;
+    const payload = { productId, category, ...values };
     await axios.post('/api/review', payload);
 
     this.setState({ isDone: true });

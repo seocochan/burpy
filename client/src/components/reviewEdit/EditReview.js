@@ -78,7 +78,7 @@ class EditReview extends Component {
   }
 
   async onSubmit(values) {
-    const res = await axios.put(`/api/review/${this.reviewId}`, values);
+    await axios.put(`/api/review/${this.reviewId}`, values);
     this.setState({ isDone: true });
   }
 
