@@ -8,32 +8,8 @@ const keys = require('../config/keys');
 const url = keys.ICServerURL;
 
 module.exports = {
-  async trainOneUserRequest(req, res) {
-    const { id } = req.params;
-    const fetched = await fetchTrainData(id);
-    const payload = { id, data: processTrainData(fetched) };
-    const dataRes = await axios.post(`${url}/train_data/`, payload);
-    console.log(dataRes.data);
-    const trainRes = await axios.post(`${url}/train/`, [{ _id: id }]);
-    console.log(trainRes.data);
-
-    res.send('train has done');
-  },
-
-  async predictOneUserRequest(req, res) {
-    const { id } = req.params;
-    const fetched = await fetchPredictData(id);
-    const payload = { id, data: fetched };
-    const dataRes = await axios.post(`${url}/predict_data/`, payload);
-    console.log(dataRes.data);
-    const predictRes = await axios.post(`${url}/predict/`, [{ _id: id }]);
-    console.log(predictRes.data);
-
-    res.send('predict has done');
-  },
-
-  async trainAllUserRequest(req, res) {
-    const userList = processUserList(await fetchUserList());
+  async trainRequest(req, res) {
+    const userList = processUserList(await fetchUserList(req.params.id));
 
     for (const { id, trainable } of userList) {
       const fetched = await fetchTrainData(id, trainable);
@@ -48,8 +24,8 @@ module.exports = {
     res.send('train has done');
   },
 
-  async predictAllUserRequest(req, res) {
-    const userList = processUserList(await fetchUserList());
+  async predictRequest(req, res) {
+    const userList = processUserList(await fetchUserList(req.params.id));
 
     for (const { id, trainable } of userList) {
       const fetched = await fetchPredictData(id, trainable);
@@ -92,9 +68,9 @@ module.exports = {
 };
 
 // 참고: https://stackoverflow.com/questions/42456436/mongodb-aggregate-nested-group
-const fetchUserList = () =>
+const fetchUserList = singleUser =>
   new Promise(resolve => {
-    Review.aggregate([
+    const query = [
       {
         $lookup: {
           from: 'users',
@@ -118,12 +94,23 @@ const fetchUserList = () =>
           }
         }
       }
-    ]).exec((err, doc) => {
-      if (!err) {
-        resolve(doc);
-        console.log('user list has been fetched');
+    ];
+
+    const option = {
+      $match: {
+        userId: mongoose.Types.ObjectId(singleUser)
       }
-    });
+    };
+
+    // req.params.id = singleUser 값이 존재하면 단일 유저 요청에 대응
+    Review.aggregate(singleUser ? [option, ...query] : query).exec(
+      (err, doc) => {
+        if (!err) {
+          resolve(doc);
+          console.log('user list has been fetched');
+        }
+      }
+    );
   });
 
 const fetchTrainData = (userId, categories) =>
