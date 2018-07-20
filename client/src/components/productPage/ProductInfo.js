@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import WishButton from './WishButton';
+import TextViewer from './TextViewer';
 import category from '../../productCategoryDict';
 import { withStyles } from '@material-ui/core/styles';
 import { Edit } from '@material-ui/icons';
@@ -23,54 +24,77 @@ class ProductInfo extends Component {
 
   renderBasicInfos() {
     const { product } = this.state;
+    const { productId } = this.props;
+
+    return (
+      <Fragment>
+        <h4>상품 기본 정보</h4>
+        <ul>
+          <li>상품명: {product.name}</li>
+          <li>종류: {product.category}</li>
+          <li>평균 평점: {product.avgScore}</li>
+        </ul>
+        <WishButton productId={productId} />
+      </Fragment>
+    );
+  }
+
+  renderDetails() {
+    const { product } = this.state;
     const { classes, productId } = this.props;
 
     return (
       <Fragment>
-        <h3>상품 조회 페이지</h3>
-        <div>
-          <ul>
-            <li>{product.name}</li>
-            <li>{product.category}</li>
-            <WishButton productId={productId} />
-            <hr />
-            <h4>상품 정보</h4>
-            <IconButton
-              aria-label="edit"
-              component={Link}
-              to={`/edit/product/${productId}`}
-            >
-              <Edit className={classes.icon} />
-            </IconButton>
-            <li>{product.details}</li>
-            <li>{product.avgScore}</li>
-          </ul>
-        </div>
+        <h4>상품 상세 정보</h4>
+        <IconButton
+          aria-label="edit"
+          component={Link}
+          to={`/edit/product/${productId}`}
+        >
+          <Edit className={classes.icon} />
+        </IconButton>
+        수정하기
+        <TextViewer value={product.details} />
       </Fragment>
     );
   }
 
   renderTastes() {
     const { product } = this.state;
-    const taste = category[product.category].params;
 
-    return taste.map((item, i) => {
+    const taste = category[product.category].params;
+    const list = taste.map((item, i) => {
       return (
         <li key={i}>
           {item}: {product.avgTaste[i]}
         </li>
       );
     });
+
+    return (
+      <Fragment>
+        <h4>맛 수치 정보</h4>
+        <ul>{list}</ul>
+      </Fragment>
+    );
   }
 
   render() {
     const { product } = this.state;
 
+    if (!product) {
+      return <div />;
+    }
+
     return (
-      <div>
-        {product && this.renderBasicInfos()}
-        <ul>{product && this.renderTastes()}</ul>
-      </div>
+      <Fragment>
+        <h3>상품 조회 페이지</h3>
+        {this.renderBasicInfos()}
+        <hr />
+        {this.renderDetails()}
+        <hr />
+        {this.renderTastes()}
+      </Fragment>
     );
   }
 }
