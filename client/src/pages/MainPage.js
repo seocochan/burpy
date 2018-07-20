@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Landing from '../components/Landing';
+import Dashboard from '../components/Dashboard';
 
-import Landing from './Landing';
-import Dashboard from './Dashboard';
-
-class Home extends Component {
+class MainPage extends Component {
   renderContent() {
     switch (this.props.auth) {
       case null:
@@ -25,4 +24,4 @@ function mapStateToProps({ auth }) {
   return { auth };
 }
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(MainPage);

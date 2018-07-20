@@ -5,6 +5,7 @@ import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductField from './ProductField';
 import productFormFields from './productFormFields';
+import TextEditor from './TextEditor';
 import { withStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
@@ -14,7 +15,7 @@ class NewProduct extends Component {
     isDone: false
   };
 
-  renderFields() {
+  renderBasicFields() {
     return _.map(productFormFields, ({ label, name }) => {
       return (
         <Field
@@ -28,11 +29,16 @@ class NewProduct extends Component {
     });
   }
 
+  renderDetailsEditor() {
+    return (
+      <Field key="details" component={TextEditor} type="text" name="details" />
+    );
+  }
+
   async onSubmit(values) {
     const res = await axios.post('/api/product', values);
     this.id = res.data._id;
     this.setState({ isDone: true });
-    console.log(values);
   }
 
   render() {
@@ -42,7 +48,8 @@ class NewProduct extends Component {
       <div>
         상품 등록
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
-          {this.renderFields()}
+          {this.renderBasicFields()}
+          {this.renderDetailsEditor()}
           <Button variant="raised" color="primary" type="submit">
             <Send className={classes.icon} />
             완료
@@ -63,9 +70,8 @@ const styles = theme => ({
 
 function validate(values) {
   const errors = {};
-  // TODO: 여기에 validation 구현
-  const requiredFields = ['name', 'details', 'catergory'];
-  requiredFields.forEach(field => {
+
+  ['name', 'category', 'details'].forEach(field => {
     if (!values[field]) {
       errors[field] = 'Required';
     }
