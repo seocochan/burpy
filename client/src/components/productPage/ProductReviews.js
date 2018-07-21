@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 class ProductReviews extends Component {
   constructor(props) {
@@ -42,10 +42,10 @@ class ProductReviews extends Component {
     this.hasReview = this.state.reviews.length != 0 ? true : false;
 
     return (
-      <div>
+      <Fragment>
         <h4>리뷰 목록</h4>
         <ul>{this.renderReviews()}</ul>
-      </div>
+      </Fragment>
     );
   }
 }

@@ -81,6 +81,7 @@ class ProductInfo extends Component {
 
   render() {
     const { product } = this.state;
+    const { classes } = this.props;
 
     if (!product) {
       return <div />;
