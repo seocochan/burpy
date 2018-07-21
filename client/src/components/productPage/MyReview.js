@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Rating from 'react-rating';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, IconButton, Paper } from '@material-ui/core';
+import { Button, IconButton } from '@material-ui/core';
 import { Delete, Edit } from '@material-ui/icons';
 
 class MyReview extends Component {
@@ -46,9 +46,7 @@ class MyReview extends Component {
             fractions={2}
             initialRating={parseFloat(review.score)}
           />
-          <Paper elevation={4} className={classes.paper}>
-            {review.comment}
-          </Paper>
+          코멘트: {review.comment}
         </Fragment>
       );
     } else {
@@ -109,10 +107,7 @@ class MyReview extends Component {
 }
 
 const styles = theme => ({
-  paper: {
-    width: '70%',
-    margin: 'auto'
-  }
+  //
 });
 
 export default withStyles(styles)(MyReview);
