@@ -11,18 +11,46 @@ class ProductPage extends Component {
 
     return (
       <div className={classes.container}>
-        <ProductInfo productId={productId} />
-        <hr />
-        <MyReview productId={productId} />
-        <ProductReviews productId={productId} />
+        <div className={classes.productInfo}>
+          <ProductInfo productId={productId} />
+          <hr />
+        </div>
+        <div className={classes.myReview}>
+          <MyReview productId={productId} />
+        </div>
+        <div className={classes.productReviews}>
+          <ProductReviews productId={productId} />
+        </div>
       </div>
     );
   }
 }
 
 const styles = theme => ({
+  // https://github.com/topheman/npm-registry-browser/blob/master/src/components/Package/Package.js
   container: {
+    display: 'grid',
+    [theme.breakpoints.down("xs")]: {
+      gridTemplateColumns: "90vw",
+      gridTemplateAreas: `"pi"
+      "mr"
+      "pr"`
+    },
+    [theme.breakpoints.up("sm")]: {
+      gridTemplateColumns: "1fr 260px",
+      gridTemplateAreas: `"pi pi pi"
+      "mr pr pr"`
+    },
     margin: theme.spacing.unit
+  },
+  productInfo: {
+    gridArea: 'pi'
+  },
+  myReview: {
+    gridArea: 'mr'
+  },
+  productReviews: {
+    gridArea: 'pr'
   }
 });
 
