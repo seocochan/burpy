@@ -6,6 +6,7 @@ import { Redirect } from 'react-router';
 import ProductField from './ProductField';
 import productFormFields from './productFormFields';
 import TextEditor from './TextEditor';
+import ImageUploader from './ImageUploader';
 import { withStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
@@ -13,7 +14,6 @@ import { Send } from '@material-ui/icons';
 class NewProduct extends Component {
   state = {
     file: null,
-    imagePreviewUrl: null,
     isDone: false
   };
 
@@ -31,40 +31,10 @@ class NewProduct extends Component {
     });
   }
 
-  renderImageInput() {
-    const { imagePreviewUrl } = this.state;
-
-    return (
-      <Fragment>
-        <input
-          onChange={this.onFileChange.bind(this)}
-          type="file"
-          accept="image/*"
-        />
-        {imagePreviewUrl && <img src={imagePreviewUrl} width="300px" />}
-      </Fragment>
-    );
-  }
-
   renderDetailsEditor() {
     return (
       <Field key="details" component={TextEditor} type="text" name="details" />
     );
-  }
-
-  onFileChange(event) {
-    event.preventDefault();
-    const reader = new FileReader();
-    const file = event.target.files[0];
-
-    reader.onloadend = () => {
-      this.setState({
-        file,
-        imagePreviewUrl: reader.result
-      });
-    };
-
-    reader.readAsDataURL(file);
   }
 
   async onSubmit(values) {
@@ -98,9 +68,9 @@ class NewProduct extends Component {
     return (
       <div>
         상품 등록
+        <ImageUploader watchFile={file => this.setState({ file })} />
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderBasicFields()}
-          {this.renderImageInput()}
           {this.renderDetailsEditor()}
           <Button variant="raised" color="primary" type="submit">
             <Send className={classes.icon} />
