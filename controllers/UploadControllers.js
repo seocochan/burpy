@@ -9,9 +9,15 @@ const s3 = new AWS.S3({
 });
 
 module.exports = {
-  getUrl(req, res) {
-    const {category, name} = req.query;
-    const key = `${category}/${name}/${uuid()}.jpeg`;
+  getImageUrl(req, res) {
+    const { category, name } = req.query;
+    const { key = `${category}/${name}/${uuid()}.jpeg` } = req.query;
+    // key를 전달받으면 기존 이미지를 수정하는 경우, 아니면 새로 등록하는 경우임.
+    // 값이 없는 경우 uuid로 새로운 key 값을 지정함.
+
+    console.log('KEY', req.query.key);
+    console.log('NEW KEY', key);
+
 
     s3.getSignedUrl(
       'putObject',
