@@ -32,6 +32,7 @@ require('./routes/userRoutes')(app);
 require('./routes/productRoutes')(app);
 require('./routes/reviewRoutes')(app);
 require('./routes/recommendRoutes')(app);
+require('./routes/uploadRoutes')(app);
 
 // 빌드 설정
 if (process.env.NODE_ENV === 'production') {

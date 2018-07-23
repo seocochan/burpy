@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductField from './ProductField';
@@ -12,6 +12,8 @@ import { Send } from '@material-ui/icons';
 
 class NewProduct extends Component {
   state = {
+    file: null,
+    imagePreviewUrl: null,
     isDone: false
   };
 
@@ -29,14 +31,63 @@ class NewProduct extends Component {
     });
   }
 
+  renderImageInput() {
+    const { imagePreviewUrl } = this.state;
+
+    return (
+      <Fragment>
+        <input
+          onChange={this.onFileChange.bind(this)}
+          type="file"
+          accept="image/*"
+        />
+        {imagePreviewUrl && <img src={imagePreviewUrl} width="300px" />}
+      </Fragment>
+    );
+  }
+
   renderDetailsEditor() {
     return (
       <Field key="details" component={TextEditor} type="text" name="details" />
     );
   }
 
+  onFileChange(event) {
+    event.preventDefault();
+    const reader = new FileReader();
+    const file = event.target.files[0];
+
+    reader.onloadend = () => {
+      this.setState({
+        file,
+        imagePreviewUrl: reader.result
+      });
+    };
+
+    reader.readAsDataURL(file);
+  }
+
   async onSubmit(values) {
-    const res = await axios.post('/api/product', values);
+    const { file } = this.state;
+
+    const { category, name } = values;
+    const uploadConfig = await axios.get(
+      `/api/upload?category=${category}&name=${name}`
+    );
+
+    await axios.put(uploadConfig.data.url, file, {
+      headers: {
+        'Content-Type': file.type
+      }
+    });
+
+    console.log(uploadConfig.data.key);
+
+    const res = await axios.post('/api/product', {
+      ...values,
+      imageUrl: uploadConfig.data.key
+    });
+
     this.id = res.data._id;
     this.setState({ isDone: true });
   }
@@ -49,6 +100,7 @@ class NewProduct extends Component {
         상품 등록
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderBasicFields()}
+          {this.renderImageInput()}
           {this.renderDetailsEditor()}
           <Button variant="raised" color="primary" type="submit">
             <Send className={classes.icon} />

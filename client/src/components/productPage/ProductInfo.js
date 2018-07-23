@@ -14,6 +14,8 @@ class ProductInfo extends Component {
     this.state = {
       product: null
     };
+
+    this.s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
   }
 
   componentDidMount() {
@@ -29,6 +31,9 @@ class ProductInfo extends Component {
     return (
       <Fragment>
         <h4>상품 기본 정보</h4>
+        {product.imageUrl && (
+          <img src={this.s3Url + product.imageUrl} width="200px" />
+        )}
         <ul>
           <li>상품명: {product.name}</li>
           <li>종류: {product.category}</li>
