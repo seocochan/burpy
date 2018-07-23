@@ -40,21 +40,23 @@ class NewProduct extends Component {
   async onSubmit(values) {
     const { file } = this.state;
     const { category, name } = values;
-    
-    const uploadConfig = await axios.get(
-      `/api/upload?category=${category}&name=${name}`
-    );
-    console.log(uploadConfig.data);
+    let uploadConfig;
 
-    await axios.put(uploadConfig.data.url, file, {
-      headers: {
-        'Content-Type': file.type
-      }
-    });
+    if (file) {
+      uploadConfig = await axios.get(
+        `/api/upload?category=${category}&name=${name}`
+      );
+
+      await axios.put(uploadConfig.data.url, file, {
+        headers: {
+          'Content-Type': file.type
+        }
+      });
+    }
 
     const res = await axios.post('/api/product', {
       ...values,
-      imageUrl: uploadConfig.data.key
+      imageUrl: uploadConfig ? uploadConfig.data.key : null
     });
 
     this.id = res.data._id;

@@ -1,10 +1,24 @@
 import React, { Component, Fragment } from 'react';
 
 class ImageUploader extends Component {
-  state = {
-    file: null,
-    imagePreviewUrl: null
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      file: null,
+      imagePreviewUrl: null
+    };
+
+    this.s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { imageUrl } = nextProps;
+    
+    // props로 기존에 등록된 이미지 url이 있는 경우 프리뷰 출력
+    if (this.props.imageUrl !== imageUrl) {
+      this.setState({ imagePreviewUrl: this.s3Url + imageUrl });
+    }
+  }
 
   onFileChange(event) {
     event.preventDefault();
