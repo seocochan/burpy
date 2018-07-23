@@ -39,19 +39,18 @@ class NewProduct extends Component {
 
   async onSubmit(values) {
     const { file } = this.state;
-
     const { category, name } = values;
+    
     const uploadConfig = await axios.get(
       `/api/upload?category=${category}&name=${name}`
     );
+    console.log(uploadConfig.data);
 
     await axios.put(uploadConfig.data.url, file, {
       headers: {
         'Content-Type': file.type
       }
     });
-
-    console.log(uploadConfig.data.key);
 
     const res = await axios.post('/api/product', {
       ...values,
