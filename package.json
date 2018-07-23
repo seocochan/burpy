@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.279.1",
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "concurrently": "^3.5.1",
@@ -31,7 +32,8 @@
     "passport-google-oauth20": "^1.0.0",
     "passport-naver": "^1.0.6",
     "passport-twitter": "^1.0.4",
-    "path-parser": "^3.0.1"
+    "path-parser": "^3.0.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "forever": "^0.15.3"

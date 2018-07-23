@@ -1,17 +1,19 @@
 import _ from 'lodash';
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductField from './ProductField';
 import productFormFields from './productFormFields';
 import TextEditor from './TextEditor';
+import ImageUploader from './ImageUploader';
 import { withStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 
 class NewProduct extends Component {
   state = {
+    file: null,
     isDone: false
   };
 
@@ -36,7 +38,27 @@ class NewProduct extends Component {
   }
 
   async onSubmit(values) {
-    const res = await axios.post('/api/product', values);
+    const { file } = this.state;
+    const { category, name } = values;
+    let uploadConfig;
+
+    if (file) {
+      uploadConfig = await axios.get(
+        `/api/upload?category=${category}&name=${name}`
+      );
+
+      await axios.put(uploadConfig.data.url, file, {
+        headers: {
+          'Content-Type': file.type
+        }
+      });
+    }
+
+    const res = await axios.post('/api/product', {
+      ...values,
+      imageUrl: uploadConfig ? uploadConfig.data.key : null
+    });
+
     this.id = res.data._id;
     this.setState({ isDone: true });
   }
@@ -47,6 +69,7 @@ class NewProduct extends Component {
     return (
       <div>
         상품 등록
+        <ImageUploader watchFile={file => this.setState({ file })} />
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderBasicFields()}
           {this.renderDetailsEditor()}
