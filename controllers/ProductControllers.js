@@ -79,7 +79,8 @@ module.exports = {
     console.log('### data for ic server ###\n', payload);
 
     res.send({ result: { id } }); // 유니티 클라이언트로 응답 보냄
-    
+
     const ICRes = await axios.post(`${url}/라우트 미정/`, payload); // IC 서버 응답 대기
+    console.log('### response from ic server ###\n', ICRes);
   }
 };
