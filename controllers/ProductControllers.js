@@ -1,6 +1,23 @@
 const Product = require('../models/Product');
+const axios = require('axios');
+const keys = require('../config/keys');
+const url = keys.ICServerURL;
 
 module.exports = {
+  async addProduct(req, res) {
+    const newProduct = await new Product(req.body).save();
+    res.send(newProduct);
+  },
+
+  updateProduct(req, res) {
+    const { id } = req.params;
+    const { body } = req;
+
+    Product.findByIdAndUpdate(id, body, { new: true }).exec((err, doc) => {
+      res.send(doc);
+    });
+  },
+
   async fetchSearchItems(req, res) {
     const { query } = req;
     const q = query.q ? { name: { $regex: query.q } } : {}; // 검색어가 지정되지 않은 경우 처리
@@ -33,11 +50,6 @@ module.exports = {
       .then(product => res.send(product));
   },
 
-  async addProduct(req, res) {
-    const newProduct = await new Product(req.body).save();
-    res.send(newProduct);
-  },
-
   async fetchPredictedItems(req, res) {
     console.log(req.body);
     const { list } = req.body;
@@ -56,12 +68,20 @@ module.exports = {
     });
   },
 
-  updateProduct(req, res) {
-    const { id } = req.params;
-    const { body } = req;
+  async addProductWithTrainImage(req, res) {
+    console.log('### data from unity ###\n', req.body);
+    const { image, name, category } = req.body;
 
-    Product.findByIdAndUpdate(id, body, { new: true }).exec((err, doc) => {
-      res.send(doc);
-    });
+    const newProduct = await new Product({ name, category }).save();
+    const id = newProduct._id;
+    console.log('### new product created ###\n', newProduct);
+
+    const payload = { id, image };
+    console.log('### data for ic server ###\n', payload);
+
+    res.send({ result: { id } }); // 유니티 클라이언트로 응답 보냄
+
+    const ICRes = await axios.post(`${url}/라우트 미정/`, payload); // IC 서버 응답 대기
+    console.log('### response from ic server ###\n', ICRes);
   }
 };
