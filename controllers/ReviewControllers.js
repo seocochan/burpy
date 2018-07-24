@@ -22,7 +22,9 @@ module.exports = {
 
     const newReview = await new Review(values).save();
     const avgScore = await fetchScore(newReview.productId);
-    const productScore = await fetchProduct(newReview.productId, avgScore);
+    const avgTaste = await fetchTaste(newReview.productId);
+    const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
+    const productScore = await fetchProduct(newReview.productId, avgScore,taste);
     res.send(productScore);
   },
 
@@ -33,7 +35,9 @@ module.exports = {
       new: true
     });
     const avgScore = await fetchScore(updatedReview.productId);
-    const productScore = await fetchProduct(updatedReview.productId, avgScore);
+    const avgTaste = await fetchTaste(updatedReview.productId);
+    const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
+    const productScore = await fetchProduct(updatedReview.productId, avgScore,taste);
     res.send(productScore);
   },
 
@@ -48,7 +52,9 @@ module.exports = {
         }
         //res.status(200).send(id);
         const Avg = await fetchScore(doc.productId);
-        const productScore = await fetchProduct(doc.productId, Avg);
+        const avgTaste = await fetchTaste(doc.productId);
+        const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
+        const productScore = await fetchProduct(doc.productId, Avg,taste);
         res.send(productScore);
       });
     });
@@ -114,9 +120,9 @@ const fetchScore = Id =>
     });
   });
 
-const fetchProduct = (Id, score) =>
+const fetchProduct = (Id, score,taste) =>
   new Promise(resolve => {
-    Product.findByIdAndUpdate(Id, { avgScore: score }, { new: true }).exec(
+    Product.findByIdAndUpdate(Id, { avgScore: score, avgTaste : taste }, { new: true }).exec(
       (err, doc) => {
         if (!err) {
           resolve(doc);
@@ -124,3 +130,31 @@ const fetchProduct = (Id, score) =>
       }
     );
   });
+
+  const fetchTaste = Id =>
+  new Promise(resolve => {
+    Review.aggregate([
+      { $match: { productId: Id } },
+      {
+        $group : {
+          _id:'',
+          tasteavg1 : {$avg : { $arrayElemAt : [ "$taste",0]}},
+          tasteavg2 : {$avg : { $arrayElemAt : [ "$taste",1]}},
+          tasteavg3 : {$avg : { $arrayElemAt : [ "$taste",2]}},
+          tasteavg4 : {$avg : { $arrayElemAt : [ "$taste",3]}},
+          tasteavg5 : {$avg : { $arrayElemAt : [ "$taste",4]}},
+        }
+      }
+    ]).exec((err, doc) => {
+      if (!err) {
+        console.log('doc1', doc);
+        if (doc.length == 0) {
+          resolve('0');
+        } else {
+          resolve(doc);
+        }
+      }
+    });
+  });
+
+
