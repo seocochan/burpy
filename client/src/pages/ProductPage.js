@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
-import ProductBasicInfo from '../components/productPage/ProductInfo';
+import ProductBasicInfo from '../components/productPage/ProductBasicInfo';
 import ProductDetails from '../components/productPage/ProductDetails';
 import ProductTastesInfo from '../components/productPage/ProductTastesInfo';
 import MyReview from '../components/productPage/MyReview';
