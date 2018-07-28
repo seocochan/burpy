@@ -10,4 +10,5 @@ module.exports = app => {
   app.get('/api/product/:id/reviews', ReviewControllers.fetchProductReviews);
   app.post('/api/predict', ProductControllers.fetchPredictedItems);
   app.post('/api/product/train-image', ProductControllers.addProductWithTrainImage);
+  app.get('/api/suggest', ProductControllers.suggestProducts)
 };
