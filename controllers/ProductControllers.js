@@ -1,5 +1,7 @@
 const Product = require('../models/Product');
 const axios = require('axios');
+const Fuse = require('fuse.js');
+const Hangul = require('hangul-js');
 const keys = require('../config/keys');
 const url = keys.ICServerURL;
 
@@ -82,5 +84,48 @@ module.exports = {
 
     const ICRes = await axios.post(`${url}/라우트 미정/`, payload); // IC 서버 응답 대기
     console.log('### response from ic server ###\n', ICRes);
+  },
+
+  async suggestProducts(req, res) {
+    const { q } = req.query;
+
+    // 검색어가 없거나 공백인 경우
+    if (!q) {
+      return res.status(404).send('검색어를 입력하세요.');
+    }
+
+    let collection = await Product.find({
+      name: { $regex: q.substr(0, 1) }
+    }).select({
+      _id: 1,
+      name: 1,
+      category: 1
+    });
+
+    // 검색 결과가 없는 경우
+    if (collection.length === 0) {
+      return res.send(collection);
+    }
+
+    // 자모 분해한 필드를 collection에 추가
+    collection = collection.map(item => ({
+      ...item._doc,
+      destName: Hangul.disassemble(item.name).join('')
+    }));
+
+    const fuse = new Fuse(collection, {
+      shouldSort: true,
+      threshold: 0.6,
+      location: 0,
+      distance: 100,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+      keys: ['destName']
+      // keys: ['name']
+    });
+    const result = fuse.search(Hangul.disassemble(q).join('')).slice(0, 5);
+
+    console.log(collection);
+    res.send(result);
   }
 };
