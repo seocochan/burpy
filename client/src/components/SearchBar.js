@@ -2,10 +2,12 @@ import _ from 'lodash';
 import axios from 'axios';
 import React, { Component, Fragment } from 'react';
 import Downshift from 'downshift';
+import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import { TextField, Paper, MenuItem } from '@material-ui/core';
 import { amber } from '@material-ui/core/colors';
+import { ArrowForward } from '@material-ui/icons';
+import { TextField, Paper, MenuItem, IconButton } from '@material-ui/core';
 
 class SearchBar extends Component {
   state = {
@@ -64,21 +66,30 @@ class SearchBar extends Component {
     highlightedIndex,
     selectedItem
   }) {
+    const { classes } = this.props;
     const isHighlighted = highlightedIndex === index;
     const isSelected = (selectedItem || '').indexOf(suggestion._id) > -1;
 
-    // @TODO: 여기에 바로가기 링크 추가
     return (
       <MenuItem
-        {...itemProps}
+        className={classes.menuItem}
         key={suggestion._id}
         selected={isHighlighted}
         component="div"
         style={{
           fontWeight: isSelected ? 500 : 400
         }}
+        {...itemProps}
       >
-        {suggestion.name}
+        <span className={classes.menuText}>{suggestion.name}</span>
+        <IconButton
+          color="secondary"
+          className={classes.menuButton}
+          component={Link}
+          to={`/product/${suggestion._id}`}
+        >
+          <ArrowForward className={classes.icon} />
+        </IconButton>
       </MenuItem>
     );
   }
@@ -119,7 +130,7 @@ class SearchBar extends Component {
                     classes
                   })}
                   {isOpen ? (
-                    <Paper className={classes.inputPaper} square>
+                    <Paper className={classes.menuPaper} square>
                       {suggestions.map((suggestion, index) =>
                         this.renderSuggestion({
                           suggestion,
@@ -146,6 +157,10 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'wrap'
   },
+  inputContainer: {
+    flexGrow: 1,
+    position: 'relative'
+  },
   input: {
     margin: theme.spacing.unit
   },
@@ -156,16 +171,26 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
     width: 180
   },
-  inputContainer: {
-    flexGrow: 1,
-    position: 'relative'
-  },
-  inputPaper: {
+  menuPaper: {
     position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing.unit,
-    left: 0,
+    left: -60,
     right: 0
+  },
+  menuItem: {
+    display: 'flex'
+  },
+  menuText: {
+    flexBasis: '80%',
+    maxWidth: '80%',
+    overflow: 'hidden'
+  },
+  menuButton: {
+    marginLeft: theme.spacing.unit
+  },
+  icon: {
+    fontSize: 18
   }
 });
 
