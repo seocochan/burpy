@@ -19,9 +19,24 @@ class ProductPage extends Component {
     };
   }
 
-  async componentDidMount() {
-    const productId = this.props.match.params.id;
+  componentDidMount() {
+    const { id } = this.props.match.params;
 
+    this.fetchData(id);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { id } = nextProps.match.params;
+
+    // 검색바를 통해 product 라우터의 id만 바뀐 경우,
+    // 현재 state를 초기화 하고 다시 fetching
+    if (id !== this.props.match.params.id) {
+      this.setState({ product: null, myReview: {}, reviews: [] });
+      this.fetchData(id);
+    }
+  }
+
+  async fetchData(productId) {
     const product = await axios.get(`/api/product/${productId}`);
     this.setState({ product: product.data });
 
