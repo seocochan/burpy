@@ -13,7 +13,8 @@ import {
   Select,
   MenuItem,
   Typography,
-  Divider
+  Divider,
+  Grid
 } from '@material-ui/core';
 
 class SearchResultPage extends Component {
@@ -79,9 +80,9 @@ class SearchResultPage extends Component {
   renderList() {
     return _.map(this.props.searchResult, item => {
       return (
-        <li key={item._id}>
-          <ProductCard product={item} />
-        </li>
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <ProductCard key={item._id} product={item} />
+        </Grid>
       );
     });
   }
@@ -149,7 +150,9 @@ class SearchResultPage extends Component {
         </div>
         <Divider />
         <div className={classes.productsSection}>
-          <ul>{this.renderList()}</ul>
+          <Grid container spacing={8}>
+            {this.renderList()}
+          </Grid>
         </div>
       </div>
     );
@@ -169,7 +172,7 @@ const styles = theme => ({
     marginBottom: theme.spacing.unit
   },
   productsSection: {
-    //
+    paddingTop: theme.spacing.unit * 2
   },
   title: {
     marginTop: theme.spacing.unit * 2
