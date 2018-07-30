@@ -1,10 +1,12 @@
 import _ from 'lodash';
 import axios from 'axios';
 import React, { Component } from 'react';
-import { reduxForm, Field, initialize } from 'redux-form';
+import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductField from './ProductField';
 import productFormFields from './productFormFields';
+import TextEditor from './TextEditor';
+import ImageUploader from './ImageUploader';
 import { withStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
@@ -13,20 +15,23 @@ class EditProduct extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      file: null,
+      imageUrl: null,
       isDone: false
     };
 
     this.id = props.match.params.id;
-    console.log(this.id);
   }
 
   async componentDidMount() {
     const res = await axios.get(`/api/product/${this.id}`);
-    const { category, name, details } = res.data;
+    const { category, name, details, imageUrl = null } = res.data;
+
     this.props.initialize({ category, name, details });
+    this.setState({ imageUrl });
   }
 
-  renderFields() {
+  renderBasicFields() {
     return _.map(productFormFields, ({ label, name }) => {
       return (
         <Field
@@ -40,9 +45,35 @@ class EditProduct extends Component {
     });
   }
 
+  renderDetailsEditor() {
+    return (
+      <Field key="details" component={TextEditor} type="text" name="details" />
+    );
+  }
+
   async onSubmit(values) {
-    const res = await axios.put(`/api/product/${this.id}`, values);
-    this.id = res.data._id;
+    const { file, imageUrl } = this.state;
+    const { category, name } = values;
+    let uploadConfig;
+
+    if (file) {
+      uploadConfig = imageUrl
+        ? await axios.get(`/api/upload?key=${imageUrl}`)
+        : await axios.get(`/api/upload?category=${category}&name=${name}`);
+      // 수정 중인 상품에 기존 이미지가 있는 경우와 없는 경우 확인.
+      // 기존 이미지가 없으면 신규 상품 등록시와 동일하게 처리.
+
+      await axios.put(uploadConfig.data.url, file, {
+        headers: {
+          'Content-Type': file.type
+        }
+      });
+    }
+
+    await axios.put(`/api/product/${this.id}`, {
+      ...values,
+      imageUrl: uploadConfig ? uploadConfig.data.key : imageUrl
+    });
 
     this.setState({ isDone: true });
   }
@@ -53,8 +84,13 @@ class EditProduct extends Component {
     return (
       <div>
         상품 수정
+        <ImageUploader
+          imageUrl={this.state.imageUrl}
+          watchFile={file => this.setState({ file })}
+        />
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
-          {this.renderFields()}
+          {this.renderBasicFields()}
+          {this.renderDetailsEditor()}
           <Button variant="raised" color="primary" type="submit">
             <Send className={classes.icon} />
             완료
@@ -75,7 +111,12 @@ const styles = theme => ({
 
 function validate(values) {
   const errors = {};
-  // TODO: 여기에 validation 구현
+
+  ['name', 'category', 'details'].forEach(field => {
+    if (!values[field]) {
+      errors[field] = 'Required';
+    }
+  });
 
   return errors;
 }

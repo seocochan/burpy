@@ -9,5 +9,7 @@ module.exports = {
   mongoURI: process.env.MONGO_URI,
   cookieKey: process.env.COOKIE_KEY,
   redirectDomain: process.env.REDIRECT_DOMAIN,
-  ICServerURL: process.env.IC_SERVER_URL
+  ICServerURL: process.env.IC_SERVER_URL,
+  awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 };

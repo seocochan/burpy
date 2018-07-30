@@ -1,22 +1,24 @@
 import React, { Component, Fragment } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import * as actions from './actions';
 import { withStyles } from '@material-ui/core/styles';
-import withRoot from '../withRoot';
-import Header from './Header';
-import Home from './Home';
-import SearchResult from './SearchResult';
-import Recommend from './Recommend';
-import Wishlist from './Wishlist';
-import MyProducts from './MyProducts';
-import ProductPage from './productPage/ProductPage';
-import NewProduct from './productEdit/NewProduct';
-import EditProduct from './productEdit/EditProduct';
-import NewReview from './reviewEdit/NewReview';
-import EditReview from './reviewEdit/EditReview';
-import MyInfo from './userInfo/MyInfo';
-import MyInfoEditor from './userInfo/MyInfoEditor';
+import withRoot from './withRoot';
+
+import MainPage from './pages/MainPage';
+import SearchResultPage from './pages/SearchResultPage';
+import ProductPage from './pages/ProductPage';
+
+import Header from './components/Header';
+import Recommend from './components/Recommend';
+import Wishlist from './components/Wishlist';
+import MyProducts from './components/MyProducts';
+import NewProduct from './components/productEdit/NewProduct';
+import EditProduct from './components/productEdit/EditProduct';
+import NewReview from './components/reviewEdit/NewReview';
+import EditReview from './components/reviewEdit/EditReview';
+import MyInfo from './components/userInfo/MyInfo';
+import MyInfoEditor from './components/userInfo/MyInfoEditor';
 
 class App extends Component {
   componentDidMount() {
@@ -32,8 +34,8 @@ class App extends Component {
           <div className={classes.root}>
             <Header />
             <div className={classes.content}>
-              <Route exact path="/" component={Home} />
-              <Route exact path="/search" component={SearchResult} />
+              <Route exact path="/" component={MainPage} />
+              <Route exact path="/search" component={SearchResultPage} />
               <Route exact path="/recommend" component={Recommend} />
               <Route exact path="/wishlist" component={Wishlist} />
               <Route exact path="/my-products" component={MyProducts} />
@@ -63,11 +65,8 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.default,
     width: '100%',
     height: 'calc(100% - 56px)',
-    marginTop: 56,
-    [theme.breakpoints.up('sm')]: {
-      height: 'calc(100% - 64px)',
-      marginTop: 64
-    }
+    margin: theme.spacing.unit,
+    marginTop: theme.spacing.unit + 56
   }
 });
 

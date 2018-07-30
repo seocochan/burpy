@@ -51,7 +51,7 @@ class Header extends Component {
     const { classes, auth } = this.props;
     const { drawer, anchorEl, value } = this.state;
     const open = Boolean(anchorEl);
-    console.log(open);
+    
     return (
       <div className={classes.root}>
         <Drawer open={drawer} onClose={this.toggleDrawer(false)}>

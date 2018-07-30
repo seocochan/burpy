@@ -17,11 +17,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.279.1",
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "concurrently": "^3.5.1",
     "cookie-session": "^2.0.0-beta.3",
     "express": "^4.16.2",
+    "fuse.js": "^3.2.1",
+    "hangul-js": "^0.2.5",
     "localtunnel": "^1.8.3",
     "lodash": "^4.17.5",
     "mongoose": "^5.0.3",
@@ -31,7 +34,8 @@
     "passport-google-oauth20": "^1.0.0",
     "passport-naver": "^1.0.6",
     "passport-twitter": "^1.0.4",
-    "path-parser": "^3.0.1"
+    "path-parser": "^3.0.1",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "forever": "^0.15.3"

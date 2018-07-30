@@ -1,26 +1,20 @@
 import _ from 'lodash';
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 class ProductReviews extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      reviews: []
-    };
 
     this.productId = props.productId;
     this.hasReview = null;
   }
 
-  async componentDidMount() {
-    const res = await axios.get(`/api/product/${this.productId}/reviews`);
-    this.setState({ reviews: res.data });
-  }
-
   renderReviews() {
+    const { reviews } = this.props;
+
     if (this.hasReview) {
-      return _.map(this.state.reviews, item => {
+      return _.map(reviews, item => {
         return (
           <li key={item._id}>
             ID: {item.userId.name}
@@ -39,13 +33,13 @@ class ProductReviews extends Component {
   }
 
   render() {
-    this.hasReview = this.state.reviews.length != 0 ? true : false;
+    this.hasReview = this.props.reviews.length != 0 ? true : false;
 
     return (
-      <div>
+      <Fragment>
         <h4>리뷰 목록</h4>
         <ul>{this.renderReviews()}</ul>
-      </div>
+      </Fragment>
     );
   }
 }

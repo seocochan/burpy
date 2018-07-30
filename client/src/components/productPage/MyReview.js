@@ -4,15 +4,12 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Rating from 'react-rating';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, IconButton, Paper } from '@material-ui/core';
+import { Button, IconButton } from '@material-ui/core';
 import { Delete, Edit } from '@material-ui/icons';
 
 class MyReview extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      myReview: {}
-    };
 
     this.productId = props.productId;
     this.reviewId = null;
@@ -20,35 +17,26 @@ class MyReview extends Component {
     this.handleDelete = this.handleDelete.bind(this);
   }
 
-  async componentDidMount() {
-    const res = await axios.get(`/api/product/${this.productId}/my_review`);
-    this.setState({ myReview: res.data });
-  }
-
   async handleDelete(id) {
     const res = await axios.delete(`/api/review/${id}`);
 
     if (res.status === 200) {
-      this.setState({ myReview: {} });
+      this.props.onDelete();
     }
   }
 
   renderMyReview() {
-    const { classes } = this.props;
+    const { classes, myReview } = this.props;
 
     if (this.hasReview) {
-      const review = this.state.myReview;
-
       return (
         <Fragment>
           <Rating
             readonly
             fractions={2}
-            initialRating={parseFloat(review.score)}
+            initialRating={parseFloat(myReview.score)}
           />
-          <Paper elevation={4} className={classes.paper}>
-            {review.comment}
-          </Paper>
+          코멘트: {myReview.comment}
         </Fragment>
       );
     } else {
@@ -61,12 +49,14 @@ class MyReview extends Component {
   }
 
   renderButtons() {
+    const { myReview } = this.props;
+
     if (this.hasReview) {
       return (
         <Fragment>
           <IconButton
             aria-label="Delete"
-            onClick={() => this.handleDelete(this.state.myReview._id)}
+            onClick={() => this.handleDelete(myReview._id)}
           >
             <Delete />
           </IconButton>
@@ -95,8 +85,9 @@ class MyReview extends Component {
   }
 
   render() {
-    this.hasReview = _.isEmpty(this.state.myReview) ? false : true;
-    this.hasReview && (this.reviewId = this.state.myReview._id);
+    const { myReview } = this.props;
+    this.hasReview = _.isEmpty(myReview) ? false : true;
+    this.hasReview && (this.reviewId = myReview._id);
 
     return (
       <Fragment>
@@ -109,10 +100,7 @@ class MyReview extends Component {
 }
 
 const styles = theme => ({
-  paper: {
-    width: '70%',
-    margin: 'auto'
-  }
+  //
 });
 
 export default withStyles(styles)(MyReview);
