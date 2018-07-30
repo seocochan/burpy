@@ -30,7 +30,9 @@ module.exports = {
       .select({
         _id: 1,
         name: 1,
-        avgScore: 1
+        category: 1,
+        avgScore: 1,
+        imageUrl: 1
       })
       .sort(sortStandard)
       .exec((err, doc) => {
