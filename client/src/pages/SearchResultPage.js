@@ -14,7 +14,8 @@ import {
   MenuItem,
   Typography,
   Divider,
-  Grid
+  Grid,
+  Zoom
 } from '@material-ui/core';
 
 class SearchResultPage extends Component {
@@ -80,9 +81,11 @@ class SearchResultPage extends Component {
   renderList() {
     return _.map(this.props.searchResult, item => {
       return (
-        <Grid item xs={12} sm={6} md={4} lg={3}>
-          <ProductCard key={item._id} product={item} />
-        </Grid>
+        <Zoom in={item}>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <ProductCard key={item._id} product={item} />
+          </Grid>
+        </Zoom>
       );
     });
   }
