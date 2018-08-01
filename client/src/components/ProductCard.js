@@ -1,5 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import Rating from 'react-rating';
+import { Star, StarBorder } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Card,
@@ -9,17 +11,12 @@ import {
   Button,
   Typography
 } from '@material-ui/core';
+import noImage from '../assets/images/noImage.png';
 
 class ProductCard extends Component {
   render() {
     const { classes } = this.props;
-    const {
-      _id: id,
-      name,
-      category,
-      avgScore,
-      imageUrl = 'noimage.png'
-    } = this.props.product;
+    const { _id: id, name, category, avgScore, imageUrl } = this.props.product;
     const s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
 
     return (
@@ -27,21 +24,37 @@ class ProductCard extends Component {
         <Card className={classes.card}>
           <CardMedia
             className={classes.media}
-            image={s3Url + imageUrl}
+            image={imageUrl ? s3Url + imageUrl : noImage}
             title={name}
+            component={Link}
+            to={`/product/${id}`}
           />
           <div className={classes.contentContainer}>
             <CardContent className={classes.content}>
-              <Typography component="p">{category}</Typography>
+              <Typography variant="caption" component="p">
+                {category}
+              </Typography>
               <Typography
                 className={classes.name}
                 gutterBottom
-                variant="headline"
+                variant="title"
                 component="h3"
               >
                 {name}
               </Typography>
-              <Typography component="p">평점: {avgScore.toFixed(1)}</Typography>
+              <Rating
+                readonly
+                initialRating={parseFloat(avgScore)}
+                fullSymbol={
+                  <Star className={classes.starIcon} nativeColor="#ffda00" />
+                }
+                emptySymbol={
+                  <StarBorder
+                    className={classes.starIcon}
+                    nativeColor="#ffed87"
+                  />
+                }
+              />
             </CardContent>
             <CardActions className={classes.actions}>
               <Button size="small" color="primary" disabled>
@@ -90,6 +103,9 @@ const styles = theme => ({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     width: '100%'
+  },
+  starIcon: {
+    fontSize: 16
   },
   actions: {
     display: 'flex',
