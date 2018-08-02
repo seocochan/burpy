@@ -12,6 +12,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Button,
   Typography,
   Divider,
   Grid,
@@ -25,8 +26,8 @@ class SearchResultPage extends Component {
     const parsed = queryString.parse(this.query, { ignoreQueryPrefix: true });
 
     this.word = parsed.q || ''; // 검색어
-    this.order = parsed.order || ''; // 정렬 기준
-    this.category = parsed.category || ''; // 분류 필터
+    this.category = parsed.category || 'all'; // 분류 필터
+    this.order = parsed.order || 'name'; // 정렬 기준
   }
 
   componentWillMount() {
@@ -66,38 +67,15 @@ class SearchResultPage extends Component {
     // TODO: 여기에 searchResult를 비우는 액션 호출 (정의 필요)
   }
 
-  onClickSort(standard) {
-    this.props.history.push(
-      `/search?q=${this.word}&order=${standard}&category=${this.category}`
-    );
-  }
-
   onChangeCategory(e) {
     this.props.history.push(
-      `/search?q=${this.word}&order=${this.order}&category=${e.target.value}`
+      `/search?q=${this.word}&category=${e.target.value}&order=${this.order}`
     );
   }
 
-  renderList() {
-    return _.map(this.props.searchResult, item => {
-      return (
-        <Zoom in={item}>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <ProductCard key={item._id} product={item} />
-          </Grid>
-        </Zoom>
-      );
-    });
-  }
-
-  renderSortButtons() {
-    return (
-      <div>
-        <button onClick={this.onClickSort.bind(this, 'name')}>이름순</button>
-        <button onClick={this.onClickSort.bind(this, 'avgScore')}>
-          평점순
-        </button>
-      </div>
+  onChangeSort(e) {
+    this.props.history.push(
+      `/search?q=${this.word}&category=${this.category}&order=${e.target.value}`
     );
   }
 
@@ -105,8 +83,8 @@ class SearchResultPage extends Component {
     const { classes } = this.props;
 
     let menuItems = [
-      <MenuItem key="전체" value={''}>
-        <em>전체</em>
+      <MenuItem key="전체" value="all">
+        전체
       </MenuItem>
     ];
     for (const c of Object.keys(category)) {
@@ -118,11 +96,11 @@ class SearchResultPage extends Component {
     }
 
     return (
-      <form className={classes.filterForm} autoComplete="off">
-        <FormControl>
+      <form autoComplete="off">
+        <FormControl className={classes.filterForm}>
           <InputLabel htmlFor="category">분류</InputLabel>
           <Select
-            value={this.category || ''}
+            value={this.category}
             onChange={this.onChangeCategory.bind(this)}
           >
             {menuItems}
@@ -130,6 +108,46 @@ class SearchResultPage extends Component {
         </FormControl>
       </form>
     );
+  }
+
+  renderSortSelect() {
+    const { classes } = this.props;
+    const sortList = [
+      { name: '이름순', val: 'name' },
+      { name: '평점순', val: 'avgScore' }
+    ];
+
+    let menuItems = [];
+    sortList.forEach(({ name, val }) => {
+      menuItems.push(
+        <MenuItem key={name} value={val}>
+          {name}
+        </MenuItem>
+      );
+    });
+
+    return (
+      <form autoComplete="off">
+        <FormControl className={classes.filterForm}>
+          <InputLabel htmlFor="order">정렬</InputLabel>
+          <Select value={this.order} onChange={this.onChangeSort.bind(this)}>
+            {menuItems}
+          </Select>
+        </FormControl>
+      </form>
+    );
+  }
+
+  renderList() {
+    return _.map(this.props.searchResult, item => {
+      return (
+        <Zoom key={item._id} in={Boolean(item)}>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <ProductCard key={item._id} product={item} />
+          </Grid>
+        </Zoom>
+      );
+    });
   }
 
   render() {
@@ -147,9 +165,18 @@ class SearchResultPage extends Component {
           결과
         </Typography>
         <div className={classes.controlSection}>
-          {this.renderCategoryFilter()}
-          {this.renderSortButtons()}
-          <Link to="/new/product">상품 등록하기</Link>
+          <div className={classes.filterSection}>
+            {this.renderCategoryFilter()}
+            {this.renderSortSelect()}
+          </div>
+          <Button
+            className={classes.newButton}
+            color="secondary"
+            component={Link}
+            to="/new/product"
+          >
+            상품 등록하기
+          </Button>
         </div>
         <Divider />
         <div className={classes.productsSection}>
@@ -164,28 +191,36 @@ class SearchResultPage extends Component {
 
 const styles = theme => ({
   container: {
-    width: '90%',
+    width: '100%',
     maxWidth: '1280px',
     margin: 'auto'
   },
   controlSection: {
     display: 'flex',
+    alignItems: 'flex-end',
     width: '100%',
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit
+    margin: theme.spacing.unit
+  },
+  filterSection: {
+    display: 'flex',
+    marginRight: 'auto'
   },
   productsSection: {
     paddingTop: theme.spacing.unit * 2
   },
   title: {
-    marginTop: theme.spacing.unit * 2
+    marginTop: theme.spacing.unit * 4,
+    marginLeft: theme.spacing.unit
   },
   titleSpan: {
     color: theme.palette.secondary.main
   },
   filterForm: {
     margin: theme.spacing.unit,
-    width: '4rem'
+    width: '8rem'
+  },
+  newButton: {
+    margin: theme.spacing.unit
   }
 });
 
