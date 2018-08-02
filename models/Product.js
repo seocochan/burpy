@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const productSchema = new Schema({
   name: String,
   category: String,
+  shops: { type: [String], default: [] },
   details: String,
   avgScore: { type: Number, default: 0 },
   avgTaste: { type: [Number], default: [0, 0, 0, 0, 0] },

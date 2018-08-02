@@ -12,18 +12,23 @@ class ProductBasicInfo extends Component {
   }
 
   renderBasicInfos() {
-    const { productId, product } = this.props;
+    const {
+      productId,
+      product: { name, category, shops = [], avgScore, imageUrl }
+    } = this.props;
 
     return (
       <Fragment>
         <h4>상품 기본 정보</h4>
-        {product.imageUrl && (
-          <img src={this.s3Url + product.imageUrl} width="200px" />
-        )}
+        {imageUrl && <img src={this.s3Url + imageUrl} width="200px" />}
         <ul>
-          <li>상품명: {product.name}</li>
-          <li>종류: {product.category}</li>
-          <li>평균 평점: {product.avgScore}</li>
+          <li>상품명: {name}</li>
+          <li>종류: {category}</li>
+          <li>평균 평점: {avgScore}</li>
+        </ul>
+        <ul>
+          판매처
+          {shops.map(shop => <li key={shop}>{shop}</li>)}
         </ul>
         <WishButton productId={productId} />
       </Fragment>

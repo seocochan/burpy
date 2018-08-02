@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import category from '../../productCategoryDict';
+import category from '../../assets/datas/productCategoryDict';
 
 class ProductTastesInfo extends Component {
   renderTastes() {

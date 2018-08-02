@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import category from '../productCategoryDict';
+import category from '../assets/datas/productCategoryDict';
 
 class Recommend extends Component {
   constructor(props) {
