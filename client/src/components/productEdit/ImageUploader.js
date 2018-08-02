@@ -47,7 +47,7 @@ class ImageUploader extends Component {
           type="file"
           accept="image/*"
         />
-        {imagePreviewUrl && <img src={imagePreviewUrl} width="300px" />}
+        {imagePreviewUrl && <img src={imagePreviewUrl} height="250px" />}
       </Fragment>
     );
   }
