@@ -175,7 +175,7 @@ class SearchResultPage extends Component {
             component={Link}
             to="/new/product"
           >
-            상품 등록하기
+            상품 등록
           </Button>
         </div>
         <Divider />
@@ -217,7 +217,7 @@ const styles = theme => ({
   },
   filterForm: {
     margin: theme.spacing.unit,
-    width: '8rem'
+    width: '7rem'
   },
   newButton: {
     margin: theme.spacing.unit
