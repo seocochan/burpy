@@ -172,6 +172,7 @@ class SearchResultPage extends Component {
           <Button
             className={classes.newButton}
             color="secondary"
+            size="small"
             component={Link}
             to="/new/product"
           >
