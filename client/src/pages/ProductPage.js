@@ -103,7 +103,7 @@ const styles = theme => ({
     display: 'grid',
     gridGap: '16px',
     justifyContent: 'center',
-    width: '90%',
+    width: '100%',
     maxWidth: '1280px',
     margin: 'auto',
     [theme.breakpoints.down('xs')]: {

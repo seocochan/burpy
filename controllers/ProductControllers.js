@@ -22,9 +22,21 @@ module.exports = {
 
   async fetchSearchItems(req, res) {
     const { query } = req;
-    const q = query.q ? { name: { $regex: query.q } } : {}; // 검색어가 지정되지 않은 경우 처리
-    const category = query.category ? { category: query.category } : {}; // 필터가 지정되지 않은 경우 처리
-    const sortStandard = query.order ? query.order : '_id'; // order값이 있으면 적용, 없으면 id로 정렬
+
+    // 검색어가 지정되지 않은 경우 처리
+    const q = query.q ? { name: { $regex: query.q } } : {};
+
+    // 필터가 지정되지 않은 경우 처리
+    const category =
+      query.category !== undefined && query.category !== 'all'
+        ? { category: query.category }
+        : {};
+
+    // 정렬 기준 기본값 지정
+    const sortStandard =
+      query.order === undefined || query.order === 'name'
+        ? { name: 1 }
+        : { avgScore: -1 };
 
     Product.find({ ...q, ...category })
       .select({
