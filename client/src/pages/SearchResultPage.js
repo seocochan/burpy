@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import queryString from 'qs';
 import React, { Component } from 'react';
-import category from '../productCategoryDict';
+import category from '../assets/datas/productCategoryDict';
 import ProductCard from '../components/ProductCard';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
