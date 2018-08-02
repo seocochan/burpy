@@ -1,14 +1,14 @@
-import _ from 'lodash';
 import axios from 'axios';
 import React, { Component, Fragment } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
-import ProductField from './ProductField';
-import productFormFields from './productFormFields';
+import ProductNameField from './ProductNameField';
+import ProductCategorySelect from './ProductCategorySelect';
+import ProductShopCheckbox from './ProductShopCheckbox';
 import TextEditor from './TextEditor';
 import ImageUploader from './ImageUploader';
 import { withStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, Divider } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 
 class NewProduct extends Component {
@@ -17,18 +17,49 @@ class NewProduct extends Component {
     isDone: false
   };
 
-  renderBasicFields() {
-    return _.map(productFormFields, ({ label, name }) => {
-      return (
+  renderNameField() {
+    return (
+      <Fragment>
         <Field
-          key={name}
-          component={ProductField}
+          className={'name'}
+          key="name"
+          component={ProductNameField}
           type="text"
-          label={label}
-          name={name}
+          label="상품명"
+          name="name"
         />
-      );
-    });
+      </Fragment>
+    );
+  }
+
+  renderCategorySelect() {
+    return (
+      <Fragment>
+        <Field
+          className={'category'}
+          key="category"
+          component={ProductCategorySelect}
+          type="text"
+          label="종류"
+          name="category"
+        />
+      </Fragment>
+    );
+  }
+
+  renderShopCheckBox() {
+    return (
+      <Fragment>
+        <Field
+          className={'shops'}
+          key="shops"
+          component={ProductShopCheckbox}
+          type="checkbox"
+          label="판매처"
+          name="shops"
+        />
+      </Fragment>
+    );
   }
 
   renderDetailsEditor() {
@@ -39,9 +70,10 @@ class NewProduct extends Component {
 
   async onSubmit(values) {
     const { file } = this.state;
-    const { category, name } = values;
-    let uploadConfig;
+    const { name, category, shops, details } = values;
 
+    // 이미지 등록 과정
+    let uploadConfig;
     if (file) {
       uploadConfig = await axios.get(
         `/api/upload?category=${category}&name=${name}`
@@ -54,8 +86,19 @@ class NewProduct extends Component {
       });
     }
 
+    // shops 객체의 value가 true인 key만 원소로 가지는 배열 shopList 생성
+    let shopList = [];
+    for (const [shop, value] of Object.entries(shops)) {
+      if (value) {
+        shopList.push(shop);
+      }
+    }
+
     const res = await axios.post('/api/product', {
-      ...values,
+      name,
+      category,
+      shops: shopList,
+      details,
       imageUrl: uploadConfig ? uploadConfig.data.key : null
     });
 
@@ -70,8 +113,11 @@ class NewProduct extends Component {
       <div>
         상품 등록
         <ImageUploader watchFile={file => this.setState({ file })} />
+        <Divider />
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
-          {this.renderBasicFields()}
+          {this.renderNameField()}
+          {this.renderCategorySelect()}
+          {this.renderShopCheckBox()}
           {this.renderDetailsEditor()}
           <Button variant="raised" color="primary" type="submit">
             <Send className={classes.icon} />
