@@ -29,7 +29,7 @@ class ProductShopCheckbox extends Component {
 
   render() {
     const {
-      className,
+      classes,
       input: { value },
       label,
       meta: { error, touched },
@@ -55,7 +55,11 @@ class ProductShopCheckbox extends Component {
 
     return (
       <Fragment>
-        <FormControl component="fieldset" error={touched && error}>
+        <FormControl
+          className={classes.shopsField}
+          component="fieldset"
+          error={touched && error}
+        >
           <FormLabel component="legend">판매처</FormLabel>
           <FormGroup>{menuItems}</FormGroup>
         </FormControl>
