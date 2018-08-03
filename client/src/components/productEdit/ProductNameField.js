@@ -2,20 +2,18 @@ import React from 'react';
 import { TextField } from '@material-ui/core';
 
 export default ({
-  className,
+  classes,
   input,
   label,
-  meta: { error, touched },
-  ...custom
+  meta: { error, touched }
 }) => {
   return (
     <TextField
       autoComplete="off"
-      className={className}
+      className={classes.nameField}
       placeholder={label}
-      error={touched && error}
+      error={touched && Boolean(error)}
       {...input}
-      {...custom}
     />
   );
 };

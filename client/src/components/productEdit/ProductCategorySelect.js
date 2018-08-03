@@ -3,11 +3,10 @@ import { InputLabel, FormControl, Select, MenuItem } from '@material-ui/core';
 import category from '../../assets/datas/productCategoryDict';
 
 export default ({
-  className,
+  classes,
   input,
   label,
-  meta: { error, touched },
-  ...custom
+  meta: { error, touched }
 }) => {
   let menuItems = [];
   for (const c of Object.keys(category)) {
@@ -20,14 +19,12 @@ export default ({
 
   return (
     <Fragment>
-      <FormControl error={touched && error}>
+      <FormControl
+        className={classes.categoryField}
+        error={touched && Boolean(error)}
+      >
         <InputLabel htmlFor={label}>{label}</InputLabel>
-        <Select
-          className={className}
-          placeholder={label}
-          {...input}
-          {...custom}
-        >
+        <Select placeholder={label} {...input}>
           {menuItems}
         </Select>
       </FormControl>

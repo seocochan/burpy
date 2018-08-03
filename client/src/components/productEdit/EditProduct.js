@@ -8,8 +8,15 @@ import ProductShopCheckbox from './ProductShopCheckbox';
 import TextEditor from './TextEditor';
 import ImageUploader from './ImageUploader';
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Divider } from '@material-ui/core';
-import { Send } from '@material-ui/icons';
+import {
+  Button,
+  Divider,
+  Typography,
+  ExpansionPanel,
+  ExpansionPanelSummary,
+  ExpansionPanelDetails
+} from '@material-ui/core';
+import { Send, ExpandMore, Create } from '@material-ui/icons';
 import shopList from '../../assets/datas/productShopList';
 
 const processShopList = (allShops, list) => {
@@ -48,53 +55,134 @@ class EditProduct extends Component {
   }
 
   renderNameField() {
+    const { classes } = this.props;
+
     return (
-      <Fragment>
+      <div className={classes.inputContainer}>
+        <Typography variant="title" gutterBottom>
+          상품의 이름은 무엇인가요?
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          상세한 상품명을 입력해주시면 다른 사용자들이 상품을 쉽게 찾을 수
+          있습니다.
+        </Typography>
         <Field
-          className={'name'}
+          classes={classes}
           key="name"
           component={ProductNameField}
           type="text"
           label="상품명"
           name="name"
         />
-      </Fragment>
+      </div>
     );
   }
 
   renderCategorySelect() {
+    const { classes } = this.props;
+
     return (
-      <Fragment>
+      <div className={classes.inputContainer}>
+        <Typography variant="title" gutterBottom>
+          어떤 종류인가요?
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          아래 목록에서 해당되는 항목을 선택해주세요.
+        </Typography>
         <Field
-          className={'category'}
+          classes={classes}
           key="category"
           component={ProductCategorySelect}
           type="text"
           label="종류"
           name="category"
         />
-      </Fragment>
+      </div>
     );
   }
 
   renderShopCheckBox() {
+    const { classes } = this.props;
+
     return (
-      <Fragment>
+      <div className={classes.inputContainer}>
+        <Typography variant="title" gutterBottom>
+          어디에서 구매할 수 있나요?
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          이 상품을 구매할 수 있는 판매처를 알려주세요. (1개 이상 선택)
+        </Typography>
         <Field
-          className={'shops'}
+          classes={classes}
           key="shops"
           component={ProductShopCheckbox}
           type="checkbox"
           label="판매처"
           name="shops"
         />
-      </Fragment>
+      </div>
+    );
+  }
+
+  renderImageUpoader() {
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.inputContainer}>
+        <Typography variant="title" gutterBottom>
+          <Typography variant="caption" component="span">
+            선택사항
+          </Typography>
+          상품의 대표 이미지를 등록해주세요.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          이 상품을 나타낼 수 있는 이미지를 한 장 등록할 수 있습니다.
+        </Typography>
+        <ImageUploader
+          imageUrl={this.state.imageUrl}
+          watchFile={file => this.setState({ file })}
+        />
+      </div>
     );
   }
 
   renderDetailsEditor() {
+    const { classes } = this.props;
+
     return (
-      <Field key="details" component={TextEditor} type="text" name="details" />
+      <div className={classes.inputContainer}>
+        <Typography variant="title" gutterBottom>
+          <Typography variant="caption" component="span">
+            선택사항
+          </Typography>
+          상세 정보 작성
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          이 상품에 대한 보다 상세한 정보를 자유롭게 작성할 수 있습니다.
+        </Typography>
+        <ExpansionPanel
+          classes={{ root: classes.editorPanelRoot }}
+          elevation={0}
+        >
+          <ExpansionPanelSummary
+            classes={{ expandIcon: classes.editorSummaryIcon }}
+            expandIcon={<ExpandMore />}
+          >
+            <Button variant="outlined">
+              <Create className={classes.editorIcon} /> 에디터 표시
+            </Button>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Field
+              classes={classes}
+              key="details"
+              component={TextEditor}
+              type="text"
+              name="details"
+            />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      </div>
     );
   }
 
@@ -141,21 +229,25 @@ class EditProduct extends Component {
     const { classes } = this.props;
 
     return (
-      <div>
-        상품 수정
-        <ImageUploader
-          imageUrl={this.state.imageUrl}
-          watchFile={file => this.setState({ file })}
-        />
-        <Divider />
+      <div className={classes.container}>
         <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
           {this.renderNameField()}
           {this.renderCategorySelect()}
+          <Divider />
           {this.renderShopCheckBox()}
+          <Divider />
+          {this.renderImageUpoader()}
+          <Divider />
           {this.renderDetailsEditor()}
-          <Button variant="raised" color="primary" type="submit">
-            <Send className={classes.icon} />
-            완료
+          <Button
+            className={classes.submitButton}
+            variant="contained"
+            size="large"
+            color="primary"
+            type="submit"
+          >
+            <Send className={classes.submitIcon} />
+            등록하기
           </Button>
           {this.state.isDone && <Redirect to={`/product/${this.id}`} />}
         </form>
@@ -165,7 +257,55 @@ class EditProduct extends Component {
 }
 
 const styles = theme => ({
-  icon: {
+  container: {
+    width: '100%',
+    maxWidth: '1280px',
+    margin: 'auto',
+    marginTop: theme.spacing.unit * 2
+  },
+  inputContainer: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 4
+  },
+  nameField: {
+    marginTop: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit,
+    width: '100%',
+    maxWidth: 320
+  },
+  categoryField: {
+    marginLeft: theme.spacing.unit,
+    width: '100%',
+    maxWidth: 320
+  },
+  shopsField: {
+    marginTop: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit,
+    width: '100%',
+    maxWidth: 320
+  },
+  detailsField: {
+    width: '98%',
+    margin: 'auto',
+    marginTop: theme.spacing.unit * 2
+  },
+  submitButton: {
+    float: 'right'
+  },
+  editorPanelRoot: {
+    backgroundColor: 'transparent',
+    '&:before': {
+      backgroundColor: 'transparent'
+    }
+  },
+  editorSummaryIcon: {
+    left: -16
+  },
+  editorIcon: {
+    marginRight: theme.spacing.unit,
+    fontSize: 20
+  },
+  submitIcon: {
     marginRight: theme.spacing.unit,
     fontSize: 20
   }
