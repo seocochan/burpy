@@ -9,6 +9,6 @@ module.exports = app => {
   app.get('/api/product/:id/my_review', ReviewControllers.fetchMyReview);
   app.get('/api/product/:id/reviews', ReviewControllers.fetchProductReviews);
   app.post('/api/predict', ProductControllers.fetchPredictedItems);
-  app.post('/api/product/train-image', ProductControllers.addProductWithTrainImage);
+  app.post('/api/product/ic', ProductControllers.addProductFromIC);
   app.get('/api/suggest', ProductControllers.suggestProducts)
 };
