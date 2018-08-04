@@ -3,6 +3,7 @@ import axios from 'axios';
 import ProductBasicInfo from '../components/productPage/ProductBasicInfo';
 import ProductDetails from '../components/productPage/ProductDetails';
 import ProductTastesInfo from '../components/productPage/ProductTastesInfo';
+import ReviewStat from '../components/productPage/ReviewStat';
 import MyReview from '../components/productPage/MyReview';
 import ProductReviews from '../components/productPage/ProductReviews';
 import { withStyles } from '@material-ui/core/styles';
@@ -54,10 +55,11 @@ class ProductPage extends Component {
   }
 
   renderReviewTab(productId) {
-    const { myReview, reviews } = this.state;
+    const { product, myReview, reviews } = this.state;
 
     return (
       <Fragment>
+        <ReviewStat product={product} />
         <MyReview
           productId={productId}
           myReview={myReview}
@@ -126,7 +128,7 @@ const styles = theme => ({
     gridArea: 'pt',
     padding: theme.spacing.unit,
     minWidth: '180px',
-    maxHeight: '200px'
+    maxHeight: '300px'
   },
   contents: {
     gridArea: 'co',
