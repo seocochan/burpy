@@ -10,14 +10,17 @@ import {
   ListItemSecondaryAction,
   Paper,
   Typography,
-  IconButton
+  IconButton,
+  Button
 } from '@material-ui/core';
+import category from '../../assets/datas/productCategoryDict';
 
 class ProductReviews extends Component {
   constructor(props) {
     super(props);
 
     this.productId = props.productId;
+    this.tasteNames = category[this.props.category].params;
     this.hasReview = null;
   }
 
@@ -27,8 +30,8 @@ class ProductReviews extends Component {
     if (this.hasReview) {
       return _.map(reviews, item => {
         const Content = () => (
-          <Paper classname={classes.content} elevation={0}>
-            <Typography variant="subheading">
+          <Paper className={classes.content} elevation={0}>
+            <Typography variant="subheading" gutterBottom>
               {item.userId.name}
               <Rating
                 readonly
@@ -44,15 +47,16 @@ class ProductReviews extends Component {
                 }
               />
             </Typography>
-            <Typography variant="body1" component="p">
-              {item.comment}
-            </Typography>
+            <Typography variant="body1">{item.comment}</Typography>
           </Paper>
         );
 
         const Footer = () => (
           <Typography className={classes.footer} variant="caption">
-            {item.dateAdded}
+            {item.dateAdded.substring(0, 10)} |{' '}
+            {item.taste
+              .map((value, i) => `${this.tasteNames[i]}: ${value}`)
+              .join(', ')}
           </Typography>
         );
 
@@ -65,7 +69,7 @@ class ProductReviews extends Component {
             />
             <ListItemSecondaryAction>
               <IconButton>
-                <ThumbUp style={{ fontSize: 18 }} />
+                <ThumbUp className={classes.icon} />
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
@@ -73,8 +77,8 @@ class ProductReviews extends Component {
       });
     } else {
       return (
-        <Typography variant="subheading">
-          아직 사용자들의 리뷰가 없습니다.
+        <Typography variant="body1">
+          <em>"아직 사용자들의 리뷰가 없습니다."</em>
         </Typography>
       );
     }
@@ -86,6 +90,21 @@ class ProductReviews extends Component {
 
     return (
       <div className={classes.container}>
+        <div className={classes.titleContainer}>
+          <Typography className={classes.title} variant="subheading">
+            리뷰
+          </Typography>
+          <Button classes={{ sizeSmall: classes.button }} size="small">
+            평점순
+          </Button>
+          <Button
+            classes={{ sizeSmall: classes.button }}
+            size="small"
+            color="primary"
+          >
+            최신순
+          </Button>
+        </div>
         <List className={classes.list} dense>
           {this.renderReviews()}
         </List>
@@ -96,7 +115,22 @@ class ProductReviews extends Component {
 
 const styles = theme => ({
   container: {
-    width: '100%'
+    width: '100%',
+    margin: theme.spacing.unit
+  },
+  titleContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  title: {
+    marginRight: 'auto'
+  },
+  button: {
+    minWidth: 48,
+    minHeight: 24,
+    padding: 2,
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
   },
   list: {
     margin: theme.spacing.unit
@@ -110,6 +144,9 @@ const styles = theme => ({
   starIcon: {
     fontSize: 16,
     marginBottom: '-2px'
+  },
+  icon: {
+    fontSize: 20
   }
 });
 

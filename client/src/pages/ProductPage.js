@@ -7,7 +7,7 @@ import ReviewStat from '../components/productPage/ReviewStat';
 import MyReview from '../components/productPage/MyReview';
 import ProductReviews from '../components/productPage/ProductReviews';
 import { withStyles } from '@material-ui/core/styles';
-import { Tabs, Tab, Paper } from '@material-ui/core';
+import { Tabs, Tab, Paper, Divider } from '@material-ui/core';
 
 class ProductPage extends Component {
   constructor(props) {
@@ -58,15 +58,23 @@ class ProductPage extends Component {
     const { product, myReview, reviews } = this.state;
 
     return (
-      <Fragment>
-        <ReviewStat product={product} />
-        <MyReview
-          productId={productId}
-          myReview={myReview}
-          onDelete={() => this.setState({ myReview: {} })}
-        />
-        <ProductReviews productId={productId} reviews={reviews} />
-      </Fragment>
+      product && (
+        <Fragment>
+          <ReviewStat product={product} />
+          <Divider light />
+          <MyReview
+            productId={productId}
+            category={product.category}
+            myReview={myReview}
+            onDelete={() => this.setState({ myReview: {} })}
+          />
+          <ProductReviews
+            productId={productId}
+            category={product.category}
+            reviews={reviews}
+          />
+        </Fragment>
+      )
     );
   }
 
