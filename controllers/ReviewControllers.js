@@ -23,8 +23,15 @@ module.exports = {
     const newReview = await new Review(values).save();
     const avgScore = await fetchScore(newReview.productId);
     const avgTaste = await fetchTaste(newReview.productId);
+    const reviewCount_1 = await fetchScoreCount(newReview.productId,0,1);
+    const reviewCount_2 = await fetchScoreCount(newReview.productId,1,2);
+    const reviewCount_3 = await fetchScoreCount(newReview.productId,2,3);
+    const reviewCount_4 = await fetchScoreCount(newReview.productId,3,4);
+    const reviewCount_5 = await fetchScoreCount(newReview.productId,4,5);
+    const count = [ reviewCount_1[0].count,reviewCount_2[0].count,reviewCount_3[0].count,reviewCount_4[0].count,reviewCount_5[0].count]
+    console.log(count);
     const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-    const productScore = await fetchProduct(newReview.productId, avgScore,taste);
+    const productScore = await fetchProduct(newReview.productId, avgScore,taste,count);
     res.send(productScore);
   },
 
@@ -36,8 +43,14 @@ module.exports = {
     });
     const avgScore = await fetchScore(updatedReview.productId);
     const avgTaste = await fetchTaste(updatedReview.productId);
+    const reviewCount_1 = await fetchScoreCount(updatedReview.productId,0,1);
+    const reviewCount_2 = await fetchScoreCount(updatedReview.productId,1,2);
+    const reviewCount_3 = await fetchScoreCount(updatedReview.productId,2,3);
+    const reviewCount_4 = await fetchScoreCount(updatedReview.productId,3,4);
+    const reviewCount_5 = await fetchScoreCount(updatedReview.productId,4,5);
+    const count = [ reviewCount_1[0].count,reviewCount_2[0].count,reviewCount_3[0].count,reviewCount_4[0].count,reviewCount_5[0].count]
     const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-    const productScore = await fetchProduct(updatedReview.productId, avgScore,taste);
+    const productScore = await fetchProduct(updatedReview.productId, avgScore,taste,count);
     res.send(productScore);
   },
 
@@ -53,8 +66,14 @@ module.exports = {
         //res.status(200).send(id);
         const Avg = await fetchScore(doc.productId);
         const avgTaste = await fetchTaste(doc.productId);
+        const reviewCount_1 = await fetchScoreCount(doc.productId,0,1);
+        const reviewCount_2 = await fetchScoreCount(doc.productId,1,2);
+        const reviewCount_3 = await fetchScoreCount(doc.productId,2,3);
+        const reviewCount_4 = await fetchScoreCount(doc.productId,3,4);
+        const reviewCount_5 = await fetchScoreCount(doc.productId,4,5);
         const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-        const productScore = await fetchProduct(doc.productId, Avg,taste);
+        const count = [ reviewCount_1[0].count,reviewCount_2[0].count,reviewCount_3[0].count,reviewCount_4[0].count,reviewCount_5[0].count]
+        const productScore = await fetchProduct(doc.productId, Avg,taste,count);
         res.send(productScore);
       });
     });
@@ -112,7 +131,7 @@ const fetchScore = Id =>
       if (!err) {
         console.log('doc', doc);
         if (doc.length == 0) {
-          resolve('0');
+          resolve(0);
         } else {
           resolve(doc[0].scoreavg);
         }
@@ -120,9 +139,9 @@ const fetchScore = Id =>
     });
   });
 
-const fetchProduct = (Id, score,taste) =>
+const fetchProduct = (Id, score,taste,count) =>
   new Promise(resolve => {
-    Product.findByIdAndUpdate(Id, { avgScore: score, avgTaste : taste }, { new: true }).exec(
+    Product.findByIdAndUpdate(Id, { avgScore: score, avgTaste : taste, reviewCount : count}, { new: true }).exec(
       (err, doc) => {
         if (!err) {
           resolve(doc);
@@ -130,7 +149,6 @@ const fetchProduct = (Id, score,taste) =>
       }
     );
   });
-
   const fetchTaste = Id =>
   new Promise(resolve => {
     Review.aggregate([
@@ -149,7 +167,29 @@ const fetchProduct = (Id, score,taste) =>
       if (!err) {
         console.log('doc1', doc);
         if (doc.length == 0) {
-          resolve('0');
+          resolve(0);
+        } else {
+          resolve(doc);
+        }
+      }
+    });
+  });
+
+  const fetchScoreCount = (Id,a,b)=>
+  new Promise(resolve => {
+    Review.aggregate([
+      { $match:  { $and : [{ productId: Id}, { score : {$gt : a}},{score : {$lte : b}}]}},
+      {
+        $count : "count"
+      }
+    ]).exec((err, doc) => {
+      if (!err) {
+        console.log('doc2', doc);
+        if (doc.length == 0) {
+          doc = [
+            {count : 0}
+          ]
+          resolve(doc);
         } else {
           resolve(doc);
         }

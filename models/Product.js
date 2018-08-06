@@ -9,7 +9,8 @@ const productSchema = new Schema({
   avgScore: { type: Number, default: 0 },
   avgTaste: { type: [Number], default: [0, 0, 0, 0, 0] },
   reviews: [{ type: Schema.Types.ObjectId, ref: 'reviews' }],
-  imageUrl: String
+  imageUrl: String,
+  reviewCount : {type : [Number], default : [0, 0, 0, 0, 0]}
 });
 
 productSchema.plugin(autoIncrement.plugin, 'products');
