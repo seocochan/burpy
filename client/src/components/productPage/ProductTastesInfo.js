@@ -20,7 +20,6 @@ class ProductTastesInfo extends Component {
   renderChart() {
     const { avgTaste } = this.props.product;
     const data = this.processData(avgTaste);
-    console.log(data);
 
     return (
       <RadarChart outerRadius={80} width={240} height={240} data={data}>
