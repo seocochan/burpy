@@ -60,14 +60,14 @@ class ReviewStat extends Component {
   }
 
   render() {
-    const { product } = this.props;
+    const { product, classes } = this.props;
 
     if (!product) {
       return <div />;
     }
 
     return (
-      <div>
+      <div className={classes.container}>
         <Typography variant="subheading">평점 분포</Typography>
         <Typography variant="caption">
           평균 {product.avgScore.toFixed(1)} / 5.0 ({this.sumArray(
@@ -81,7 +81,10 @@ class ReviewStat extends Component {
 }
 
 const styles = theme => ({
-  //
+  container: {
+    width: '100%',
+    margin: theme.spacing.unit
+  }
 });
 
 export default withStyles(styles)(ReviewStat);
