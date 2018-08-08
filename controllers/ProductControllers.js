@@ -22,6 +22,8 @@ module.exports = {
 
   async fetchSearchItems(req, res) {
     const { query } = req;
+    const count = parseInt(query.count),
+      size = parseInt(query.size);
 
     // 검색어가 지정되지 않은 경우 처리
     const q = query.q ? { name: { $regex: query.q } } : {};
@@ -47,6 +49,8 @@ module.exports = {
         imageUrl: 1
       })
       .sort(sortStandard)
+      .skip(size * (count === 1 ? 0 : count))
+      .limit(parseInt(size))
       .exec((err, doc) => {
         if (err) {
           console.warn(err);
