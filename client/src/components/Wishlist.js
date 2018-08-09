@@ -7,8 +7,9 @@ class Wishlist extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      wishlist: {}
+      wishlist: []
     };
+    //this.onClickSort = this.onClickSort.bind(this);
   }
 
   fetchWishlist() {
@@ -25,6 +26,27 @@ class Wishlist extends Component {
   onDeleteClick(id) {
     axios.delete(`/api/wishlist/${id}`).then(() => this.fetchWishlist());
   }
+
+  onClickSort() {
+    this.state.wishlist.sort( (a, b)=>{
+      if(a.productId.name > b.productId.name){
+        return 1;
+      }
+      if(a.productId.name < b.productId.name){
+        return -1;
+      }
+      return 0;
+    })
+  }
+
+  renderSortButtons() {
+    return (
+      <div>
+        <button onClick={this.onClickSort()}>이름순</button>
+      </div>
+    );
+  }
+
 
   renderList() {
     return _.map(this.state.wishlist, item => {
@@ -45,6 +67,7 @@ class Wishlist extends Component {
     return (
       <div>
         <h3>찜한 상품 목록</h3>
+        {this.renderSortButtons()}
         <ul>{this.renderList()}</ul>
       </div>
     );
