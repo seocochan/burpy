@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import axios from 'axios';
 import queryString from 'qs';
 import React, { Component } from 'react';
 import category from '../assets/datas/productCategoryDict';
@@ -19,7 +20,19 @@ import {
   Zoom
 } from '@material-ui/core';
 
+const SIZE_UNIT = 10;
+
 class SearchResultPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { nextData: [], isPending: true };
+
+    this.size = SIZE_UNIT * 2;
+    this.count = 1;
+
+    this.fetchMoreSearchItems = this.fetchMoreSearchItems.bind(this);
+  }
+
   // 이 컴포넌트가 mount, update 됐을 때 url 쿼리를 값으로 가져오는 함수.
   setQueryToParams(props) {
     this.query = props.location.search;
@@ -30,9 +43,46 @@ class SearchResultPage extends Component {
     this.order = parsed.order || 'name'; // 정렬 기준
   }
 
+  async fetchMoreSearchItems(query, isInit = false) {
+    const { fetchSearchItems, searchResult } = this.props;
+    const { nextData } = this.state;
+
+    // 컴포넌트 마운트 or 정렬, 필터, 키워드가 바뀐 경우
+    if (isInit) {
+      if (nextData.length !== 0) {
+        // cdm 없이 첫번째 검색이 발생한 경우. pending
+        await this.setState({ nextData: [] });
+      }
+
+      this.size = SIZE_UNIT * 2;
+      this.count = 1;
+      const res = await axios.get(
+        `/api/search_result${query}&size=${this.size}&count=${this.count}`
+      );
+      fetchSearchItems(res.data.slice(0, SIZE_UNIT));
+      await this.setState({ nextData: res.data.slice(SIZE_UNIT) });
+    }
+    // 더보기 버튼을 클릭한 경우
+    else {
+      fetchSearchItems([...searchResult, ...nextData]); // 기존 리스트에 다음 원소들을 누적
+      // await this.setState({ nextData: [] }); // 다음 데이터를 기다리는 상태. pending
+
+      await this.setState({ isPending: true });
+      const res = await axios.get(
+        `/api/search_result${query}&size=${this.size}&count=${this.count}`
+      );
+      await this.setState({ nextData: res.data });
+    }
+
+    await this.setState({ isPending: false });
+    this.size = SIZE_UNIT;
+    this.count++;
+  }
+
   componentWillMount() {
     this.setQueryToParams(this.props);
-    this.props.fetchSearchItems(this.query);
+    // this.props.fetchSearchItems(this.query);
+    this.fetchMoreSearchItems(this.query, true);
   }
 
   // props가 변경될 때 수행되는 이벤트
@@ -45,19 +95,33 @@ class SearchResultPage extends Component {
     // 검색 결과 배열의 내용이나 순서가 변경되었는지 확인
     // isEqual()은 원소가 같은 배열도 순서가 다르면 다른 것으로 인식하기 때문에 sort() 필요
     // sort()는 원본을 바꾸기 때문에 slice()로 복제한 배열을 참조
-    const a = _.isEqual(
+    const isPendingStateSame = nextProps.isPending === this.state.isPending;
+
+    const isNextDataSame = _.isEqual(
+      nextState.nextData.slice().sort(),
+      this.state.nextData.slice().sort()
+    );
+
+    if (!isNextDataSame) {
+      return true;
+    }
+
+    const isSearchResultSame = _.isEqual(
       nextProps.searchResult.slice().sort(),
       this.props.searchResult.slice().sort()
     );
 
     // URL 쿼리가 변경되었는지 확인
-    const b = nextProps.location.search === this.props.location.search;
+    const isUrlSame = nextProps.location.search === this.props.location.search;
 
-    if (a && b) {
+    if (isSearchResultSame && isUrlSame) {
+      if (!isPendingStateSame) {
+        return true;
+      }
       return false;
     } else {
-      if (a) {
-        this.props.fetchSearchItems(this.query);
+      if (isSearchResultSame) {
+        this.fetchMoreSearchItems(this.query, true);
       }
       return true;
     }
@@ -152,6 +216,7 @@ class SearchResultPage extends Component {
 
   render() {
     const { classes } = this.props;
+    const { nextData, isPending } = this.state;
 
     return (
       <div className={classes.container}>
@@ -184,6 +249,20 @@ class SearchResultPage extends Component {
           <Grid container spacing={8}>
             {this.renderList()}
           </Grid>
+          {nextData.length !== 0 ? (
+            <Button
+              className={classes.loadMoreButton}
+              variant="outlined"
+              onClick={() => this.fetchMoreSearchItems(this.query)}
+              disabled={isPending}
+            >
+              더 보기
+            </Button>
+          ) : (
+            <Button className={classes.loadMoreButton} disabled>
+              이게 다예요.
+            </Button>
+          )}
         </div>
       </div>
     );
@@ -207,7 +286,16 @@ const styles = theme => ({
     marginRight: 'auto'
   },
   productsSection: {
+    display: 'flex',
+    flexDirection: 'column',
     paddingTop: theme.spacing.unit * 2
+  },
+  loadMoreButton: {
+    width: '70%',
+    maxWidth: 600,
+    margin: 'auto',
+    marginTop: theme.spacing.unit * 4,
+    marginBottom: theme.spacing.unit * 4
   },
   title: {
     marginTop: theme.spacing.unit * 4,
