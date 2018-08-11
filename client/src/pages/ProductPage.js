@@ -85,23 +85,27 @@ class ProductPage extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.container}>
-        <Paper className={classes.productBasicInfo}>
-          <ProductBasicInfo productId={productId} product={product} />
-        </Paper>
-        <Paper className={classes.productTastesInfo}>
-          <ProductTastesInfo productId={productId} product={product} />
-        </Paper>
+      <Fragment>
+        <div className={classes.titleContainer}>
+          <div className={classes.titleContent}>
+            <ProductBasicInfo productId={productId} product={product} />
+          </div>
+        </div>
+        <div className={classes.contentsContainer}>
+          <Paper className={classes.productTastesInfo}>
+            <ProductTastesInfo productId={productId} product={product} />
+          </Paper>
 
-        <Paper className={classes.contents}>
-          <Tabs value={tab} onChange={this.handleTabChange}>
-            <Tab value="product" label="상품 정보" />
-            <Tab value="review" label="리뷰" />
-          </Tabs>
-          {tab === 'product' && this.renderProductTab(productId, product)}
-          {tab === 'review' && this.renderReviewTab(productId)}
-        </Paper>
-      </div>
+          <Paper className={classes.contents}>
+            <Tabs value={tab} onChange={this.handleTabChange}>
+              <Tab value="product" label="상품 정보" />
+              <Tab value="review" label="리뷰" />
+            </Tabs>
+            {tab === 'product' && this.renderProductTab(productId, product)}
+            {tab === 'review' && this.renderReviewTab(productId)}
+          </Paper>
+        </div>
+      </Fragment>
     );
   }
 }
@@ -109,7 +113,19 @@ class ProductPage extends Component {
 const styles = theme => ({
   // https://github.com/topheman/npm-registry-browser/blob/master/src/components/Package/Package.js
   // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns
-  container: {
+  titleContainer: {
+    backgroundColor: theme.palette.primary.dark,
+    height: 320,
+    margin: -theme.spacing.unit,
+    marginBottom: theme.spacing.unit * 4
+  },
+  titleContent: {
+    width: '100%',
+    maxWidth: '1280px',
+    margin: 'auto',
+    padding: theme.spacing.unit
+  },
+  contentsContainer: {
     display: 'grid',
     gridGap: '16px',
     justifyContent: 'center',
@@ -118,19 +134,14 @@ const styles = theme => ({
     margin: 'auto',
     [theme.breakpoints.down('xs')]: {
       gridTemplateColumns: '90vw',
-      gridTemplateAreas: `"pb"
-      "pt"
+      gridTemplateAreas: `"pt"
       "co"`
     },
     [theme.breakpoints.up('sm')]: {
       gridTemplateColumns: '3fr 1fr',
-      gridTemplateAreas: `"pb pt"
+      gridTemplateAreas: `"co pt"
       "co pt"`
     }
-  },
-  productBasicInfo: {
-    gridArea: 'pb',
-    padding: theme.spacing.unit
   },
   productTastesInfo: {
     gridArea: 'pt',

@@ -5,7 +5,6 @@ import Downshift from 'downshift';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import { amber } from '@material-ui/core/colors';
 import { ArrowForward } from '@material-ui/icons';
 import { TextField, Paper, MenuItem, IconButton } from '@material-ui/core';
 
@@ -83,7 +82,7 @@ class SearchBar extends Component {
       >
         <span className={classes.menuText}>{suggestion.name}</span>
         <IconButton
-          color="secondary"
+          color="primary"
           className={classes.menuButton}
           component={Link}
           to={`/product/${suggestion._id}`}
@@ -166,7 +165,7 @@ const styles = theme => ({
   },
   textField: {
     padding: theme.spacing.unit,
-    backgroundColor: amber[300],
+    backgroundColor: theme.palette.primary.light,
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 180

@@ -40,7 +40,7 @@ class MyReview extends Component {
     const { classes, myReview, category } = this.props;
 
     const Content = () => (
-      <Paper className={classes.content} elevation={0}>
+      <Paper className={classes.content} elevation={0} square>
         <Typography variant="subheading" gutterBottom>
           {myReview.userId.name}
           <Rating
