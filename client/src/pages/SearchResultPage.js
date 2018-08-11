@@ -184,6 +184,9 @@ class SearchResultPage extends Component {
           <Grid container spacing={8}>
             {this.renderList()}
           </Grid>
+          <Button className={classes.loadMoreButton} variant="outlined">
+            더 보기
+          </Button>
         </div>
       </div>
     );
@@ -207,7 +210,16 @@ const styles = theme => ({
     marginRight: 'auto'
   },
   productsSection: {
+    display: 'flex',
+    flexDirection: 'column',
     paddingTop: theme.spacing.unit * 2
+  },
+  loadMoreButton: {
+    width: '70%',
+    maxWidth: 600,
+    margin: 'auto',
+    marginTop: theme.spacing.unit * 4,
+    marginBottom: theme.spacing.unit * 4
   },
   title: {
     marginTop: theme.spacing.unit * 4,
