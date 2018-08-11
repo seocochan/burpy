@@ -63,9 +63,10 @@ class TextEditor extends Component {
 
   render() {
     const { error /* , touched */ } = this.props.meta;
+    const { classes } = this.props;
 
     return (
-      <div style={{ width: '80%', margin: 'auto' }}>
+      <div className={classes.detailsField}>
         <div id="editSection" />
         <div>{error}</div>
       </div>

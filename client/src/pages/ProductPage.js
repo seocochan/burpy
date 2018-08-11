@@ -3,10 +3,11 @@ import axios from 'axios';
 import ProductBasicInfo from '../components/productPage/ProductBasicInfo';
 import ProductDetails from '../components/productPage/ProductDetails';
 import ProductTastesInfo from '../components/productPage/ProductTastesInfo';
+import ReviewStat from '../components/productPage/ReviewStat';
 import MyReview from '../components/productPage/MyReview';
 import ProductReviews from '../components/productPage/ProductReviews';
 import { withStyles } from '@material-ui/core/styles';
-import { Tabs, Tab, Paper } from '@material-ui/core';
+import { Tabs, Tab, Paper, Divider } from '@material-ui/core';
 
 class ProductPage extends Component {
   constructor(props) {
@@ -54,17 +55,26 @@ class ProductPage extends Component {
   }
 
   renderReviewTab(productId) {
-    const { myReview, reviews } = this.state;
+    const { product, myReview, reviews } = this.state;
 
     return (
-      <Fragment>
-        <MyReview
-          productId={productId}
-          myReview={myReview}
-          onDelete={() => this.setState({ myReview: {} })}
-        />
-        <ProductReviews productId={productId} reviews={reviews} />
-      </Fragment>
+      product && (
+        <Fragment>
+          <ReviewStat product={product} />
+          <Divider light />
+          <MyReview
+            productId={productId}
+            category={product.category}
+            myReview={myReview}
+            onDelete={() => this.setState({ myReview: {} })}
+          />
+          <ProductReviews
+            productId={productId}
+            category={product.category}
+            reviews={reviews}
+          />
+        </Fragment>
+      )
     );
   }
 
@@ -103,7 +113,7 @@ const styles = theme => ({
     display: 'grid',
     gridGap: '16px',
     justifyContent: 'center',
-    width: '90%',
+    width: '100%',
     maxWidth: '1280px',
     margin: 'auto',
     [theme.breakpoints.down('xs')]: {
@@ -126,7 +136,7 @@ const styles = theme => ({
     gridArea: 'pt',
     padding: theme.spacing.unit,
     minWidth: '180px',
-    maxHeight: '200px'
+    maxHeight: '300px'
   },
   contents: {
     gridArea: 'co',

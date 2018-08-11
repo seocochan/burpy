@@ -22,17 +22,35 @@ module.exports = {
 
   async fetchSearchItems(req, res) {
     const { query } = req;
-    const q = query.q ? { name: { $regex: query.q } } : {}; // 검색어가 지정되지 않은 경우 처리
-    const category = query.category ? { category: query.category } : {}; // 필터가 지정되지 않은 경우 처리
-    const sortStandard = query.order ? query.order : '_id'; // order값이 있으면 적용, 없으면 id로 정렬
+    const count = parseInt(query.count),
+      size = parseInt(query.size);
+
+    // 검색어가 지정되지 않은 경우 처리
+    const q = query.q ? { name: { $regex: query.q } } : {};
+
+    // 필터가 지정되지 않은 경우 처리
+    const category =
+      query.category !== undefined && query.category !== 'all'
+        ? { category: query.category }
+        : {};
+
+    // 정렬 기준 기본값 지정
+    const sortStandard =
+      query.order === undefined || query.order === 'name'
+        ? { name: 1 }
+        : { avgScore: -1 };
 
     Product.find({ ...q, ...category })
       .select({
         _id: 1,
         name: 1,
-        avgScore: 1
+        category: 1,
+        avgScore: 1,
+        imageUrl: 1
       })
       .sort(sortStandard)
+      .skip(size * (count === 1 ? 0 : count))
+      .limit(parseInt(size))
       .exec((err, doc) => {
         if (err) {
           console.warn(err);
@@ -69,7 +87,7 @@ module.exports = {
     });
   },
 
-  async addProductWithTrainImage(req, res) {
+  async addProductFromIC(req, res) {
     console.log('### data from unity ###\n', req.body);
     const { image, name, category } = req.body;
 
@@ -77,13 +95,7 @@ module.exports = {
     const id = newProduct._id;
     console.log('### new product created ###\n', newProduct);
 
-    const payload = { id, image };
-    console.log('### data for ic server ###\n', payload);
-
     res.send({ result: { id } }); // 유니티 클라이언트로 응답 보냄
-
-    const ICRes = await axios.post(`${url}/라우트 미정/`, payload); // IC 서버 응답 대기
-    console.log('### response from ic server ###\n', ICRes);
   },
 
   async suggestProducts(req, res) {

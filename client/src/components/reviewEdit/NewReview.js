@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { Component, Fragment } from 'react';
 import { reduxForm, Field, FieldArray, initialize } from 'redux-form';
 import { Redirect } from 'react-router';
-import category from '../../productCategoryDict';
+import category from '../../assets/datas/productCategoryDict';
 import CommentField from './CommentField';
 import ScoreField from './ScoreField';
 import TasteField from './TasteField';
