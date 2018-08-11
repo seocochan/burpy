@@ -51,7 +51,7 @@ class Header extends Component {
     const { classes, auth } = this.props;
     const { drawer, anchorEl, value } = this.state;
     const open = Boolean(anchorEl);
-    
+
     return (
       <div className={classes.root}>
         <Drawer open={drawer} onClose={this.toggleDrawer(false)}>
@@ -111,11 +111,11 @@ class Header extends Component {
               BURPY
             </Typography>
             <Hidden xsDown implementation="css">
-              <Button component={Link} to="/recommend">
+              <Button color="secondary" component={Link} to="/recommend">
                 <ThumbUp className={classes.icon} />
                 추천음료
               </Button>
-              <Button component={Link} to="/my-products">
+              <Button color="secondary" component={Link} to="/my-products">
                 <LocalBar className={classes.icon} />
                 마이바
               </Button>

@@ -30,7 +30,7 @@ class ProductReviews extends Component {
     if (this.hasReview) {
       return _.map(reviews, item => {
         const Content = () => (
-          <Paper className={classes.content} elevation={0}>
+          <Paper className={classes.content} elevation={0} square>
             <Typography variant="subheading" gutterBottom>
               {item.userId.name}
               <Rating

@@ -236,7 +236,6 @@ class SearchResultPage extends Component {
           </div>
           <Button
             className={classes.newButton}
-            color="secondary"
             size="small"
             component={Link}
             to="/new/product"
@@ -302,7 +301,7 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit
   },
   titleSpan: {
-    color: theme.palette.secondary.main
+    color: theme.palette.primary.light
   },
   filterForm: {
     margin: theme.spacing.unit,

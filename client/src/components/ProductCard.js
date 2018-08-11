@@ -63,7 +63,6 @@ class ProductCard extends Component {
               <Button
                 variant="flat"
                 size="small"
-                color="secondary"
                 component={Link}
                 to={`/product/${id}`}
               >

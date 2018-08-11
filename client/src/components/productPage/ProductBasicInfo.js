@@ -2,8 +2,9 @@ import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import { Edit } from '@material-ui/icons';
-import { Button, IconButton, Chip } from '@material-ui/core';
+import { Typography, Button, IconButton, Chip } from '@material-ui/core';
 import WishButton from './WishButton';
+import noImage from '../../assets/images/noImage.png';
 
 class ProductBasicInfo extends Component {
   constructor(props) {
@@ -19,22 +20,36 @@ class ProductBasicInfo extends Component {
     } = this.props;
 
     return (
-      <Fragment>
-        <h4>상품 기본 정보</h4>
-        {imageUrl && <img src={this.s3Url + imageUrl} height="240px" />}
-        <ul>
-          <li>상품명: {name}</li>
-          <li>종류: {category}</li>
-          <li>평균 평점: {avgScore}</li>
-        </ul>
-        <div>
-          판매처
-          {shops.map(shop => (
-            <Chip className={classes.chip} key={shop} label={shop} />
-          ))}
+      <div className={classes.container}>
+        <div className={classes.thumbnailFrame}>
+          <img
+            className={classes.thumbnail}
+            src={imageUrl ? this.s3Url + imageUrl : noImage}
+            height="240px"
+          />
         </div>
-        <WishButton productId={productId} />
-      </Fragment>
+        <div className={classes.informations}>
+          <div className={classes.topItem}>
+            <Typography className={classes.typoSub} variant="subheading">
+              {category}
+            </Typography>
+            <Typography className={classes.typo} variant="title">
+              {name}
+            </Typography>
+          </div>
+          <div className={classes.bottomItem}>
+            {shops.map(shop => (
+              <Chip className={classes.chip} key={shop} label={shop} />
+            ))}
+            <Typography className={classes.typo} variant="body2">
+              {avgScore}
+            </Typography>
+            <div className={classes.wishButton}>
+              <WishButton productId={productId} />
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -50,6 +65,51 @@ class ProductBasicInfo extends Component {
 }
 
 const styles = theme => ({
+  container: {
+    display: 'flex',
+    marginTop: theme.spacing.unit * 4,
+    height: '100%'
+  },
+  thumbnailFrame: {
+    width: '25%',
+    height: '80%',
+    maxWidth: 180,
+    maxHeight: 240,
+    minWidth: 120,
+    overflow: 'hidden',
+    position: 'relative',
+    borderRadius: 2
+  },
+  thumbnail: {
+    width: '100%',
+    heigth: '100%',
+    objectFit: 'contain',
+    backgroundColor: '#fff'
+  },
+  informations: {
+    flex: '1 1',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    marginLeft: '1.5rem'
+  },
+  topItem: {
+    flexGrow: 1
+  },
+  bottomItem: {
+    marginTop: 'auto'
+  },
+  typo: {
+    color: '#fff'
+  },
+  typoSub: {
+    color: '#d3d5ea'
+  },
+  wishButton: {
+    position: 'absolute',
+    top: 0,
+    right: 16
+  },
   icon: {
     marginRight: theme.spacing.unit,
     fontSize: 20

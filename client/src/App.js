@@ -66,7 +66,7 @@ const styles = theme => ({
     width: '100%',
     height: 'calc(100% - 56px)',
     margin: theme.spacing.unit,
-    marginTop: theme.spacing.unit + 56
+    marginTop: theme.spacing.unit + 56,
   }
 });
 
