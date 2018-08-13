@@ -22,7 +22,7 @@ class ProductTastesInfo extends Component {
     const data = this.processData(avgTaste);
 
     return (
-      <RadarChart outerRadius={80} width={240} height={240} data={data}>
+      <RadarChart outerRadius={70} width={192} height={192} data={data}>
         <PolarGrid />
         <PolarAngleAxis dataKey="name" tick={{ fontSize: 12 }} />
         <PolarRadiusAxis
@@ -43,23 +43,30 @@ class ProductTastesInfo extends Component {
   }
 
   render() {
-    const { product } = this.props;
+    const { classes, product } = this.props;
 
     if (!product) {
       return <div />;
     }
 
     return (
-      <div>
+      <div className={classes.container}>
         <Typography variant="subheading">맛 수치</Typography>
-        {this.renderChart()}
+        <div className={classes.chartContainer}>{this.renderChart()}</div>
       </div>
     );
   }
 }
 
 const styles = theme => ({
-  //
+  container: {
+    margin: 'auto'
+  },
+  chartContainer: {
+    display: 'flex',
+    alignContent: 'center',
+    justifyContent: 'center'
+  }
 });
 
 export default withStyles(styles)(ProductTastesInfo);

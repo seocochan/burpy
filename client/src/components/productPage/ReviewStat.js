@@ -82,7 +82,6 @@ class ReviewStat extends Component {
 
 const styles = theme => ({
   container: {
-    width: '100%',
     margin: theme.spacing.unit
   }
 });

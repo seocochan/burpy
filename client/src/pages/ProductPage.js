@@ -8,6 +8,7 @@ import MyReview from '../components/productPage/MyReview';
 import ProductReviews from '../components/productPage/ProductReviews';
 import { withStyles } from '@material-ui/core/styles';
 import { Tabs, Tab, Paper, Divider } from '@material-ui/core';
+import { InfoOutline, Toc } from '@material-ui/icons';
 
 class ProductPage extends Component {
   constructor(props) {
@@ -98,8 +99,30 @@ class ProductPage extends Component {
 
           <Paper className={classes.contents}>
             <Tabs value={tab} onChange={this.handleTabChange}>
-              <Tab value="product" label="상품 정보" />
-              <Tab value="review" label="리뷰" />
+              <Tab
+                classes={{
+                  root: classes.tabRoot,
+                  wrapper: classes.tabWrapper,
+                  label: classes.tabLabel,
+                  labelIcon: classes.tabLabelIcon
+                }}
+                value="product"
+                label="상품 정보"
+                icon={
+                  <InfoOutline className={classes.tabIcon} color="primary" />
+                }
+              />
+              <Tab
+                classes={{
+                  root: classes.tabRoot,
+                  wrapper: classes.tabWrapper,
+                  label: classes.tabLabel,
+                  labelIcon: classes.tabLabelIcon
+                }}
+                value="review"
+                label="리뷰"
+                icon={<Toc className={classes.tabIcon} color="primary" />}
+              />
             </Tabs>
             {tab === 'product' && this.renderProductTab(productId, product)}
             {tab === 'review' && this.renderReviewTab(productId)}
@@ -121,7 +144,7 @@ const styles = theme => ({
   },
   titleContent: {
     width: '100%',
-    maxWidth: '1280px',
+    maxWidth: 1280,
     margin: 'auto',
     padding: theme.spacing.unit
   },
@@ -130,7 +153,7 @@ const styles = theme => ({
     gridGap: '16px',
     justifyContent: 'center',
     width: '100%',
-    maxWidth: '1280px',
+    maxWidth: 1280,
     margin: 'auto',
     [theme.breakpoints.down('xs')]: {
       gridTemplateColumns: '90vw',
@@ -146,13 +169,21 @@ const styles = theme => ({
   productTastesInfo: {
     gridArea: 'pt',
     padding: theme.spacing.unit,
-    minWidth: '180px',
-    maxHeight: '300px'
+    minWidth: 220,
+    height: 240
   },
   contents: {
     gridArea: 'co',
     padding: theme.spacing.unit
-  }
+  },
+  tabRoot: { minWidth: 110 },
+  tabWrapper: {
+    flexDirection: 'row',
+    minHeight: 42
+  },
+  tabLabel: { fontSize: theme.typography.pxToRem(14) },
+  tabLabelIcon: { minHeight: 0 },
+  tabIcon: { fontSize: 16 }
 });
 
 export default withStyles(styles)(ProductPage);

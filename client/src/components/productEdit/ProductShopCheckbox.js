@@ -45,6 +45,7 @@ class ProductShopCheckbox extends Component {
               checked={Boolean(value[shop])}
               onChange={this.onCheckChange}
               value={shop}
+              color="primary"
             />
           }
           key={shop}

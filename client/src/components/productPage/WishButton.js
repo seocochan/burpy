@@ -1,37 +1,43 @@
-import React, { Component } from 'react';
 import axios from 'axios';
+import React, { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import { IconButton, CircularProgress } from '@material-ui/core';
+import { Favorite, FavoriteBorder } from '@material-ui/icons';
 
 class ToggleButton extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isToggleOn: Boolean
-    };
+    this.state = { isToggleOn: null };
 
     this.wishlist = [];
     this.handleClick = this.handleClick.bind(this, props.productId);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.fetchWishlist();
   }
 
   fetchWishlist() {
     axios.get('/api/wishlist').then(res => {
       this.wishlist = res.data;
+
       if (this.wishlist !== []) {
-        for (var i = 0; i < this.wishlist.length; i++) {
-          if (this.wishlist[i].productId._id == this.props.productId) {
+        for (let i = 0; i < this.wishlist.length; i++) {
+          if (
+            this.wishlist[i].productId._id === parseInt(this.props.productId)
+          ) {
             this.setState({ isToggleOn: false });
-          } else {
-            this.setState({ isToggleOn: true });
+            break;
           }
         }
+      }
+      if (this.state.isToggleOn == null) {
+        this.setState({ isToggleOn: true });
       }
     });
   }
 
-  handleClick(id) {
+  async handleClick(id) {
     if (this.state.isToggleOn) {
       axios.post(`/api/wishlist/${id}`).then(res => {
         this.setState(prevState => ({
@@ -49,12 +55,38 @@ class ToggleButton extends Component {
   }
 
   render() {
+    const { classes } = this.props;
+    const { isToggleOn } = this.state;
+
+    let icon;
+    if (isToggleOn == null) {
+      icon = <CircularProgress size={24} color="secondary" />;
+    } else if (isToggleOn == true) {
+      icon = <FavoriteBorder className={classes.icon} />;
+    } else {
+      icon = <Favorite className={classes.icon} />;
+    }
+
     return (
-      <button onClick={this.handleClick}>
-        {this.state.isToggleOn ? '찜목록추가' : '이미추가됨'}
-      </button>
+      <IconButton
+        className={classes.iconButton}
+        size="large"
+        onClick={this.handleClick}
+      >
+        {icon}
+      </IconButton>
     );
   }
 }
 
-export default ToggleButton;
+const styles = theme => ({
+  iconButton: {
+    fontSize: 32,
+    color: '#ec5252'
+  },
+  icon: {
+    fontSize: 'inherit'
+  }
+});
+
+export default withStyles(styles)(ToggleButton);
