@@ -103,7 +103,7 @@ module.exports = {
 
     // 검색어가 없거나 공백인 경우
     if (!q) {
-      return res.status(404).send('검색어를 입력하세요.');
+      return res.status(404).send({ result: '검색어를 입력하세요.' });
     }
 
     let collection = await Product.find({
@@ -116,7 +116,7 @@ module.exports = {
 
     // 검색 결과가 없는 경우
     if (collection.length === 0) {
-      return res.send(collection);
+      return res.send({ result: collection });
     }
 
     // 자모 분해한 필드를 collection에 추가
@@ -138,6 +138,6 @@ module.exports = {
     const result = fuse.search(Hangul.disassemble(q).join('')).slice(0, 5);
 
     console.log(collection);
-    res.send(result);
+    res.send({ result });
   }
 };
