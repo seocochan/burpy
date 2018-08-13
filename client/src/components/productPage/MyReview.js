@@ -60,10 +60,11 @@ class MyReview extends Component {
 
     const Footer = () => (
       <Typography className={classes.footer} variant="caption">
-        {myReview.dateAdded.substring(0, 10)} |{' '}
         {myReview.taste
           .map((value, i) => `${this.tasteNames[i]}: ${value}`)
           .join(', ')}
+        <br />
+        {myReview.dateAdded.substring(0, 10)}
       </Typography>
     );
 
@@ -127,7 +128,6 @@ class MyReview extends Component {
 
 const styles = theme => ({
   container: {
-    width: '100%',
     margin: theme.spacing.unit,
     minHeight: 56
   },

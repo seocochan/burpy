@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import Rating from 'react-rating';
 import { withStyles } from '@material-ui/core/styles';
-import { Edit } from '@material-ui/icons';
 import { Typography, Button, IconButton, Chip } from '@material-ui/core';
+import { Star, StarBorder } from '@material-ui/icons';
 import WishButton from './WishButton';
 import noImage from '../../assets/images/noImage.png';
 
@@ -38,12 +38,27 @@ class ProductBasicInfo extends Component {
             </Typography>
           </div>
           <div className={classes.bottomItem}>
-            {shops.map(shop => (
-              <Chip className={classes.chip} key={shop} label={shop} />
-            ))}
-            <Typography className={classes.typo} variant="body2">
-              {avgScore}
+            <div className={classes.shopList}>
+              {shops.map(shop => (
+                <Chip className={classes.chip} key={shop} label={shop} />
+              ))}
+            </div>
+            <Typography className={classes.typoScore} variant="body2">
+              평균 {avgScore.toFixed(1)}
             </Typography>
+            <Rating
+              readonly
+              initialRating={parseFloat(avgScore)}
+              fullSymbol={
+                <Star className={classes.starIcon} nativeColor="#ffda00" />
+              }
+              emptySymbol={
+                <StarBorder
+                  className={classes.starIcon}
+                  nativeColor="#ffda00"
+                />
+              }
+            />
             <div className={classes.wishButton}>
               <WishButton productId={productId} />
             </div>
@@ -105,17 +120,34 @@ const styles = theme => ({
   typoSub: {
     color: '#d3d5ea'
   },
+  typoScore: {
+    color: '#fff',
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit * 2
+  },
   wishButton: {
     position: 'absolute',
-    top: 0,
-    right: 16
+    top: -16,
+    right: 12
   },
   icon: {
     marginRight: theme.spacing.unit,
     fontSize: 20
   },
+  shopList: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
   chip: {
-    margin: theme.spacing.unit / 2
+    marginRight: theme.spacing.unit / 2,
+    marginBottom: theme.spacing.unit / 2,
+    maxWidth: 70,
+    height: 20,
+    fontSize: 12,
+    backgroundColor: theme.palette.secondary.main
+  },
+  starIcon: {
+    fontSize: 32
   }
 });
 

@@ -90,9 +90,10 @@ class Header extends Component {
           </div>
         </Drawer>
         <AppBar position="fixed">
-          <Toolbar>
+          <Toolbar classes={{ root: classes.toolbar }} disableGutters>
             <Hidden smUp implementation="css">
               <IconButton
+                style={{ margin: 0 }}
                 className={classes.drawerButton}
                 color="inherit"
                 aria-label="Menu"
@@ -107,6 +108,7 @@ class Header extends Component {
               className={classes.title}
               component={Link}
               to="/"
+              style={{ marginLeft: 8 }}
             >
               BURPY
             </Typography>
@@ -181,6 +183,11 @@ class Header extends Component {
 const styles = theme => ({
   root: {
     flexGrow: 1
+  },
+  toolbar: {
+    width: '100%',
+    maxWidth: 1280,
+    margin: 'auto'
   },
   title: {
     flex: 1

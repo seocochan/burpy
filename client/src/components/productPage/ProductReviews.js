@@ -53,10 +53,11 @@ class ProductReviews extends Component {
 
         const Footer = () => (
           <Typography className={classes.footer} variant="caption">
-            {item.dateAdded.substring(0, 10)} |{' '}
             {item.taste
               .map((value, i) => `${this.tasteNames[i]}: ${value}`)
               .join(', ')}
+            <br />
+            {item.dateAdded.substring(0, 10)}
           </Typography>
         );
 
@@ -115,7 +116,6 @@ class ProductReviews extends Component {
 
 const styles = theme => ({
   container: {
-    width: '100%',
     margin: theme.spacing.unit
   },
   titleContainer: {

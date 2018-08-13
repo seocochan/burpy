@@ -58,6 +58,8 @@ class SearchBar extends Component {
     );
   }
 
+  inputProps = { color: '#ff0000' };
+
   renderSuggestion({
     suggestion,
     index,
@@ -124,7 +126,8 @@ class SearchBar extends Component {
                     InputProps: getInputProps({
                       onChange: this.handleInputChange,
                       placeholder: '검색',
-                      id: 'search-input'
+                      id: 'search-input',
+                      className: classes.input
                     }),
                     classes
                   })}
@@ -161,7 +164,7 @@ const styles = theme => ({
     position: 'relative'
   },
   input: {
-    margin: theme.spacing.unit
+    color: '#fff'
   },
   textField: {
     padding: theme.spacing.unit,
