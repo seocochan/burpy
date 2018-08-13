@@ -34,7 +34,7 @@ class SearchBar extends Component {
     // 글자 입력에 의해 인풋 값이 변경된 경우
     if (typeof inputValue !== 'undefined') {
       const suggestions = await axios.get(`/api/suggest?q=${inputValue}`);
-      this.setState({ suggestions: suggestions.data });
+      this.setState({ suggestions: suggestions.data.result });
     }
   }, 300);
 
