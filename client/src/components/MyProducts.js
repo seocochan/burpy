@@ -6,7 +6,10 @@ import { Link } from 'react-router-dom';
 class MyProducts extends Component {
   constructor(props) {
     super(props);
-    this.state = { reviews: [] };
+    this.state = { 
+      reviews: [],
+      order : ''
+     };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);

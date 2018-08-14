@@ -16,8 +16,7 @@ class ProductPage extends Component {
       product: null,
       myReview: {},
       reviews: [],
-      tab: 'product',
-      order : 'dateAdded'
+      tab: 'product'
     };
   }
 
@@ -37,29 +36,14 @@ class ProductPage extends Component {
       this.fetchData(id);
     }
   }
-  shouldComponentUpdate(nextProps,nextState){
-    const{id} = nextProps.match.params;
-
-    const a = nextState.order!==this.state.order;
-    console.log(a);
-    if(a){
-      this.fetchData(id);
-      return true;
-    }
-    else{
-      return true;
-    }
-  }
-
 
   async fetchData(productId) {
     const product = await axios.get(`/api/product/${productId}`);
     this.setState({ product: product.data });
-    console.log(this.state.order);
 
     const myReview = await axios.get(`/api/product/${productId}/my_review`);
-    const reviews = await axios.get(`/api/product/${productId}/reviews`,{params : {order : this.state.order}});
-    this.setState({ myReview: myReview.data, reviews: reviews.data, });
+    const reviews = await axios.get(`/api/product/${productId}/reviews?order=dateAdded`);
+    this.setState({ reviews: reviews.data, myReview: myReview.data });
   }
 
   handleTabChange = (event, value) => {
@@ -71,8 +55,7 @@ class ProductPage extends Component {
   }
 
   renderReviewTab(productId) {
-    const { product, myReview, reviews, order } = this.state;
-    console.log(order);
+    const { product, myReview, reviews } = this.state;
 
     return (
       product && (
@@ -89,7 +72,11 @@ class ProductPage extends Component {
             productId={productId}
             category={product.category}
             reviews={reviews}
-            onSortChange = {sort=>this.setState({order : sort})}
+            onSortChange={async sort => {
+              const reviews = await axios.get(`/api/product/${productId}/reviews?order=${sort}`);
+              console.log(reviews.data);
+              this.setState({ reviews: reviews.data });
+            }}
           />
         </Fragment>
       )
@@ -101,6 +88,7 @@ class ProductPage extends Component {
     const productId = this.props.match.params.id;
     const { product, tab } = this.state;
     const { classes } = this.props;
+    console.log(this.state.reviews);
 
     return (
       <div className={classes.container}>
