@@ -16,15 +16,16 @@ class ProductPage extends Component {
       product: null,
       myReview: {},
       reviews: [],
-      tab: 'product'
+      tab: 'product',
+      order : 'dateAdded'
     };
   }
 
   componentDidMount() {
     const { id } = this.props.match.params;
-
     this.fetchData(id);
   }
+
 
   componentWillReceiveProps(nextProps) {
     const { id } = nextProps.match.params;
@@ -36,14 +37,29 @@ class ProductPage extends Component {
       this.fetchData(id);
     }
   }
+  shouldComponentUpdate(nextProps,nextState){
+    const{id} = nextProps.match.params;
+
+    const a = nextState.order!==this.state.order;
+    console.log(a);
+    if(a){
+      this.fetchData(id);
+      return true;
+    }
+    else{
+      return true;
+    }
+  }
+
 
   async fetchData(productId) {
     const product = await axios.get(`/api/product/${productId}`);
     this.setState({ product: product.data });
+    console.log(this.state.order);
 
     const myReview = await axios.get(`/api/product/${productId}/my_review`);
-    const reviews = await axios.get(`/api/product/${productId}/reviews`);
-    this.setState({ myReview: myReview.data, reviews: reviews.data });
+    const reviews = await axios.get(`/api/product/${productId}/reviews`,{params : {order : this.state.order}});
+    this.setState({ myReview: myReview.data, reviews: reviews.data, });
   }
 
   handleTabChange = (event, value) => {
@@ -55,7 +71,8 @@ class ProductPage extends Component {
   }
 
   renderReviewTab(productId) {
-    const { product, myReview, reviews } = this.state;
+    const { product, myReview, reviews, order } = this.state;
+    console.log(order);
 
     return (
       product && (
@@ -72,6 +89,7 @@ class ProductPage extends Component {
             productId={productId}
             category={product.category}
             reviews={reviews}
+            onSortChange = {sort=>this.setState({order : sort})}
           />
         </Fragment>
       )

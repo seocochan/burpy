@@ -41,7 +41,7 @@ module.exports = {
     const count = [reviewCount[0].one,reviewCount[0].two,reviewCount[0].three,reviewCount[0].four,reviewCount[0].five];
     const avgTaste = await fetchTaste(updatedReview.productId);
     const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-    const productScore = await fetchProduct(updatedReview.productId, avgScore,taste);
+    const productScore = await fetchProduct(updatedReview.productId, avgScore,taste,count);
     res.send(productScore);
   },
 
@@ -60,7 +60,7 @@ module.exports = {
         const count = [reviewCount[0].one,reviewCount[0].two,reviewCount[0].three,reviewCount[0].four,reviewCount[0].five];
         const avgTaste = await fetchTaste(doc.productId);
         const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-        const productScore = await fetchProduct(doc.productId, Avg,taste);
+        const productScore = await fetchProduct(doc.productId, Avg,taste,count);
         res.send(productScore);
       });
     });
@@ -91,10 +91,15 @@ module.exports = {
   fetchProductReviews(req, res) {
     const productId = req.params.id;
     const userId = req.user._id;
+    const {query} = req;
+    const sortStandard = query.order === undefined || query.order ==='dateAdded'
+    ? {dateAdded : -1}
+    : {score : -1};
 
     // FIX: dateAdded 순으로 정렬
     Review.find({ productId, userId: { $ne: userId } })
       .populate('userId')
+      .sort(sortStandard)
       .exec((err, doc) => {
         if (err) {
           res.status(404).send('조회 실패');

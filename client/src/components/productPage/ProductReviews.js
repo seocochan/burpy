@@ -22,6 +22,7 @@ class ProductReviews extends Component {
     this.productId = props.productId;
     this.tasteNames = category[this.props.category].params;
     this.hasReview = null;
+    this.onClickSort = this.onClickSort.bind(this);
   }
 
   renderReviews() {
@@ -83,10 +84,15 @@ class ProductReviews extends Component {
       );
     }
   }
+  onClickSort(standard){
+    this.props.onSortChange(standard)
+    console.log(standard);
+  }
 
   render() {
     const { classes } = this.props;
     this.hasReview = this.props.reviews.length != 0 ? true : false;
+    console.log(this.props.order);
 
     return (
       <div className={classes.container}>
@@ -94,13 +100,14 @@ class ProductReviews extends Component {
           <Typography className={classes.title} variant="subheading">
             리뷰
           </Typography>
-          <Button classes={{ sizeSmall: classes.button }} size="small">
+          <Button classes={{ sizeSmall: classes.button }} size="small" onClick = {()=>this.onClickSort('score')}>
             평점순
           </Button>
           <Button
             classes={{ sizeSmall: classes.button }}
             size="small"
             color="primary"
+            onClick = {()=>this.onClickSort('dateAdded')}
           >
             최신순
           </Button>
