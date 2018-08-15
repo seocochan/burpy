@@ -41,14 +41,16 @@ class NewReview extends Component {
         <Typography variant="body1" gutterBottom>
           1 ~ 5점 사이의 별점을 선택하실 수 있어요.
         </Typography>
-        <Field
-          classes={classes}
-          key="score"
-          component={ScoreField}
-          type="text"
-          label="평점"
-          name="score"
-        />
+        <div className={classes.fieldContainer}>
+          <Field
+            classes={classes}
+            key="score"
+            component={ScoreField}
+            type="text"
+            label="평점"
+            name="score"
+          />
+        </div>
       </div>
     );
   }
@@ -65,14 +67,16 @@ class NewReview extends Component {
           상세한 평가를 입력해주시면 다른 사용자들이 상품을 선택하는 데 도움이
           됩니다.
         </Typography>
-        <Field
-          classes={classes}
-          key="comment"
-          component={CommentField}
-          type="text"
-          label="내용"
-          name="comment"
-        />
+        <div className={classes.fieldContainer}>
+          <Field
+            classes={classes}
+            key="comment"
+            component={CommentField}
+            type="text"
+            label="코멘트"
+            name="comment"
+          />
+        </div>
       </div>
     );
   }
@@ -88,7 +92,9 @@ class NewReview extends Component {
         <Typography variant="body1" gutterBottom>
           1 ~ 5단계 사이로 맛의 강도를 선택해주세요.
         </Typography>
-        <FieldArray name="taste" component={this.renderTastes} />
+        <div className={classes.fieldContainer}>
+          <FieldArray name="taste" component={this.renderTastes} />
+        </div>
       </div>
     );
   }
@@ -117,11 +123,9 @@ class NewReview extends Component {
     const { productId } = this;
     const { category } = this.state.product;
     const payload = { productId, category, ...values };
-    console.log(payload);
 
-    // await axios.post('/api/review', payload);
-
-    // this.setState({ isDone: true });
+    await axios.post('/api/review', payload);
+    this.setState({ isDone: true });
   }
 
   render() {
@@ -166,6 +170,20 @@ const styles = theme => ({
   inputContainer: {
     marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 4
+  },
+  fieldContainer: {
+    marginTop: theme.spacing.unit
+  },
+  starIcon: {
+    fontSize: 48
+  },
+  commentField: {
+    width: '100%',
+    maxWidth: 480
+  },
+  commentInput: {
+    border: '1px solid #ecedef',
+    backgroundColor: 'white'
   },
   submitIcon: {
     marginRight: theme.spacing.unit,

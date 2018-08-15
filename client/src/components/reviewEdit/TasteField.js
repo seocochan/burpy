@@ -24,12 +24,7 @@ const field = ({ theme, input, label }) => {
   };
 
   return (
-    <div
-      style={{
-        marginBottom: 32,
-        maxWidth: 420
-      }}
-    >
+    <div style={{ marginBottom: 32, maxWidth: 420 }}>
       <Typography variant="body2">{label}</Typography>
       <div style={{ margin: 8 }}>
         <Slider
