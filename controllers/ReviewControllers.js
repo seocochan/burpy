@@ -13,7 +13,7 @@ module.exports = {
         path: 'reviews',
         populate: { path: 'productId' }
       })
-      .sort(sortStandard)
+      .sort({dateAdded : -1})
       .exec((err, doc) => {
         res.send(doc.reviews);
       });

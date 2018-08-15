@@ -7,16 +7,16 @@ class MyProducts extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      reviews: [],
-      order : ''
+      reviews: []
      };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);
   }
 
-  componentDidMount() {
-    axios.get('/api/review').then(res => this.setState({ reviews: res.data }));
+  async componentDidMount() {
+    const reviews = await axios.get('api/review?order=dateAdded');
+    this.setState( { reviews : reviews.data } );
   }
 
   async handleDelete(id) {
@@ -50,11 +50,27 @@ class MyProducts extends Component {
       );
     });
   }
+  async onclickSort(standard){
+    const reviews = await axios.get(`/api/review?order=${standard}`);
+    this.setState( { reviews : reviews.data } );
+    console.log(reviews.data);
+  
+  }
+  renderSortButton(){
+    return(
+      <div>
+        <button onClick = {this.onclickSort.bind(this,'score')}>평점순</button>
+        <button onClick = {this.onclickSort.bind(this,'dateAdded')}>날짜순</button>
+
+      </div>
+    )
+  }
 
   render() {
     return (
       <div>
         <h3>내 상품</h3>
+        {this.renderSortButton()}
         <ul>{this.renderList()}</ul>
       </div>
     );

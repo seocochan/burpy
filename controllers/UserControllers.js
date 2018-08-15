@@ -5,7 +5,7 @@ module.exports = {
     const sortWishlist = req.order ? req.order : 'wishlist.date';
     User.findById(req.user._id)
       .populate('wishlist.productId')
-      .sort(sortWishlist)
+      .sort({"wishlist.date" : -1})
       .exec((err, doc) => {
         res.send(doc.wishlist);
       });

@@ -18,6 +18,11 @@ import category from '../../assets/datas/productCategoryDict';
 class ProductReviews extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      dateSort : true,
+      scoreSort : false
+
+    }
 
     this.productId = props.productId;
     this.tasteNames = category[this.props.category].params;
@@ -84,8 +89,25 @@ class ProductReviews extends Component {
     }
   }
 
+  onClickSort(standard){
+    this.props.onSortChange(standard);
+    if(this.state.dateSort){
+      this.setState({
+        dateSort : false,
+        scoreSort : true
+      })
+    }
+    else{
+      this.setState({
+        dateSort : true,
+        scoreSort : false
+      })
+    }
+
+  }
+
   render() {
-    const { classes, onSortChange } = this.props;
+    const { classes } = this.props;
     this.hasReview = this.props.reviews.length != 0 ? true : false;
 
     return (
@@ -94,14 +116,21 @@ class ProductReviews extends Component {
           <Typography className={classes.title} variant="subheading">
             리뷰
           </Typography>
-          <Button classes={{ sizeSmall: classes.button }} size="small" onClick={() => onSortChange('score')}>
+          <Button 
+            classes={{ sizeSmall: classes.button }}
+            size="small" 
+            onClick={this.onClickSort.bind(this,'name')}
+            disabled={this.state.scoreSort}>
             평점순
           </Button>
           <Button
             classes={{ sizeSmall: classes.button }}
             size="small"
             color="primary"
-            onClick={() => onSortChange('dateAdded')}
+            onClick={
+              this.onClickSort.bind(this,'dateAdded')
+            }
+            disabled={this.state.dateSort}
           >
             최신순
           </Button>
