@@ -212,7 +212,7 @@ class NewProduct extends Component {
             color="primary"
             type="submit"
           >
-            <Send className={classes.icon} />
+            <Send className={classes.submitIcon} />
             등록하기
           </Button>
           {this.state.isDone && <Redirect to={`/product/${this.id}`} />}

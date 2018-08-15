@@ -1,14 +1,25 @@
 import React from 'react';
 import { TextField } from '@material-ui/core';
 
-export default ({ input, label, meta: { error, touched } }) => {
+export default ({ classes, input, label, meta: { error, touched } }) => {
   return (
     <div>
-      <label>{label}</label>
-      <TextField {...input} multiline rows="4" style={{ width: 400 }} />
-      <div className="red-text" style={{ marginBottom: '20px' }}>
-        {touched && error}
-      </div>
+      <TextField
+        className={classes.commentField}
+        autoComplete="off"
+        label={label}
+        multiline
+        rows="4"
+        error={touched && Boolean(error)}
+        InputProps={{
+          disableUnderline: true,
+          classes: {
+            inputMultiline: classes.commentInput
+          }
+        }}
+        InputLabelProps={{ shrink: true }}
+        {...input}
+      />
     </div>
   );
 };
