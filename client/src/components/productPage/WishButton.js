@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { IconButton, CircularProgress, Snackbar } from '@material-ui/core';
-import { Favorite, FavoriteBorder, CloseIcon } from '@material-ui/icons';
+import { Favorite, FavoriteBorder } from '@material-ui/icons';
 
 class ToggleButton extends Component {
   constructor(props) {
