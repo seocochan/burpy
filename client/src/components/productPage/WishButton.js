@@ -1,16 +1,17 @@
 import axios from 'axios';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { IconButton, CircularProgress } from '@material-ui/core';
+import { IconButton, CircularProgress, Snackbar } from '@material-ui/core';
 import { Favorite, FavoriteBorder } from '@material-ui/icons';
 
 class ToggleButton extends Component {
   constructor(props) {
     super(props);
-    this.state = { isToggleOn: null };
+    this.state = { isToggleOn: null, open: false };
 
     this.wishlist = [];
     this.handleClick = this.handleClick.bind(this, props.productId);
+    this.currentState = null;
   }
 
   componentDidMount() {
@@ -38,20 +39,40 @@ class ToggleButton extends Component {
   }
 
   async handleClick(id) {
-    if (this.state.isToggleOn) {
-      axios.post(`/api/wishlist/${id}`).then(res => {
-        this.setState(prevState => ({
-          isToggleOn: !prevState.isToggleOn
-        }));
-      });
+    const { isToggleOn } = this.state;
+    this.currentState = isToggleOn;
+    await this.setState({ isToggleOn: null });
+
+    if (this.currentState) {
+      await axios.post(`/api/wishlist/${id}`);
+      this.setState({ isToggleOn: !this.currentState });
     } else {
-      axios.delete(`/api/wishlist/${id}`).then(() => {
-        this.fetchWishlist();
-        this.setState(prevState => ({
-          isToggleOn: !prevState.isToggleOn
-        }));
-      });
+      await axios.delete(`/api/wishlist/${id}`);
+      this.fetchWishlist();
+      this.setState({ isToggleOn: !this.currentState });
     }
+
+    this.setState({ open: true });
+  }
+
+  renderSnackBar() {
+    const { open, isToggleOn } = this.state;
+
+    return (
+      <Snackbar
+        open={open}
+        autoHideDuration={1000}
+        onClose={() => this.setState({ open: false })}
+        ContentProps={{
+          'aria-describedby': 'message-id'
+        }}
+        message={
+          <span id="message-id">
+            {isToggleOn ? '찜 목록에서 제거!' : '찜 목록에 추가!'}
+          </span>
+        }
+      />
+    );
   }
 
   render() {
@@ -68,13 +89,17 @@ class ToggleButton extends Component {
     }
 
     return (
-      <IconButton
-        className={classes.iconButton}
-        size="large"
-        onClick={this.handleClick}
-      >
-        {icon}
-      </IconButton>
+      <Fragment>
+        <IconButton
+          className={classes.iconButton}
+          size="large"
+          onClick={this.handleClick}
+          disabled={isToggleOn == null}
+        >
+          {icon}
+        </IconButton>
+        {this.renderSnackBar()}
+      </Fragment>
     );
   }
 }

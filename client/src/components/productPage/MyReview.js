@@ -13,13 +13,16 @@ import {
   Paper,
   Typography,
   IconButton,
-  Button
+  Button,
+  CircularProgress,
+  Snackbar
 } from '@material-ui/core';
 import category from '../../assets/datas/productCategoryDict';
 
 class MyReview extends Component {
   constructor(props) {
     super(props);
+    this.state = { open: false, isPending: false };
 
     this.productId = props.productId;
     this.tasteNames = category[this.props.category].params;
@@ -29,15 +32,34 @@ class MyReview extends Component {
   }
 
   async handleDelete(id) {
+    await this.setState({ isPending: true });
     const res = await axios.delete(`/api/review/${id}`);
 
     if (res.status === 200) {
+      this.setState({ open: true, isPending: false });
       this.props.onDelete();
     }
   }
 
+  renderSnackBar() {
+    const { open } = this.state;
+
+    return (
+      <Snackbar
+        open={open}
+        autoHideDuration={1000}
+        onClose={() => this.setState({ open: false })}
+        ContentProps={{
+          'aria-describedby': 'message-id'
+        }}
+        message={<span id="message-id">리뷰를 삭제했습니다.</span>}
+      />
+    );
+  }
+
   renderMyReview() {
-    const { classes, myReview, category } = this.props;
+    const { classes, myReview } = this.props;
+    const { isPending } = this.state;
 
     const Content = () => (
       <Paper className={classes.content} elevation={0} square>
@@ -79,12 +101,18 @@ class MyReview extends Component {
           <ListItemSecondaryAction className={classes.buttonContainer}>
             <IconButton
               aria-label="Delete"
+              disabled={isPending}
               onClick={() => this.handleDelete(myReview._id)}
             >
-              <Delete className={classes.icon} />
+              {isPending ? (
+                <CircularProgress size={24} color="secondary" />
+              ) : (
+                <Delete className={classes.icon} />
+              )}
             </IconButton>
             <IconButton
               aria-label="Edit"
+              disabled={isPending}
               component={Link}
               to={`/edit/review/${this.reviewId}`}
             >
@@ -103,24 +131,30 @@ class MyReview extends Component {
 
     if (this.hasReview) {
       return (
-        <div className={classes.container}>
-          <Typography variant="subheading">내 리뷰</Typography>
-          {this.renderMyReview()}
-        </div>
+        <Fragment>
+          <div className={classes.container}>
+            <Typography variant="subheading">내 리뷰</Typography>
+            {this.renderMyReview()}
+          </div>
+          {this.renderSnackBar()}
+        </Fragment>
       );
     } else {
       return (
-        <div className={classes.container}>
-          <Button
-            className={classes.writeButton}
-            variant="outlined"
-            component={Link}
-            to={`/new/review/${this.productId}`}
-          >
-            <Create className={classes.writeIcon} />
-            리뷰 작성
-          </Button>
-        </div>
+        <Fragment>
+          <div className={classes.container}>
+            <Button
+              className={classes.writeButton}
+              variant="outlined"
+              component={Link}
+              to={`/new/review/${this.productId}`}
+            >
+              <Create className={classes.writeIcon} />
+              리뷰 작성
+            </Button>
+          </div>
+          {this.renderSnackBar()}
+        </Fragment>
       );
     }
   }
