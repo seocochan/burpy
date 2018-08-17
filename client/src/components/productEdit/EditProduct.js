@@ -130,7 +130,6 @@ class EditProduct extends Component {
   renderImageUpoader() {
     const { classes } = this.props;
     const { imageUrl } = this.state;
-    console.log(imageUrl);
 
     return (
       <div className={classes.inputContainer}>
