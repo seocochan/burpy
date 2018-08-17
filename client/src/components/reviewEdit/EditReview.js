@@ -8,7 +8,12 @@ import ScoreField from './ScoreField';
 import TasteField from './TasteField';
 import { withStyles } from '@material-ui/core/styles';
 import { Send } from '@material-ui/icons';
-import { Button, Typography, Divider } from '@material-ui/core';
+import {
+  Button,
+  Typography,
+  Divider,
+  CircularProgress
+} from '@material-ui/core';
 
 class EditReview extends Component {
   constructor(props) {
@@ -126,33 +131,45 @@ class EditReview extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, initialized } = this.props;
     const { product } = this.state;
-
-    if (!product) {
-      return <div />;
-    }
+    const loading = product == null || !initialized;
 
     return (
-      <div className={classes.container}>
-        <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
-          {this.renderScoreField()}
-          {this.renderTasteFields()}
-          <Divider />
-          {this.renderCommentField()}
-          <Button
-            className={classes.submitButton}
-            variant="contained"
-            size="large"
-            color="primary"
-            type="submit"
+      <Fragment>
+        {loading && (
+          <div className={classes.progressContainer}>
+            <CircularProgress />
+          </div>
+        )}
+
+        {product && (
+          <div
+            className={classes.container}
+            style={{ display: loading ? 'none' : 'block' }}
           >
-            <Send className={classes.submitIcon} />
-            등록하기
-          </Button>
-          {this.state.isDone && <Redirect to={`/product/${this.productId}`} />}
-        </form>
-      </div>
+            <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
+              {this.renderScoreField()}
+              {this.renderTasteFields()}
+              <Divider />
+              {this.renderCommentField()}
+              <Button
+                className={classes.submitButton}
+                variant="contained"
+                size="large"
+                color="primary"
+                type="submit"
+              >
+                <Send className={classes.submitIcon} />
+                등록하기
+              </Button>
+              {this.state.isDone && (
+                <Redirect to={`/product/${this.productId}`} />
+              )}
+            </form>
+          </div>
+        )}
+      </Fragment>
     );
   }
 }
@@ -163,6 +180,14 @@ const styles = theme => ({
     maxWidth: '1280px',
     margin: 'auto',
     marginTop: theme.spacing.unit * 2
+  },
+  progressContainer: {
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    height: '100%',
+    width: '100%',
+    zIndex: 9999
   },
   inputContainer: {
     marginTop: theme.spacing.unit * 2,
