@@ -14,7 +14,8 @@ import {
   Typography,
   ExpansionPanel,
   ExpansionPanelSummary,
-  ExpansionPanelDetails
+  ExpansionPanelDetails,
+  CircularProgress
 } from '@material-ui/core';
 import { Send, ExpandMore, Create } from '@material-ui/icons';
 import shopList from '../../assets/datas/productShopList';
@@ -35,6 +36,7 @@ class EditProduct extends Component {
     this.state = {
       file: null,
       imageUrl: null,
+      isPending: true,
       isDone: false
     };
 
@@ -52,6 +54,7 @@ class EditProduct extends Component {
       details
     });
     this.setState({ imageUrl });
+    this.setState({ isPending: false });
   }
 
   renderNameField() {
@@ -126,6 +129,8 @@ class EditProduct extends Component {
 
   renderImageUpoader() {
     const { classes } = this.props;
+    const { imageUrl } = this.state;
+    console.log(imageUrl);
 
     return (
       <div className={classes.inputContainer}>
@@ -139,7 +144,7 @@ class EditProduct extends Component {
           이 상품을 나타낼 수 있는 이미지를 한 장 등록할 수 있습니다.
         </Typography>
         <ImageUploader
-          imageUrl={this.state.imageUrl}
+          imageUrl={imageUrl}
           watchFile={file => this.setState({ file })}
         />
       </div>
@@ -226,32 +231,45 @@ class EditProduct extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, initialized } = this.props;
+    const { isPending } = this.state;
+    const loading = isPending || !initialized;
 
     return (
-      <div className={classes.container}>
-        <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
-          {this.renderNameField()}
-          {this.renderCategorySelect()}
-          <Divider />
-          {this.renderShopCheckBox()}
-          <Divider />
-          {this.renderImageUpoader()}
-          <Divider />
-          {this.renderDetailsEditor()}
-          <Button
-            className={classes.submitButton}
-            variant="contained"
-            size="large"
-            color="primary"
-            type="submit"
-          >
-            <Send className={classes.submitIcon} />
-            등록하기
-          </Button>
-          {this.state.isDone && <Redirect to={`/product/${this.id}`} />}
-        </form>
-      </div>
+      <Fragment>
+        {loading && (
+          <div className={classes.progressContainer}>
+            <CircularProgress />
+          </div>
+        )}
+
+        <div
+          className={classes.container}
+          style={{ display: loading ? 'none' : 'block' }}
+        >
+          <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
+            {this.renderNameField()}
+            {this.renderCategorySelect()}
+            <Divider />
+            {this.renderShopCheckBox()}
+            <Divider />
+            {this.renderImageUpoader()}
+            <Divider />
+            {this.renderDetailsEditor()}
+            <Button
+              className={classes.submitButton}
+              variant="contained"
+              size="large"
+              color="primary"
+              type="submit"
+            >
+              <Send className={classes.submitIcon} />
+              등록하기
+            </Button>
+            {this.state.isDone && <Redirect to={`/product/${this.id}`} />}
+          </form>
+        </div>
+      </Fragment>
     );
   }
 }
@@ -262,6 +280,14 @@ const styles = theme => ({
     maxWidth: '1280px',
     margin: 'auto',
     marginTop: theme.spacing.unit * 2
+  },
+  progressContainer: {
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    height: '100%',
+    width: '100%',
+    zIndex: 9999
   },
   inputContainer: {
     marginTop: theme.spacing.unit * 2,
