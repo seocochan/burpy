@@ -162,6 +162,14 @@ const fetchProduct = (Id, score,taste,count) =>
       if (!err) {
         console.log('doc1', doc);
         if (doc.length == 0) {
+          doc = {
+            id : '',
+            tasteavg1 : 0,
+            tasteavg2 : 0,
+            tasteavg3 : 0,
+            tasteavg4 : 0,
+            tasteavg5 : 0
+          }
           resolve(0);
         } else {
           resolve(doc);
@@ -217,7 +225,15 @@ const fetchProduct = (Id, score,taste,count) =>
       if (!err) {
         console.log('doc2', doc);
         if (doc.length == 0) {
-          resolve(0);
+          doc = {
+            id : '',
+            one : 0,
+            two : 0,
+            three : 0,
+            four : 0,
+            five : 0
+          }
+          resolve(doc);
         } else {
           resolve(doc);
         }

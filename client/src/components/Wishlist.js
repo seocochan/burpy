@@ -7,9 +7,12 @@ class Wishlist extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      wishlist: []
+      wishlist: [],
+      name : false,
+      date : true
     };
-    //this.onClickSort = this.onClickSort.bind(this);
+    this.nameSort = this.nameSort.bind(this);
+    this.dateSort = this.dateSort.bind(this);
   }
 
   fetchWishlist() {
@@ -27,22 +30,55 @@ class Wishlist extends Component {
     axios.delete(`/api/wishlist/${id}`).then(() => this.fetchWishlist());
   }
 
-  onClickSort() {
-    this.state.wishlist.sort( (a, b)=>{
-      if(a.productId.name > b.productId.name){
-        return 1;
-      }
-      if(a.productId.name < b.productId.name){
-        return -1;
-      }
-      return 0;
-    })
+  buttonOff(){
+    if(this.state.date){
+      this.setState({
+        date : false,
+        name : true
+      })
+    }
+    else{
+      this.setState({
+        date : true,
+        name : false
+      })
+    }
+  }
+
+  nameSort() {
+    this.setState(
+      this.state.wishlist.sort((a,b)=>{
+        if(a.productId.name > b.productId.name){
+          return 1;
+        }
+        if(a.productId.name < b.productId.name){
+          return -1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
+  }
+  dateSort() {
+    this.setState(
+      this.state.wishlist.sort((a,b)=>{
+        if(a.date > b.date){
+          return -1;
+        }
+        if(a.date < b.date){
+          return 1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
   }
 
   renderSortButtons() {
     return (
       <div>
-        <button onClick={this.onClickSort()}>이름순</button>
+        <button onClick={()=>this.nameSort()} disabled={this.state.name}>이름순</button>
+        <button onClick={()=>this.dateSort()} disabled={this.state.date}>날짜순</button>
       </div>
     );
   }

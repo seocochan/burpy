@@ -7,15 +7,19 @@ class MyProducts extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      reviews: []
+      reviews: [],
+      date : true,
+      score : false
      };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);
+    this.scoreSort = this.scoreSort.bind(this);
+    this.dateSort = this.dateSort.bind(this);
   }
 
   async componentDidMount() {
-    const reviews = await axios.get('api/review?order=dateAdded');
+    const reviews = await axios.get('api/review');
     this.setState( { reviews : reviews.data } );
   }
 
@@ -35,6 +39,50 @@ class MyProducts extends Component {
     this.props.history.push(`/edit/review/${id}`);
   }
 
+  buttonOff(){
+    if(this.state.date){
+      this.setState({
+        date : false,
+        score : true
+      })
+    }
+    else{
+      this.setState({
+        date : true,
+        score : false
+      })
+    }
+  }
+
+  scoreSort() {
+    this.setState(
+      this.state.reviews.sort((a,b)=>{
+        if(a.productId.name > b.productId.name){
+          return 1;
+        }
+        if(a.productId.name < b.productId.name){
+          return -1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
+  }
+  dateSort() {
+    this.setState(
+      this.state.reviews.sort((a,b)=>{
+        if(a.dateAdded > b.dateAdded){
+          return -1;
+        }
+        if(a.dateAdded < b.dateAdded){
+          return 1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
+  }
+
   renderList() {
     return _.map(this.state.reviews, item => {
       return (
@@ -50,17 +98,11 @@ class MyProducts extends Component {
       );
     });
   }
-  async onclickSort(standard){
-    const reviews = await axios.get(`/api/review?order=${standard}`);
-    this.setState( { reviews : reviews.data } );
-    console.log(reviews.data);
-  
-  }
   renderSortButton(){
     return(
       <div>
-        <button onClick = {this.onclickSort.bind(this,'score')}>평점순</button>
-        <button onClick = {this.onclickSort.bind(this,'dateAdded')}>날짜순</button>
+        <button onClick = {()=>this.scoreSort()} disabled={this.state.score}>평점순</button>
+        <button onClick = {()=>this.dateSort()} disabled={this.state.date}>날짜순</button>
 
       </div>
     )

@@ -4,6 +4,12 @@ import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
+import { withStyles } from '@material-ui/core/styles';
+import {Paper,Table} from '@material-ui/core';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import TableHead from '@material-ui/core/TableHead';
 
 class MyInfo extends Component {
   constructor(props) {
@@ -19,6 +25,8 @@ class MyInfo extends Component {
     });
   }
 
+
+
   renderEditButton() {
     return (
       <IconButton
@@ -32,23 +40,49 @@ class MyInfo extends Component {
   }
   render() {
     const { info } = this.state;
+    const {classes} = this.props;
 
     return (
-      <div>
-        <li>이름 : {info.name}</li>
-        <br />
-        <li>
-          성별 : {info.gender == null ? '추가로 입력하세요.' : info.gender}
-        </li>
-        <br />
-        <li>
-          생일 : {info.birthday == null ? '추가로 입력하세요.' : info.birthday}
-        </li>
-        <br />
+      <div className = {classes.container}>
+        <Paper className = {classes.paperSize}>
+          <Table className = {classes.userInfo}>
+            <TableBody>
+              <TableRow>
+                <TableCell>이름</TableCell>
+                <TableCell>{info.name}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>성별</TableCell>
+                <TableCell>{info.gender==null ? '추가로 입력하세요' : info.gender}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>생일</TableCell>
+                <TableCell>{info.birthday==null ? '추가로 입력하세요' : info.birthday}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
         <p>{this.renderEditButton()}</p>
       </div>
     );
   }
 }
 
-export default MyInfo;
+const styles = theme =>({
+  container : {
+    justifyContent : 'center',
+    width : '100%',
+    margin : 'auto',
+    maxWidth : '960px'
+  },
+  paperSize : {
+    padding : theme.spacing.unit
+  },
+  userInfo : {
+    fontSize : 20,
+    padding : 'center'
+  }
+
+})
+
+export default withStyles(styles)(MyInfo);
