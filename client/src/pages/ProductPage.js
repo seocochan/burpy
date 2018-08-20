@@ -23,7 +23,6 @@ class ProductPage extends Component {
 
   componentDidMount() {
     const { id } = this.props.match.params;
-
     this.fetchData(id);
   }
 
@@ -43,7 +42,9 @@ class ProductPage extends Component {
     this.setState({ product: product.data });
 
     const myReview = await axios.get(`/api/product/${productId}/my_review`);
-    const reviews = await axios.get(`/api/product/${productId}/reviews`);
+    const reviews = await axios.get(
+      `/api/product/${productId}/reviews?order=dateAdded`
+    );
     this.setState({ myReview: myReview.data, reviews: reviews.data });
   }
 
@@ -73,6 +74,13 @@ class ProductPage extends Component {
             productId={productId}
             category={product.category}
             reviews={reviews}
+            onSortChange={async sort => {
+              const reviews = await axios.get(
+                `/api/product/${productId}/reviews?order=${sort}`
+              );
+              console.log('call');
+              this.setState({ reviews: reviews.data });
+            }}
           />
         </Fragment>
       )
