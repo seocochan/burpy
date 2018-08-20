@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Home, ThumbUp, LocalBar, AccountCircle } from '@material-ui/icons';
+import LogoIcon from './LogoIcon';
 
 class Header extends Component {
   state = {
@@ -110,7 +111,11 @@ class Header extends Component {
               to="/"
               style={{ marginLeft: 8 }}
             >
-              BURPY
+              <LogoIcon
+                width={110}
+                height={28}
+                color={'#f0ecdf'}
+              />
             </Typography>
             <Hidden xsDown implementation="css">
               <Button color="secondary" component={Link} to="/recommend">
