@@ -11,13 +11,15 @@ import {
   Paper,
   Typography,
   IconButton,
-  Button
+  Button,
+  CircularProgress
 } from '@material-ui/core';
 import category from '../../assets/datas/productCategoryDict';
 
 class ProductReviews extends Component {
   constructor(props) {
     super(props);
+    this.state = { sort: props.recentSort };
 
     this.productId = props.productId;
     this.tasteNames = category[this.props.category].params;
@@ -85,8 +87,17 @@ class ProductReviews extends Component {
     }
   }
 
+  onClickSort(standard) {
+    const { onSortChange } = this.props;
+
+    onSortChange(standard);
+    this.setState({ sort: standard });
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, nextReviews = [], onClickMore, isPending } = this.props;
+    const { sort } = this.state;
+
     this.hasReview = this.props.reviews.length != 0 ? true : false;
 
     return (
@@ -95,13 +106,20 @@ class ProductReviews extends Component {
           <Typography className={classes.title} variant="subheading">
             리뷰
           </Typography>
-          <Button classes={{ sizeSmall: classes.button }} size="small">
+          <Button
+            classes={{ sizeSmall: classes.button }}
+            size="small"
+            disabled={sort === 'score'}
+            onClick={this.onClickSort.bind(this, 'score')}
+          >
             평점순
           </Button>
           <Button
             classes={{ sizeSmall: classes.button }}
             size="small"
             color="primary"
+            disabled={sort === 'dateAdded'}
+            onClick={this.onClickSort.bind(this, 'dateAdded')}
           >
             최신순
           </Button>
@@ -109,6 +127,24 @@ class ProductReviews extends Component {
         <List className={classes.list} dense>
           {this.renderReviews()}
         </List>
+        {nextReviews.length !== 0 ? (
+          <Button
+            className={classes.loadMoreButton}
+            variant="outlined"
+            onClick={() => onClickMore()}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <CircularProgress size={20} />
+            ) : (
+              '리뷰 더 보기'
+            )}
+          </Button>
+        ) : (
+          <Button className={classes.loadMoreButton} disabled>
+            이게 다예요.
+          </Button>
+        )}
       </div>
     );
   }
@@ -116,6 +152,8 @@ class ProductReviews extends Component {
 
 const styles = theme => ({
   container: {
+    display: 'flex',
+    flexDirection: 'column',
     margin: theme.spacing.unit
   },
   titleContainer: {
@@ -147,6 +185,14 @@ const styles = theme => ({
   },
   icon: {
     fontSize: 20
+  },
+  loadMoreButton: {
+    width: '70%',
+    maxWidth: 600,
+    height: 20,
+    margin: 'auto',
+    marginTop: theme.spacing.unit * 4,
+    marginBottom: theme.spacing.unit * 4
   }
 });
 
