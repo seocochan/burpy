@@ -94,7 +94,7 @@ class ProductReviews extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, nextReviews = [], onClickMore } = this.props;
     const { sort } = this.state;
 
     this.hasReview = this.props.reviews.length != 0 ? true : false;
@@ -126,6 +126,20 @@ class ProductReviews extends Component {
         <List className={classes.list} dense>
           {this.renderReviews()}
         </List>
+        {nextReviews.length !== 0 ? (
+          <Button
+            className={classes.loadMoreButton}
+            variant="outlined"
+            onClick={() => onClickMore()}
+            disabled={false}
+          >
+            리뷰 더 보기
+          </Button>
+        ) : (
+          <Button className={classes.loadMoreButton} disabled>
+            이게 다예요.
+          </Button>
+        )}
       </div>
     );
   }
@@ -133,6 +147,8 @@ class ProductReviews extends Component {
 
 const styles = theme => ({
   container: {
+    display: 'flex',
+    flexDirection: 'column',
     margin: theme.spacing.unit
   },
   titleContainer: {
@@ -164,6 +180,13 @@ const styles = theme => ({
   },
   icon: {
     fontSize: 20
+  },
+  loadMoreButton: {
+    width: '70%',
+    maxWidth: 600,
+    margin: 'auto',
+    marginTop: theme.spacing.unit * 4,
+    marginBottom: theme.spacing.unit * 4
   }
 });
 

@@ -160,11 +160,16 @@ module.exports = {
   fetchProductReviews(req, res) {
     const productId = req.params.id;
     const userId = req.user._id;
-    const { order = 'dateAdded' } = req.query;
+    const { query } = req;
+    const { order = 'dateAdded' } = query;
+    const count = parseInt(query.count),
+      size = parseInt(query.size);
 
     Review.find({ productId, userId: { $ne: userId } })
       .populate('userId')
       .sort({ [order]: -1 })
+      .skip(size * (count === 1 ? 0 : count))
+      .limit(parseInt(size))
       .exec((err, doc) => {
         if (err) {
           res.status(404).send('조회 실패');

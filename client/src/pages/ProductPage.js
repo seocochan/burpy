@@ -10,6 +10,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { Tabs, Tab, Paper, Divider } from '@material-ui/core';
 import { InfoOutline, Toc } from '@material-ui/icons';
 
+const SIZE_UNIT = 2;
+
 class ProductPage extends Component {
   constructor(props) {
     super(props);
@@ -17,10 +19,15 @@ class ProductPage extends Component {
       product: null,
       myReview: {},
       reviews: [],
+      nextReviews: [],
       tab: 'product'
     };
 
     this.recentSort = 'dateAdded';
+    this.reviewSize = SIZE_UNIT * 2;
+    this.reviewCount = 1;
+    this.fetchMoreReviews = this.fetchMoreReviews.bind(this);
+    this.handleReviewSortChange = this.handleReviewSortChange.bind(this);
   }
 
   componentDidMount() {
@@ -34,9 +41,16 @@ class ProductPage extends Component {
     // 검색바를 통해 product 라우터의 id만 바뀐 경우,
     // 현재 state를 초기화 하고 다시 fetching
     if (id !== this.props.match.params.id) {
-      this.setState({ product: null, myReview: {}, reviews: [] });
+      this.setState({
+        product: null,
+        myReview: {},
+        reviews: [],
+        nextReviews: []
+      });
       this.fetchData(id);
       this.recentSort = 'dateAdded';
+      this.reviewSize = SIZE_UNIT * 2;
+      this.reviewCount = 1;
     }
   }
 
@@ -46,9 +60,54 @@ class ProductPage extends Component {
 
     const myReview = await axios.get(`/api/product/${productId}/my_review`);
     const reviews = await axios.get(
-      `/api/product/${productId}/reviews?order=dateAdded`
+      `/api/product/${productId}/reviews?order=${this.recentSort}&size=${
+        this.reviewSize
+      }&count=${this.reviewCount}`
     );
-    this.setState({ myReview: myReview.data, reviews: reviews.data });
+    this.setState({
+      myReview: myReview.data,
+      reviews: reviews.data.slice(0, SIZE_UNIT),
+      nextReviews: reviews.data.slice(SIZE_UNIT)
+    });
+
+    this.reviewSize = SIZE_UNIT;
+    this.reviewCount++;
+  }
+
+  async fetchMoreReviews() {
+    const { id: productId } = this.props.match.params;
+    const { reviews, nextReviews } = this.state;
+
+    await this.setState({ reviews: [...reviews, ...nextReviews] });
+    const res = await axios.get(
+      `/api/product/${productId}/reviews?order=${this.recentSort}&size=${
+        this.reviewSize
+      }&count=${this.reviewCount}`
+    );
+    await this.setState({ nextReviews: res.data });
+
+    this.reviewSize = SIZE_UNIT;
+    this.reviewCount++;
+  }
+
+  async handleReviewSortChange(standard) {
+    const { id: productId } = this.props.match.params;
+    this.recentSort = standard;
+    this.reviewSize = SIZE_UNIT * 2;
+    this.reviewCount = 1;
+
+    const reviews = await axios.get(
+      `/api/product/${productId}/reviews?order=${standard}&size=${
+        this.reviewSize
+      }&count=${this.reviewCount}`
+    );
+    this.setState({
+      reviews: reviews.data.slice(0, SIZE_UNIT),
+      nextReviews: reviews.data.slice(SIZE_UNIT)
+    });
+
+    this.reviewSize = SIZE_UNIT;
+    this.reviewCount++;
   }
 
   handleTabChange = (event, value) => {
@@ -60,7 +119,7 @@ class ProductPage extends Component {
   }
 
   renderReviewTab(productId) {
-    const { product, myReview, reviews } = this.state;
+    const { product, myReview, reviews, nextReviews } = this.state;
 
     return (
       product && (
@@ -77,14 +136,10 @@ class ProductPage extends Component {
             productId={productId}
             category={product.category}
             reviews={reviews}
+            nextReviews={nextReviews}
             recentSort={this.recentSort}
-            onSortChange={async standard => {
-              this.recentSort = standard;
-              const reviews = await axios.get(
-                `/api/product/${productId}/reviews?order=${standard}`
-              );
-              this.setState({ reviews: reviews.data });
-            }}
+            onSortChange={this.handleReviewSortChange}
+            onClickMore={this.fetchMoreReviews}
           />
         </Fragment>
       )
