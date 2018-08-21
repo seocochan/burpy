@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import axios from 'axios';
 import queryString from 'qs';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import category from '../assets/datas/productCategoryDict';
 import ProductCard from '../components/ProductCard';
 import { connect } from 'react-redux';
@@ -17,7 +17,8 @@ import {
   Typography,
   Divider,
   Grid,
-  Zoom
+  Zoom,
+  CircularProgress
 } from '@material-ui/core';
 
 const SIZE_UNIT = 10;
@@ -25,8 +26,9 @@ const SIZE_UNIT = 10;
 class SearchResultPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { nextData: [], isPending: true };
+    this.state = { nextData: [], isPending: true, isInitFetchDone: false };
 
+    this.isInitFetchDone = false;
     this.size = SIZE_UNIT * 2;
     this.count = 1;
 
@@ -45,10 +47,14 @@ class SearchResultPage extends Component {
 
   async fetchMoreSearchItems(query, isInit = false) {
     const { fetchSearchItems, searchResult } = this.props;
-    const { nextData } = this.state;
+    const { nextData, isInitFetchDone } = this.state;
 
     // 컴포넌트 마운트 or 정렬, 필터, 키워드가 바뀐 경우
     if (isInit) {
+      if (isInitFetchDone) {
+        await this.setState({ isInitFetchDone: false });
+      }
+
       if (nextData.length !== 0) {
         // cdm 없이 첫번째 검색이 발생한 경우. pending
         await this.setState({ nextData: [] });
@@ -60,7 +66,10 @@ class SearchResultPage extends Component {
         `/api/search_result${query}&size=${this.size}&count=${this.count}`
       );
       fetchSearchItems(res.data.slice(0, SIZE_UNIT));
-      await this.setState({ nextData: res.data.slice(SIZE_UNIT) });
+      await this.setState({
+        isInitFetchDone: true,
+        nextData: res.data.slice(SIZE_UNIT)
+      });
     }
     // 더보기 버튼을 클릭한 경우
     else {
@@ -216,7 +225,7 @@ class SearchResultPage extends Component {
 
   render() {
     const { classes } = this.props;
-    const { nextData, isPending } = this.state;
+    const { nextData, isPending, isInitFetchDone } = this.state;
 
     return (
       <div className={classes.container}>
@@ -244,25 +253,36 @@ class SearchResultPage extends Component {
           </Button>
         </div>
         <Divider />
-        <div className={classes.productsSection}>
-          <Grid container spacing={8}>
-            {this.renderList()}
-          </Grid>
-          {nextData.length !== 0 ? (
-            <Button
-              className={classes.loadMoreButton}
-              variant="outlined"
-              onClick={() => this.fetchMoreSearchItems(this.query)}
-              disabled={isPending}
-            >
-              더 보기
-            </Button>
-          ) : (
-            <Button className={classes.loadMoreButton} disabled>
-              이게 다예요.
-            </Button>
+        <Fragment>
+          {!isInitFetchDone && (
+            <div className={classes.progressContainer}>
+              <CircularProgress />
+            </div>
           )}
-        </div>
+
+          <div
+            className={classes.productsSection}
+            style={{ display: !isInitFetchDone ? 'none' : 'flex' }}
+          >
+            <Grid container spacing={8}>
+              {this.renderList()}
+            </Grid>
+            {nextData.length !== 0 ? (
+              <Button
+                className={classes.loadMoreButton}
+                variant="outlined"
+                onClick={() => this.fetchMoreSearchItems(this.query)}
+                disabled={isPending}
+              >
+                {isPending ? <CircularProgress size={20} /> : '결과 더 보기'}
+              </Button>
+            ) : (
+              <Button className={classes.loadMoreButton} disabled>
+                이게 다예요.
+              </Button>
+            )}
+          </div>
+        </Fragment>
       </div>
     );
   }
@@ -284,6 +304,14 @@ const styles = theme => ({
     display: 'flex',
     marginRight: 'auto'
   },
+  progressContainer: {
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    height: '100%',
+    width: '100%',
+    zIndex: 9999
+  },
   productsSection: {
     display: 'flex',
     flexDirection: 'column',
@@ -292,6 +320,7 @@ const styles = theme => ({
   loadMoreButton: {
     width: '70%',
     maxWidth: 600,
+    height: 20,
     margin: 'auto',
     marginTop: theme.spacing.unit * 4,
     marginBottom: theme.spacing.unit * 4
