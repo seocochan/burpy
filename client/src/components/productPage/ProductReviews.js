@@ -18,10 +18,7 @@ import category from '../../assets/datas/productCategoryDict';
 class ProductReviews extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      dateSort: true,
-      scoreSort: false
-    };
+    this.state = { sort: 'dateAdded' };
 
     this.productId = props.productId;
     this.tasteNames = category[this.props.category].params;
@@ -91,26 +88,14 @@ class ProductReviews extends Component {
 
   onClickSort(standard) {
     const { onSortChange } = this.props;
-    const { dateSort } = this.state;
 
     onSortChange(standard);
-
-    if (dateSort) {
-      this.setState({
-        dateSort: false,
-        scoreSort: true
-      });
-    } else {
-      this.setState({
-        dateSort: true,
-        scoreSort: false
-      });
-    }
+    this.setState({ sort: standard });
   }
 
   render() {
     const { classes } = this.props;
-    const { dateSort, scoreSort } = this.state;
+    const { sort } = this.state;
 
     this.hasReview = this.props.reviews.length != 0 ? true : false;
 
@@ -123,7 +108,7 @@ class ProductReviews extends Component {
           <Button
             classes={{ sizeSmall: classes.button }}
             size="small"
-            disabled={scoreSort}
+            disabled={sort === 'score'}
             onClick={this.onClickSort.bind(this, 'score')}
           >
             평점순
@@ -132,7 +117,7 @@ class ProductReviews extends Component {
             classes={{ sizeSmall: classes.button }}
             size="small"
             color="primary"
-            disabled={dateSort}
+            disabled={sort === 'dateAdded'}
             onClick={this.onClickSort.bind(this, 'dateAdded')}
           >
             최신순
