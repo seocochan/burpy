@@ -19,6 +19,8 @@ class ProductPage extends Component {
       reviews: [],
       tab: 'product'
     };
+
+    this.recentSort = 'dateAdded';
   }
 
   componentDidMount() {
@@ -34,6 +36,7 @@ class ProductPage extends Component {
     if (id !== this.props.match.params.id) {
       this.setState({ product: null, myReview: {}, reviews: [] });
       this.fetchData(id);
+      this.recentSort = 'dateAdded';
     }
   }
 
@@ -74,11 +77,12 @@ class ProductPage extends Component {
             productId={productId}
             category={product.category}
             reviews={reviews}
-            onSortChange={async sort => {
+            recentSort={this.recentSort}
+            onSortChange={async standard => {
+              this.recentSort = standard;
               const reviews = await axios.get(
-                `/api/product/${productId}/reviews?order=${sort}`
+                `/api/product/${productId}/reviews?order=${standard}`
               );
-              console.log('call');
               this.setState({ reviews: reviews.data });
             }}
           />

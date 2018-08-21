@@ -18,7 +18,7 @@ import category from '../../assets/datas/productCategoryDict';
 class ProductReviews extends Component {
   constructor(props) {
     super(props);
-    this.state = { sort: 'dateAdded' };
+    this.state = { sort: props.recentSort };
 
     this.productId = props.productId;
     this.tasteNames = category[this.props.category].params;
