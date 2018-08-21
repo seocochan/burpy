@@ -11,7 +11,8 @@ import {
   Paper,
   Typography,
   IconButton,
-  Button
+  Button,
+  CircularProgress
 } from '@material-ui/core';
 import category from '../../assets/datas/productCategoryDict';
 
@@ -94,7 +95,7 @@ class ProductReviews extends Component {
   }
 
   render() {
-    const { classes, nextReviews = [], onClickMore } = this.props;
+    const { classes, nextReviews = [], onClickMore, isPending } = this.props;
     const { sort } = this.state;
 
     this.hasReview = this.props.reviews.length != 0 ? true : false;
@@ -131,9 +132,13 @@ class ProductReviews extends Component {
             className={classes.loadMoreButton}
             variant="outlined"
             onClick={() => onClickMore()}
-            disabled={false}
+            disabled={isPending}
           >
-            리뷰 더 보기
+            {isPending ? (
+              <CircularProgress size={20} />
+            ) : (
+              '리뷰 더 보기'
+            )}
           </Button>
         ) : (
           <Button className={classes.loadMoreButton} disabled>
@@ -184,6 +189,7 @@ const styles = theme => ({
   loadMoreButton: {
     width: '70%',
     maxWidth: 600,
+    height: 20,
     margin: 'auto',
     marginTop: theme.spacing.unit * 4,
     marginBottom: theme.spacing.unit * 4

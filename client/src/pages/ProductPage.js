@@ -20,6 +20,7 @@ class ProductPage extends Component {
       myReview: {},
       reviews: [],
       nextReviews: [],
+      isReviewsPending: true,
       tab: 'product'
     };
 
@@ -45,8 +46,10 @@ class ProductPage extends Component {
         product: null,
         myReview: {},
         reviews: [],
-        nextReviews: []
+        nextReviews: [],
+        isReviewsPending: true
       });
+
       this.fetchData(id);
       this.recentSort = 'dateAdded';
       this.reviewSize = SIZE_UNIT * 2;
@@ -64,10 +67,12 @@ class ProductPage extends Component {
         this.reviewSize
       }&count=${this.reviewCount}`
     );
+
     this.setState({
       myReview: myReview.data,
       reviews: reviews.data.slice(0, SIZE_UNIT),
-      nextReviews: reviews.data.slice(SIZE_UNIT)
+      nextReviews: reviews.data.slice(SIZE_UNIT),
+      isReviewsPending: false
     });
 
     this.reviewSize = SIZE_UNIT;
@@ -78,13 +83,17 @@ class ProductPage extends Component {
     const { id: productId } = this.props.match.params;
     const { reviews, nextReviews } = this.state;
 
-    await this.setState({ reviews: [...reviews, ...nextReviews] });
+    await this.setState({
+      reviews: [...reviews, ...nextReviews],
+      isReviewsPending: true
+    });
+
     const res = await axios.get(
       `/api/product/${productId}/reviews?order=${this.recentSort}&size=${
         this.reviewSize
       }&count=${this.reviewCount}`
     );
-    await this.setState({ nextReviews: res.data });
+    await this.setState({ nextReviews: res.data, isReviewsPending: false });
 
     this.reviewSize = SIZE_UNIT;
     this.reviewCount++;
@@ -96,6 +105,7 @@ class ProductPage extends Component {
     this.reviewSize = SIZE_UNIT * 2;
     this.reviewCount = 1;
 
+    await this.setState({ isReviewsPending: true });
     const reviews = await axios.get(
       `/api/product/${productId}/reviews?order=${standard}&size=${
         this.reviewSize
@@ -103,7 +113,8 @@ class ProductPage extends Component {
     );
     this.setState({
       reviews: reviews.data.slice(0, SIZE_UNIT),
-      nextReviews: reviews.data.slice(SIZE_UNIT)
+      nextReviews: reviews.data.slice(SIZE_UNIT),
+      isReviewsPending: false
     });
 
     this.reviewSize = SIZE_UNIT;
@@ -119,7 +130,13 @@ class ProductPage extends Component {
   }
 
   renderReviewTab(productId) {
-    const { product, myReview, reviews, nextReviews } = this.state;
+    const {
+      product,
+      myReview,
+      reviews,
+      nextReviews,
+      isReviewsPending
+    } = this.state;
 
     return (
       product && (
@@ -140,6 +157,7 @@ class ProductPage extends Component {
             recentSort={this.recentSort}
             onSortChange={this.handleReviewSortChange}
             onClickMore={this.fetchMoreReviews}
+            isPending={isReviewsPending}
           />
         </Fragment>
       )
