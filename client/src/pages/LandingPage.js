@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography, Button } from '@material-ui/core';
 import backgroundImage from '../assets/images/landing-background.jpg';
+import cameraImage from '../assets/images/camera.png';
+import shareImage from '../assets/images/share.png';
+import ideaImage from '../assets/images/idea.png';
 
 class LandingPage extends Component {
   render() {
@@ -59,24 +62,138 @@ class LandingPage extends Component {
         <div className={classes.details} id="details">
           <div className={classes.info}>
             <div className={classes.infoTitle}>
-              <Typography variant="display1">기능 타이틀</Typography>
-              <Typography variant="headline">기능 설명</Typography>
+              <Typography variant="display1" gutterBottom>
+                사진을 찍고 상품을 찾으세요
+              </Typography>
+              <Typography variant="headline">
+                모바일 앱을 통해 음료의 사진을 찍으세요! 똑똑한 Burpy가
+                찾아드립니다.
+              </Typography>
             </div>
-            <div className={classes.infoImage}>기능 이미지</div>
+            <div className={classes.infoImageFrame}>
+              <img
+                className={classes.infoImage}
+                src={cameraImage}
+                height="100%"
+              />
+              <Typography variant="caption">
+                Icons made by{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="https://www.flaticon.com/authors/smartline"
+                  title="Smartline"
+                >
+                  Smartline
+                </a>{' '}
+                from{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="https://www.flaticon.com/"
+                  title="Flaticon"
+                >
+                  www.flaticon.com
+                </a>{' '}
+                is licensed by{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="http://creativecommons.org/licenses/by/3.0/"
+                  title="Creative Commons BY 3.0"
+                  target="_blank"
+                >
+                  CC 3.0 BY
+                </a>
+              </Typography>
+            </div>
+          </div>
+          <div className={classes.infoEven}>
+            <div className={classes.infoTitle}>
+              <Typography variant="display1" gutterBottom>
+                정보를 공유하세요
+              </Typography>
+              <Typography variant="headline">
+                찾는 상품이 없나요? 상품을 직접 등록해보세요. Burpy는 여러분들의
+                참여로 만들어집니다.
+              </Typography>
+            </div>
+            <div className={classes.infoImageFrame}>
+              <img
+                className={classes.infoImage}
+                src={shareImage}
+                height="100%"
+              />
+              <Typography variant="caption">
+                Icons made by{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="https://www.flaticon.com/authors/mynamepong"
+                  title="mynamepong"
+                >
+                  mynamepong
+                </a>{' '}
+                from{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="https://www.flaticon.com/"
+                  title="Flaticon"
+                >
+                  www.flaticon.com
+                </a>{' '}
+                is licensed by{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="http://creativecommons.org/licenses/by/3.0/"
+                  title="Creative Commons BY 3.0"
+                  target="_blank"
+                >
+                  CC 3.0 BY
+                </a>
+              </Typography>
+            </div>
           </div>
           <div className={classes.info}>
             <div className={classes.infoTitle}>
-              <Typography variant="display1">기능 타이틀</Typography>
-              <Typography variant="headline">기능 설명</Typography>
+              <Typography variant="display1" gutterBottom>
+                당신의 취향을 분석합니다
+              </Typography>
+              <Typography variant="headline">
+                한잔 하신 후엔 리뷰를 등록해보세요. Burpy의 인공지능이 취향을
+                분석하고 좋아하실 만한 상품을 추천해드립니다.
+              </Typography>
             </div>
-            <div className={classes.infoImage}>기능 이미지</div>
-          </div>
-          <div className={classes.info}>
-            <div className={classes.infoTitle}>
-              <Typography variant="display1">기능 타이틀</Typography>
-              <Typography variant="headline">기능 설명</Typography>
+            <div className={classes.infoImageFrame}>
+              <img
+                className={classes.infoImage}
+                src={ideaImage}
+                height="100%"
+              />
+              <Typography variant="caption">
+                Icons made by{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="https://www.flaticon.com/authors/vectors-market"
+                  title="Vectors Market"
+                >
+                  Vectors Market
+                </a>{' '}
+                from{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="https://www.flaticon.com/"
+                  title="Flaticon"
+                >
+                  www.flaticon.com
+                </a>{' '}
+                is licensed by{' '}
+                <a
+                  className={classes.licenseLink}
+                  href="http://creativecommons.org/licenses/by/3.0/"
+                  title="Creative Commons BY 3.0"
+                  target="_blank"
+                >
+                  CC 3.0 BY
+                </a>
+              </Typography>
             </div>
-            <div className={classes.infoImage}>기능 이미지</div>
           </div>
         </div>
       </div>
@@ -166,7 +283,8 @@ const styles = theme => ({
   },
   info: {
     display: 'flex',
-    minHeight: 320,
+    minHeight: 300,
+    marginBottom: theme.spacing.unit * 10,
     justifyContent: 'space-between',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
@@ -176,8 +294,48 @@ const styles = theme => ({
       flexDirection: 'row'
     }
   },
-  infoTitle: {},
-  infoImage: {}
+  infoEven: {
+    display: 'flex',
+    minHeight: 300,
+    marginBottom: theme.spacing.unit * 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    },
+    [theme.breakpoints.up('md')]: {
+      flexDirection: 'row-reverse'
+    }
+  },
+  infoTitle: {
+    [theme.breakpoints.down('sm')]: {
+      textAlign: 'center',
+      marginBottom: theme.spacing.unit * 2
+    },
+    [theme.breakpoints.up('md')]: {
+      textAlign: 'left',
+      width: '66.6667%'
+    }
+  },
+  infoImageFrame: {
+    height: 224,
+    textAlign: 'center',
+    [theme.breakpoints.down('sm')]: {
+      width: '75%'
+    },
+    [theme.breakpoints.up('md')]: {
+      width: '25%'
+    }
+  },
+  infoImage: {
+    display: 'block',
+    margin: 'auto',
+    marginBottom: 2
+  },
+  licenseLink: {
+    color: 'inherit',
+    textDecoration: 'none'
+  }
 });
 
 export default withStyles(styles)(LandingPage);
