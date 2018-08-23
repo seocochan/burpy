@@ -7,7 +7,6 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
   Divider,
   AppBar,
@@ -20,7 +19,7 @@ import {
   Hidden
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Home, ThumbUp, LocalBar, AccountCircle } from '@material-ui/icons';
+import { ThumbUp, LocalBar, AccountCircle } from '@material-ui/icons';
 import LogoIcon from './LogoIcon';
 
 class Header extends Component {
@@ -50,59 +49,63 @@ class Header extends Component {
 
   render() {
     const { classes, auth } = this.props;
-    const { drawer, anchorEl, value } = this.state;
+    const { drawer, anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
     return (
       <div className={classes.root}>
-        <Drawer open={drawer} onClose={this.toggleDrawer(false)}>
-          <div
-            tabIndex={0}
-            role="button"
-            onClick={this.toggleDrawer(false)}
-            onKeyDown={this.toggleDrawer(false)}
-          >
-            <List>
-              <div className={classes.drawerList}>
-                <ListItem button component={Link} to="/recommend">
-                  <ListItemIcon>
-                    <ThumbUp className={classes.icon} />
-                  </ListItemIcon>
-                  추천음료
-                </ListItem>
-                <ListItem button component={Link} to="/my-products">
-                  <ListItemIcon>
-                    <LocalBar className={classes.icon} />
-                  </ListItemIcon>
-                  마이바
-                </ListItem>
-                <Divider />
-                <ListItem button component={Link} to="/my-info">
-                  내 정보
-                </ListItem>
-                <ListItem button component={Link} to="/wishlist">
-                  찜 목록
-                </ListItem>
-                <ListItem button component="a" href="/api/logout">
-                  로그아웃
-                </ListItem>
-              </div>
-            </List>
-          </div>
-        </Drawer>
+        {auth && (
+          <Drawer open={drawer} onClose={this.toggleDrawer(false)}>
+            <div
+              tabIndex={0}
+              role="button"
+              onClick={this.toggleDrawer(false)}
+              onKeyDown={this.toggleDrawer(false)}
+            >
+              <List>
+                <div className={classes.drawerList}>
+                  <ListItem button component={Link} to="/recommend">
+                    <ListItemIcon>
+                      <ThumbUp className={classes.icon} />
+                    </ListItemIcon>
+                    추천음료
+                  </ListItem>
+                  <ListItem button component={Link} to="/my-products">
+                    <ListItemIcon>
+                      <LocalBar className={classes.icon} />
+                    </ListItemIcon>
+                    마이바
+                  </ListItem>
+                  <Divider />
+                  <ListItem button component={Link} to="/my-info">
+                    내 정보
+                  </ListItem>
+                  <ListItem button component={Link} to="/wishlist">
+                    찜 목록
+                  </ListItem>
+                  <ListItem button component="a" href="/api/logout">
+                    로그아웃
+                  </ListItem>
+                </div>
+              </List>
+            </div>
+          </Drawer>
+        )}
         <AppBar position="fixed">
           <Toolbar classes={{ root: classes.toolbar }} disableGutters>
-            <Hidden smUp implementation="css">
-              <IconButton
-                style={{ margin: 0 }}
-                className={classes.drawerButton}
-                color="inherit"
-                aria-label="Menu"
-                onClick={this.toggleDrawer(true)}
-              >
-                <MenuIcon />
-              </IconButton>
-            </Hidden>
+            {auth && (
+              <Hidden smUp implementation="css">
+                <IconButton
+                  style={{ margin: 0 }}
+                  className={classes.drawerButton}
+                  color="inherit"
+                  aria-label="Menu"
+                  onClick={this.toggleDrawer(true)}
+                >
+                  <MenuIcon />
+                </IconButton>
+              </Hidden>
+            )}
             <Typography
               variant="title"
               color="inherit"
@@ -111,73 +114,82 @@ class Header extends Component {
               to="/"
               style={{ marginLeft: 8 }}
             >
-              <LogoIcon
-                width={110}
-                height={28}
-                color={'#f0ecdf'}
-              />
+              <LogoIcon width={110} height={28} color={'#f0ecdf'} />
             </Typography>
-            <Hidden xsDown implementation="css">
-              <Button color="secondary" component={Link} to="/recommend">
-                <ThumbUp className={classes.icon} />
-                추천음료
-              </Button>
-              <Button color="secondary" component={Link} to="/my-products">
-                <LocalBar className={classes.icon} />
-                마이바
-              </Button>
-            </Hidden>
-            <SearchBar />
-            <Hidden xsDown implementation="css">
-              {auth && (
-                <div>
-                  <IconButton
-                    aria-owns={open ? 'menu-appbar' : null}
-                    aria-haspopup="true"
-                    onClick={this.handleMenu}
-                    color="inherit"
-                  >
-                    <AccountCircle />
-                  </IconButton>
-                  <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right'
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right'
-                    }}
-                    open={open}
-                    onClose={this.handleClose}
-                  >
-                    <MenuItem
-                      onClick={this.handleClose}
-                      component={Link}
-                      to="/my-info"
+            {auth ? (
+              <Fragment>
+                <Hidden xsDown implementation="css">
+                  <Button color="secondary" component={Link} to="/recommend">
+                    <ThumbUp className={classes.icon} />
+                    추천음료
+                  </Button>
+                  <Button color="secondary" component={Link} to="/my-products">
+                    <LocalBar className={classes.icon} />
+                    마이바
+                  </Button>
+                </Hidden>
+                <SearchBar />
+                <Hidden xsDown implementation="css">
+                  <div>
+                    <IconButton
+                      aria-owns={open ? 'menu-appbar' : null}
+                      aria-haspopup="true"
+                      onClick={this.handleMenu}
+                      color="inherit"
                     >
-                      내 정보
-                    </MenuItem>
-                    <MenuItem
-                      onClick={this.handleClose}
-                      component={Link}
-                      to="/wishlist"
+                      <AccountCircle />
+                    </IconButton>
+                    <Menu
+                      id="menu-appbar"
+                      anchorEl={anchorEl}
+                      anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right'
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right'
+                      }}
+                      open={open}
+                      onClose={this.handleClose}
                     >
-                      찜 목록
-                    </MenuItem>
-                    <MenuItem
-                      onClick={this.handleClose}
-                      component="a"
-                      href="/api/logout"
-                    >
-                      로그아웃
-                    </MenuItem>
-                  </Menu>
-                </div>
-              )}
-            </Hidden>
+                      <MenuItem
+                        onClick={this.handleClose}
+                        component={Link}
+                        to="/my-info"
+                      >
+                        내 정보
+                      </MenuItem>
+                      <MenuItem
+                        onClick={this.handleClose}
+                        component={Link}
+                        to="/wishlist"
+                      >
+                        찜 목록
+                      </MenuItem>
+                      <MenuItem
+                        onClick={this.handleClose}
+                        component="a"
+                        href="/api/logout"
+                      >
+                        로그아웃
+                      </MenuItem>
+                    </Menu>
+                  </div>
+                </Hidden>
+              </Fragment>
+            ) : (
+              auth != null && (
+                <Fragment>
+                  <Button color="secondary" component="a" href="#details">
+                    Burpy는?
+                  </Button>
+                  <Button color="secondary" component="a" href="#top">
+                    가입하기
+                  </Button>
+                </Fragment>
+              )
+            )}
           </Toolbar>
         </AppBar>
       </div>
