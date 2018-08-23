@@ -7,7 +7,6 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
   Divider,
   AppBar,
@@ -20,7 +19,7 @@ import {
   Hidden
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Home, ThumbUp, LocalBar, AccountCircle } from '@material-ui/icons';
+import { ThumbUp, LocalBar, AccountCircle } from '@material-ui/icons';
 import LogoIcon from './LogoIcon';
 
 class Header extends Component {
@@ -50,7 +49,7 @@ class Header extends Component {
 
   render() {
     const { classes, auth } = this.props;
-    const { drawer, anchorEl, value } = this.state;
+    const { drawer, anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
     return (
@@ -179,7 +178,18 @@ class Header extends Component {
                   </div>
                 </Hidden>
               </Fragment>
-            ) : null}
+            ) : (
+              auth != null && (
+                <Fragment>
+                  <Button color="secondary" component="a" href="#details">
+                    Burpy는?
+                  </Button>
+                  <Button color="secondary" component="a" href="#top">
+                    가입하기
+                  </Button>
+                </Fragment>
+              )
+            )}
           </Toolbar>
         </AppBar>
       </div>
