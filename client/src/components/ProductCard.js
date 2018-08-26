@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import Rating from 'react-rating';
 import { Star, StarBorder } from '@material-ui/icons';
@@ -86,6 +86,8 @@ const styles = theme => ({
   },
   media: {
     width: '33.333333%'
+    // height: 0, // 세로
+    // paddingTop: '150%' // 2:3 // 세로
   },
   contentContainer: {
     width: '66.666666%',
