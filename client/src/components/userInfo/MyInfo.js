@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import {Paper,Table} from '@material-ui/core';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import TableHead from '@material-ui/core/TableHead';
-
+import {Paper,Typography} from '@material-ui/core';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import Divider from '@material-ui/core/Divider';
+import TodayIcon from '@material-ui/icons/Today';
+import FaceIcon from '@material-ui/icons/Face';
+import GenderIcon from '@material-ui/icons/SupervisorAccount';
 class MyInfo extends Component {
   constructor(props) {
     super(props);
@@ -44,23 +46,32 @@ class MyInfo extends Component {
 
     return (
       <div className = {classes.container}>
+        <Typography variant='headline' component='h2'>
+        내 정보 조회
+        </Typography>
         <Paper className = {classes.paperSize}>
-          <Table className = {classes.userInfo}>
-            <TableBody>
-              <TableRow>
-                <TableCell>이름</TableCell>
-                <TableCell>{info.name}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>성별</TableCell>
-                <TableCell>{info.gender==null ? '추가로 입력하세요' : info.gender}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>생일</TableCell>
-                <TableCell>{info.birthday==null ? '추가로 입력하세요' : info.birthday}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <List>
+            <ListItem>
+              <Avatar>
+                <FaceIcon/>
+              </Avatar>
+              <ListItemText primary = '이름' secondary={info.name}/>
+            </ListItem>
+              <Divider inset component="li" />
+            <ListItem>
+              <Avatar>
+                <GenderIcon/>
+              </Avatar>
+              <ListItemText primary='성별' secondary={info.gender}/>
+            </ListItem>
+            <Divider inset component="li"/>
+            <ListItem>
+              <Avatar>
+                <TodayIcon/>
+              </Avatar>
+              <ListItemText primary='생일' secondary={info.birthday}/>
+            </ListItem>
+          </List>
         </Paper>
         <p>{this.renderEditButton()}</p>
       </div>
@@ -76,11 +87,14 @@ const styles = theme =>({
     maxWidth : '960px'
   },
   paperSize : {
-    padding : theme.spacing.unit
+    padding : theme.spacing.unit,
+    marginTop : '20px'
   },
   userInfo : {
     fontSize : 20,
     padding : 'center'
+  },
+  tableRow : {
   }
 
 })
