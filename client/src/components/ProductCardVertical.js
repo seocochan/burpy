@@ -3,14 +3,7 @@ import { Link } from 'react-router-dom';
 import Rating from 'react-rating';
 import { Star, StarBorder } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Button,
-  Typography
-} from '@material-ui/core';
+import { Card, CardMedia, CardContent, Typography } from '@material-ui/core';
 import noImage from '../assets/images/noImage.png';
 
 class ProductCard extends Component {
@@ -30,14 +23,17 @@ class ProductCard extends Component {
             to={`/product/${id}`}
           />
           <div className={classes.contentContainer}>
-            <CardContent className={classes.content}>
+            <CardContent
+              className={classes.content}
+              classes={{ root: classes.contentRoot }}
+            >
               <Typography variant="caption" component="p">
                 {category}
               </Typography>
               <Typography
                 className={classes.name}
                 gutterBottom
-                variant="title"
+                variant="subheading"
                 component="h3"
               >
                 {name}
@@ -56,19 +52,6 @@ class ProductCard extends Component {
                 }
               />
             </CardContent>
-            <CardActions className={classes.actions}>
-              <Button size="small" color="primary" disabled>
-                찜
-              </Button>
-              <Button
-                variant="flat"
-                size="small"
-                component={Link}
-                to={`/product/${id}`}
-              >
-                더보기
-              </Button>
-            </CardActions>
           </div>
         </Card>
       </div>
@@ -78,22 +61,56 @@ class ProductCard extends Component {
 
 const styles = theme => ({
   container: {
-    maxHeight: 160,
-    margin: theme.spacing.unit
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 120,
+      margin: theme.spacing.unit / 2
+    },
+    [theme.breakpoints.up('sm')]: {
+      minWidth: 140,
+      margin: theme.spacing.unit / 2
+    },
+    [theme.breakpoints.up('md')]: {
+      minWidth: 180,
+      margin: theme.spacing.unit
+    },
+    [theme.breakpoints.up('lg')]: {
+      minWidth: 200,
+      margin: theme.spacing.unit
+    }
   },
   card: {
-    display: 'flex'
+    display: 'flex',
+    flexDirection: 'column'
   },
   media: {
-    width: '33.333333%'
+    height: 0,
+    [theme.breakpoints.down('sm')]: {
+      paddingTop: '125%'
+    },
+    [theme.breakpoints.up('md')]: {
+      paddingTop: '113%'
+    }
   },
   contentContainer: {
-    width: '66.666666%',
     display: 'flex',
     flexDirection: 'column'
   },
   content: {
     flex: '1 0 auto'
+  },
+  contentRoot: {
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing.unit / 2,
+      '&:last-child': {
+        paddingBottom: theme.spacing.unit / 2
+      }
+    },
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing.unit,
+      '&:last-child': {
+        paddingBottom: theme.spacing.unit
+      }
+    }
   },
   name: {
     overflow: 'hidden',
@@ -103,12 +120,6 @@ const styles = theme => ({
   },
   starIcon: {
     fontSize: 16
-  },
-  actions: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingBottom: theme.spacing.unit
   }
 });
 
