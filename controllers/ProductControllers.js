@@ -140,5 +140,32 @@ module.exports = {
 
     console.log(collection);
     res.send({ result });
+  },
+
+  async fetchFeaturedProduct(req, res) {
+    const { standard, size } = req.query;
+    const sortStandard = {
+      mostRated: { avgScore: -1 },
+      mostReviewd: { reviews: -1 },
+      mostRecent: { _id: -1 }
+    };
+
+    Product.find({})
+      .sort(sortStandard[standard])
+      .limit(parseInt(size))
+      .select({
+        _id: 1,
+        name: 1,
+        category: 1,
+        avgScore: 1,
+        imageUrl: 1
+      })
+      .exec((err, doc) => {
+        if (err) {
+          console.warn(err);
+          console.log(JSON.stringify(doc));
+        }
+        res.send(doc);
+      });
   }
 };
