@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Landing from '../components/Landing';
-import Dashboard from '../components/Dashboard';
+import LandingPage from './LandingPage';
+import DashboardPage from './DashboardPage';
 
 class MainPage extends Component {
   renderContent() {
@@ -9,9 +9,9 @@ class MainPage extends Component {
       case null:
         return <div />;
       case false:
-        return <Landing />;
+        return <LandingPage />;
       default:
-        return <Dashboard />;
+        return <DashboardPage />;
     }
   }
 

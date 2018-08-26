@@ -5,7 +5,6 @@ import Downshift from 'downshift';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
-import { amber } from '@material-ui/core/colors';
 import { ArrowForward } from '@material-ui/icons';
 import { TextField, Paper, MenuItem, IconButton } from '@material-ui/core';
 
@@ -35,7 +34,7 @@ class SearchBar extends Component {
     // 글자 입력에 의해 인풋 값이 변경된 경우
     if (typeof inputValue !== 'undefined') {
       const suggestions = await axios.get(`/api/suggest?q=${inputValue}`);
-      this.setState({ suggestions: suggestions.data });
+      this.setState({ suggestions: suggestions.data.result });
     }
   }, 300);
 
@@ -58,6 +57,8 @@ class SearchBar extends Component {
       />
     );
   }
+
+  inputProps = { color: '#ff0000' };
 
   renderSuggestion({
     suggestion,
@@ -83,7 +84,7 @@ class SearchBar extends Component {
       >
         <span className={classes.menuText}>{suggestion.name}</span>
         <IconButton
-          color="secondary"
+          color="primary"
           className={classes.menuButton}
           component={Link}
           to={`/product/${suggestion._id}`}
@@ -125,7 +126,8 @@ class SearchBar extends Component {
                     InputProps: getInputProps({
                       onChange: this.handleInputChange,
                       placeholder: '검색',
-                      id: 'search-input'
+                      id: 'search-input',
+                      className: classes.input
                     }),
                     classes
                   })}
@@ -162,11 +164,11 @@ const styles = theme => ({
     position: 'relative'
   },
   input: {
-    margin: theme.spacing.unit
+    color: '#fff'
   },
   textField: {
     padding: theme.spacing.unit,
-    backgroundColor: amber[300],
+    backgroundColor: theme.palette.primary.light,
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 180

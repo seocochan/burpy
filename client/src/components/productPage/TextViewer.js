@@ -20,7 +20,7 @@ class TextViewer extends Component {
 
   render() {
     return (
-      <div style={{ width: '90%', margin: 'auto' }}>
+      <div style={{ margin: 'auto' }}>
         <div id="viewSection" />
       </div>
     );

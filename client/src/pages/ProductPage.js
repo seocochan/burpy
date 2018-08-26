@@ -8,6 +8,9 @@ import MyReview from '../components/productPage/MyReview';
 import ProductReviews from '../components/productPage/ProductReviews';
 import { withStyles } from '@material-ui/core/styles';
 import { Tabs, Tab, Paper, Divider } from '@material-ui/core';
+import { InfoOutline, Toc } from '@material-ui/icons';
+
+const SIZE_UNIT = 2;
 
 class ProductPage extends Component {
   constructor(props) {
@@ -16,13 +19,20 @@ class ProductPage extends Component {
       product: null,
       myReview: {},
       reviews: [],
+      nextReviews: [],
+      isReviewsPending: true,
       tab: 'product'
     };
+
+    this.recentSort = 'dateAdded';
+    this.reviewSize = SIZE_UNIT * 2;
+    this.reviewCount = 1;
+    this.fetchMoreReviews = this.fetchMoreReviews.bind(this);
+    this.handleReviewSortChange = this.handleReviewSortChange.bind(this);
   }
 
   componentDidMount() {
     const { id } = this.props.match.params;
-
     this.fetchData(id);
   }
 
@@ -32,8 +42,18 @@ class ProductPage extends Component {
     // 검색바를 통해 product 라우터의 id만 바뀐 경우,
     // 현재 state를 초기화 하고 다시 fetching
     if (id !== this.props.match.params.id) {
-      this.setState({ product: null, myReview: {}, reviews: [] });
+      this.setState({
+        product: null,
+        myReview: {},
+        reviews: [],
+        nextReviews: [],
+        isReviewsPending: true
+      });
+
       this.fetchData(id);
+      this.recentSort = 'dateAdded';
+      this.reviewSize = SIZE_UNIT * 2;
+      this.reviewCount = 1;
     }
   }
 
@@ -42,8 +62,63 @@ class ProductPage extends Component {
     this.setState({ product: product.data });
 
     const myReview = await axios.get(`/api/product/${productId}/my_review`);
-    const reviews = await axios.get(`/api/product/${productId}/reviews`);
-    this.setState({ myReview: myReview.data, reviews: reviews.data });
+    const reviews = await axios.get(
+      `/api/product/${productId}/reviews?order=${this.recentSort}&size=${
+        this.reviewSize
+      }&count=${this.reviewCount}`
+    );
+
+    this.setState({
+      myReview: myReview.data,
+      reviews: reviews.data.slice(0, SIZE_UNIT),
+      nextReviews: reviews.data.slice(SIZE_UNIT),
+      isReviewsPending: false
+    });
+
+    this.reviewSize = SIZE_UNIT;
+    this.reviewCount++;
+  }
+
+  async fetchMoreReviews() {
+    const { id: productId } = this.props.match.params;
+    const { reviews, nextReviews } = this.state;
+
+    await this.setState({
+      reviews: [...reviews, ...nextReviews],
+      isReviewsPending: true
+    });
+
+    const res = await axios.get(
+      `/api/product/${productId}/reviews?order=${this.recentSort}&size=${
+        this.reviewSize
+      }&count=${this.reviewCount}`
+    );
+    await this.setState({ nextReviews: res.data, isReviewsPending: false });
+
+    this.reviewSize = SIZE_UNIT;
+    this.reviewCount++;
+  }
+
+  async handleReviewSortChange(standard) {
+    const { id: productId } = this.props.match.params;
+    this.recentSort = standard;
+    this.reviewSize = SIZE_UNIT * 2;
+    this.reviewCount = 1;
+
+    await this.setState({ isReviewsPending: true });
+    const reviews = await axios.get(
+      `/api/product/${productId}/reviews?order=${standard}&size=${
+        this.reviewSize
+      }&count=${this.reviewCount}`
+    );
+    this.setState({
+      reviews: reviews.data.slice(0, SIZE_UNIT),
+      nextReviews: reviews.data.slice(SIZE_UNIT),
+      isReviewsPending: false
+    });
+
+    this.reviewSize = SIZE_UNIT;
+    this.reviewCount++;
   }
 
   handleTabChange = (event, value) => {
@@ -55,7 +130,13 @@ class ProductPage extends Component {
   }
 
   renderReviewTab(productId) {
-    const { product, myReview, reviews } = this.state;
+    const {
+      product,
+      myReview,
+      reviews,
+      nextReviews,
+      isReviewsPending
+    } = this.state;
 
     return (
       product && (
@@ -72,6 +153,11 @@ class ProductPage extends Component {
             productId={productId}
             category={product.category}
             reviews={reviews}
+            nextReviews={nextReviews}
+            recentSort={this.recentSort}
+            onSortChange={this.handleReviewSortChange}
+            onClickMore={this.fetchMoreReviews}
+            isPending={isReviewsPending}
           />
         </Fragment>
       )
@@ -85,23 +171,49 @@ class ProductPage extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.container}>
-        <Paper className={classes.productBasicInfo}>
-          <ProductBasicInfo productId={productId} product={product} />
-        </Paper>
-        <Paper className={classes.productTastesInfo}>
-          <ProductTastesInfo productId={productId} product={product} />
-        </Paper>
+      <Fragment>
+        <div className={classes.titleContainer}>
+          <div className={classes.titleContent}>
+            <ProductBasicInfo productId={productId} product={product} />
+          </div>
+        </div>
+        <div className={classes.contentsContainer}>
+          <Paper className={classes.productTastesInfo}>
+            <ProductTastesInfo productId={productId} product={product} />
+          </Paper>
 
-        <Paper className={classes.contents}>
-          <Tabs value={tab} onChange={this.handleTabChange}>
-            <Tab value="product" label="상품 정보" />
-            <Tab value="review" label="리뷰" />
-          </Tabs>
-          {tab === 'product' && this.renderProductTab(productId, product)}
-          {tab === 'review' && this.renderReviewTab(productId)}
-        </Paper>
-      </div>
+          <Paper className={classes.contents}>
+            <Tabs value={tab} onChange={this.handleTabChange}>
+              <Tab
+                classes={{
+                  root: classes.tabRoot,
+                  wrapper: classes.tabWrapper,
+                  label: classes.tabLabel,
+                  labelIcon: classes.tabLabelIcon
+                }}
+                value="product"
+                label="상품 정보"
+                icon={
+                  <InfoOutline className={classes.tabIcon} color="primary" />
+                }
+              />
+              <Tab
+                classes={{
+                  root: classes.tabRoot,
+                  wrapper: classes.tabWrapper,
+                  label: classes.tabLabel,
+                  labelIcon: classes.tabLabelIcon
+                }}
+                value="review"
+                label="리뷰"
+                icon={<Toc className={classes.tabIcon} color="primary" />}
+              />
+            </Tabs>
+            {tab === 'product' && this.renderProductTab(productId, product)}
+            {tab === 'review' && this.renderReviewTab(productId)}
+          </Paper>
+        </div>
+      </Fragment>
     );
   }
 }
@@ -109,39 +221,54 @@ class ProductPage extends Component {
 const styles = theme => ({
   // https://github.com/topheman/npm-registry-browser/blob/master/src/components/Package/Package.js
   // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns
-  container: {
+  titleContainer: {
+    backgroundColor: theme.palette.primary.dark,
+    height: 320,
+    margin: -theme.spacing.unit,
+    marginBottom: theme.spacing.unit * 4
+  },
+  titleContent: {
+    width: '100%',
+    maxWidth: 1280,
+    margin: 'auto',
+    padding: theme.spacing.unit
+  },
+  contentsContainer: {
     display: 'grid',
     gridGap: '16px',
     justifyContent: 'center',
     width: '100%',
-    maxWidth: '1280px',
+    maxWidth: 1280,
     margin: 'auto',
     [theme.breakpoints.down('xs')]: {
       gridTemplateColumns: '90vw',
-      gridTemplateAreas: `"pb"
-      "pt"
+      gridTemplateAreas: `"pt"
       "co"`
     },
     [theme.breakpoints.up('sm')]: {
       gridTemplateColumns: '3fr 1fr',
-      gridTemplateAreas: `"pb pt"
+      gridTemplateAreas: `"co pt"
       "co pt"`
     }
-  },
-  productBasicInfo: {
-    gridArea: 'pb',
-    padding: theme.spacing.unit
   },
   productTastesInfo: {
     gridArea: 'pt',
     padding: theme.spacing.unit,
-    minWidth: '180px',
-    maxHeight: '300px'
+    minWidth: 220,
+    height: 240
   },
   contents: {
     gridArea: 'co',
     padding: theme.spacing.unit
-  }
+  },
+  tabRoot: { minWidth: 110 },
+  tabWrapper: {
+    flexDirection: 'row',
+    minHeight: 42
+  },
+  tabLabel: { fontSize: theme.typography.pxToRem(14) },
+  tabLabelIcon: { minHeight: 0 },
+  tabIcon: { fontSize: 16 }
 });
 
 export default withStyles(styles)(ProductPage);
