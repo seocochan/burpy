@@ -1,15 +1,26 @@
 import _ from 'lodash';
 import React, { Component } from 'react';
 import axios from 'axios';
+import WishlistCard from '../components/WishlistCard'
 import { Link } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import {
+  Divider,
+  Grid,
+  Typography,
+  Button
+} from '@material-ui/core';
 
 class Wishlist extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      wishlist: []
+      wishlist: [],
+      name : false,
+      date : true
     };
-    //this.onClickSort = this.onClickSort.bind(this);
+    this.nameSort = this.nameSort.bind(this);
+    this.dateSort = this.dateSort.bind(this);
   }
 
   fetchWishlist() {
@@ -27,22 +38,55 @@ class Wishlist extends Component {
     axios.delete(`/api/wishlist/${id}`).then(() => this.fetchWishlist());
   }
 
-  onClickSort() {
-    this.state.wishlist.sort( (a, b)=>{
-      if(a.productId.name > b.productId.name){
-        return 1;
-      }
-      if(a.productId.name < b.productId.name){
-        return -1;
-      }
-      return 0;
-    })
+  buttonOff(){
+    if(this.state.date){
+      this.setState({
+        date : false,
+        name : true
+      })
+    }
+    else{
+      this.setState({
+        date : true,
+        name : false
+      })
+    }
+  }
+
+  nameSort() {
+    this.setState(
+      this.state.wishlist.sort((a,b)=>{
+        if(a.productId.name > b.productId.name){
+          return 1;
+        }
+        if(a.productId.name < b.productId.name){
+          return -1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
+  }
+  dateSort() {
+    this.setState(
+      this.state.wishlist.sort((a,b)=>{
+        if(a.date > b.date){
+          return -1;
+        }
+        if(a.date < b.date){
+          return 1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
   }
 
   renderSortButtons() {
     return (
       <div>
-        <button onClick={this.onClickSort()}>이름순</button>
+        <Button variant="extendedFab" onClick={()=>this.nameSort()} disabled={this.state.name}>이름순</Button>
+        <Button variant="extendedFab" onClick={()=>this.dateSort()} disabled={this.state.date}>날짜순</Button>
       </div>
     );
   }
@@ -51,27 +95,62 @@ class Wishlist extends Component {
   renderList() {
     return _.map(this.state.wishlist, item => {
       return (
-        <li key={item.productId}>
-          <Link to={`/product/${item.productId._id}`}>
-            {item.productId.name}
-          </Link>
-          <button onClick={this.onDeleteClick.bind(this, item.productId._id)}>
-            삭제
-          </button>
-        </li>
+        <Grid key = {item.productId._id} item lg={3} md={4} sm={6} xs={12}>
+        <WishlistCard 
+        key={item.productId._id} 
+        product={item.productId} 
+        onDelete = { id =>{
+          this.onDeleteClick(id);
+        }}/>
+        </Grid>
       );
     });
   }
 
   render() {
+    const {classes} = this.props;
     return (
-      <div>
-        <h3>찜한 상품 목록</h3>
-        {this.renderSortButtons()}
-        <ul>{this.renderList()}</ul>
+      <div className = {classes.container}>
+        <div>
+          <Typography
+           className={classes.title}
+           variant="title"
+           component="h2"
+           >Wishlist
+           </Typography>
+           <div className={classes.sortButton}>
+            {this.renderSortButtons()}
+           </div>
+        </div>
+          <Divider />
+            <div>
+              <Grid container spacing={8}>
+                {this.renderList()}
+              </Grid>
+            </div>
       </div>
     );
   }
 }
 
-export default Wishlist;
+const styles = theme =>({
+  container : {
+    width : '100%',
+    maxWidth : '1280px',
+    margin : 'auto'
+  },
+  wishlistSection : {
+    paddingTop : theme.spacing.unit*2,
+    margin : 'center'
+  },
+  title : {
+    marginTop : theme.spacing.unit *4,
+    marginLeft : theme.spacing.unit
+  },
+  sortButton : {
+    marginTop : theme.spacing.unit*2,
+    marginBottom : theme.spacing.unit*2
+  }
+})
+
+export default withStyles(styles)(Wishlist);

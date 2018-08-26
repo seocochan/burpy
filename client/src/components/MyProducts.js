@@ -6,14 +6,21 @@ import { Link } from 'react-router-dom';
 class MyProducts extends Component {
   constructor(props) {
     super(props);
-    this.state = { reviews: [] };
+    this.state = { 
+      reviews: [],
+      date : true,
+      score : false
+     };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);
+    this.scoreSort = this.scoreSort.bind(this);
+    this.dateSort = this.dateSort.bind(this);
   }
 
-  componentDidMount() {
-    axios.get('/api/review').then(res => this.setState({ reviews: res.data }));
+  async componentDidMount() {
+    const reviews = await axios.get('api/review');
+    this.setState( { reviews : reviews.data } );
   }
 
   async handleDelete(id) {
@@ -32,6 +39,50 @@ class MyProducts extends Component {
     this.props.history.push(`/edit/review/${id}`);
   }
 
+  buttonOff(){
+    if(this.state.date){
+      this.setState({
+        date : false,
+        score : true
+      })
+    }
+    else{
+      this.setState({
+        date : true,
+        score : false
+      })
+    }
+  }
+
+  scoreSort() {
+    this.setState(
+      this.state.reviews.sort((a,b)=>{
+        if(a.productId.name > b.productId.name){
+          return 1;
+        }
+        if(a.productId.name < b.productId.name){
+          return -1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
+  }
+  dateSort() {
+    this.setState(
+      this.state.reviews.sort((a,b)=>{
+        if(a.dateAdded > b.dateAdded){
+          return -1;
+        }
+        if(a.dateAdded < b.dateAdded){
+          return 1;
+        }
+        return 0;
+      })
+    )
+    this.buttonOff();
+  }
+
   renderList() {
     return _.map(this.state.reviews, item => {
       return (
@@ -47,11 +98,21 @@ class MyProducts extends Component {
       );
     });
   }
+  renderSortButton(){
+    return(
+      <div>
+        <button onClick = {()=>this.scoreSort()} disabled={this.state.score}>평점순</button>
+        <button onClick = {()=>this.dateSort()} disabled={this.state.date}>날짜순</button>
+
+      </div>
+    )
+  }
 
   render() {
     return (
       <div>
         <h3>내 상품</h3>
+        {this.renderSortButton()}
         <ul>{this.renderList()}</ul>
       </div>
     );

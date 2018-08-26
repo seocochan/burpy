@@ -36,6 +36,7 @@ class ProductPage extends Component {
     this.fetchData(id);
   }
 
+
   componentWillReceiveProps(nextProps) {
     const { id } = nextProps.match.params;
 
@@ -169,6 +170,7 @@ class ProductPage extends Component {
     const productId = this.props.match.params.id;
     const { product, tab } = this.state;
     const { classes } = this.props;
+    console.log(this.state.reviews);
 
     return (
       <Fragment>

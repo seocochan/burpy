@@ -1,15 +1,44 @@
 const User = require('../models/User');
+const Product = require('../models/Product');
 
 module.exports = {
   fetchWishlist(req, res) {
     const sortWishlist = req.order ? req.order : 'wishlist.date';
-    User.findById(req.user._id)
+    User.findById(
+      req.user._id
+    )
       .populate('wishlist.productId')
-      .sort(sortWishlist)
+      .sort({'wishlsit.date' : -1})
       .exec((err, doc) => {
         res.send(doc.wishlist);
       });
   },
+  /*
+  fetchWishlist(req, res) {
+    const sortWishlist = req.order ? req.order : 'wishlist.date';
+    User.aggregate([
+      {
+        $match : {_id : req.user._id}
+      },
+      {
+        $lookup : {
+          from : 'product',
+          localField : 'wishlist.productId',
+          foreignField : 'productId',
+          as : 'product'
+        }
+      },
+      {
+        $unwind : '$wishlist'
+      },
+      {
+        $sort : {'wishlist.date' : 1}
+      }
+    ])
+    .exec((err,doc)=>{
+      res.send({result : doc})
+    })
+  },*/
 
   deleteWishlistItem(req, res) {
     const userId = req.user._id;
