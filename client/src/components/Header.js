@@ -107,12 +107,11 @@ class Header extends Component {
               </Hidden>
             )}
             <Typography
+              className={classes.logo}
               variant="title"
               color="inherit"
-              className={classes.title}
               component={Link}
               to="/"
-              style={{ marginLeft: 8 }}
             >
               <LogoIcon width={110} height={28} color={'#f0ecdf'} />
             </Typography>
@@ -206,8 +205,14 @@ const styles = theme => ({
     maxWidth: 1280,
     margin: 'auto'
   },
-  title: {
-    flex: 1
+  logo: {
+    flex: 1,
+    [theme.breakpoints.down('xs')]: {
+      marginLeft: 0
+    },
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: 16
+    }
   },
   drawerButton: {
     marginLeft: '-1rem',
