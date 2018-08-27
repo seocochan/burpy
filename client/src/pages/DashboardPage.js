@@ -2,7 +2,8 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import ProductCardVertical from '../components/ProductCardVertical';
 import SkeletonCardVertical from '../components/SkeletonCardVertical';
-import { Typography, Divider } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import { Timeline, Whatshot, Update } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import backgroundImage from '../assets/images/banner-image1.jpg';
 
@@ -83,7 +84,10 @@ class DashboardPage extends Component {
         </div>
         <div className={classes.contentsContainer}>
           <div className={classes.featuredSection}>
-            <Typography variant="headline">실시간 Top5 음료</Typography>
+            <div className={classes.titleContainer}>
+              <Timeline className={classes.icon} color="primary" />
+              <Typography variant="headline">실시간 Top5 음료</Typography>
+            </div>
             <Typography variant="subheading" gutterBottom>
               사용자들에게 가장 높은 평가를 받은 제품들입니다.
             </Typography>
@@ -92,7 +96,11 @@ class DashboardPage extends Component {
               : this.renderList(mostRated)}
           </div>
           <div className={classes.featuredSection}>
-            <Typography variant="headline">최고 인기</Typography>
+            <div className={classes.titleContainer}>
+              <Whatshot className={classes.icon} color="primary" />
+              <Typography variant="headline">최고 인기</Typography>
+            </div>
+
             <Typography variant="subheading" gutterBottom>
               최다 리뷰 획득!
             </Typography>
@@ -101,7 +109,11 @@ class DashboardPage extends Component {
               : this.renderList(mostReviewd)}
           </div>
           <div className={classes.featuredSection}>
-            <Typography variant="headline">방금 등록됐어요</Typography>
+            <div className={classes.titleContainer}>
+              <Update className={classes.icon} color="primary" />
+              <Typography variant="headline">방금 등록됐어요</Typography>
+            </div>
+
             <Typography variant="subheading" gutterBottom>
               지금 확인해보세요
             </Typography>
@@ -164,6 +176,9 @@ const styles = theme => ({
       maxWidth: (200 + theme.spacing.unit) * 5 + 40
     }
   },
+  titleContainer: {
+    display: 'flex'
+  },
   listContainer: {
     overflowX: 'auto'
   },
@@ -171,6 +186,10 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'nowrap',
     width: 0
+  },
+  icon: {
+    fontSize: 32,
+    marginRight: '0.5rem'
   }
 });
 

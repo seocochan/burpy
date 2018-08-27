@@ -245,6 +245,7 @@ class SearchResultPage extends Component {
           </div>
           <Button
             className={classes.newButton}
+            classes={{ sizeSmall: classes.newButtonSizeSmall }}
             size="small"
             component={Link}
             to="/new/product"
@@ -297,7 +298,6 @@ const styles = theme => ({
   controlSection: {
     display: 'flex',
     alignItems: 'flex-end',
-    width: '100%',
     margin: theme.spacing.unit
   },
   filterSection: {
@@ -338,6 +338,9 @@ const styles = theme => ({
   },
   newButton: {
     margin: theme.spacing.unit
+  },
+  newButtonSizeSmall: {
+    padding: '7px 4px'
   }
 });
 
