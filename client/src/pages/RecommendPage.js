@@ -1,10 +1,12 @@
 import _ from 'lodash';
+import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { Typography } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import category from '../assets/datas/productCategoryDict';
 
-class Recommend extends Component {
+class RecommendPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,4 +63,4 @@ class Recommend extends Component {
   }
 }
 
-export default Recommend;
+export default RecommendPage;

@@ -8,9 +8,9 @@ import withRoot from './withRoot';
 import MainPage from './pages/MainPage';
 import SearchResultPage from './pages/SearchResultPage';
 import ProductPage from './pages/ProductPage';
+import RecommendPage from './pages/RecommendPage';
 
 import Header from './components/Header';
-import Recommend from './components/Recommend';
 import Wishlist from './components/Wishlist';
 import MyProducts from './components/MyProducts';
 import NewProduct from './components/productEdit/NewProduct';
@@ -36,7 +36,7 @@ class App extends Component {
             <div className={classes.content}>
               <Route exact path="/" component={MainPage} />
               <Route exact path="/search" component={SearchResultPage} />
-              <Route exact path="/recommend" component={Recommend} />
+              <Route exact path="/recommend" component={RecommendPage} />
               <Route exact path="/wishlist" component={Wishlist} />
               <Route exact path="/my-products" component={MyProducts} />
               <Route exact path="/product/:id" component={ProductPage} />
