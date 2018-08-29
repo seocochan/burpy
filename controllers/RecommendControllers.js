@@ -47,7 +47,7 @@ module.exports = {
 
     let result = {};
     for (const [category, _items] of Object.entries(predict)) {
-      const items = _items.slice(0, 3); // 상위 3개 결과로 제한
+      const items = _items.slice(0, 5); // 상위 5개 결과로 제한
       result[category] = [];
 
       const list = items.map(item => item.id);
@@ -55,7 +55,7 @@ module.exports = {
         { $match: { _id: { $in: list } } },
         { $addFields: { __order: { $indexOfArray: [list, '$_id'] } } },
         { $sort: { __order: 1 } },
-        { $project: { _id: 0, name: 1, avgScore: 1 } }
+        { $project: { _id: 0, name: 1, category: 1, imageUrl: 1 } }
       ]);
 
       items.forEach((item, i) => {
