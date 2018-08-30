@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import axios from 'axios';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Typography, CircularProgress, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import category from '../assets/datas/productCategoryDict';
 import ProductCardVertical from '../components/ProductCardVertical';
@@ -20,6 +21,25 @@ class RecommendPage extends Component {
     this.setState({ recommended: res.data });
   }
 
+  renderTitle() {
+    const { classes, auth } = this.props;
+
+    if (auth == null) {
+      return (
+        <Typography className={classes.title} variant="display1" gutterBottom>
+          <CircularProgress />
+        </Typography>
+      );
+    }
+
+    const { name, reviews } = auth;
+    return (
+      <Typography className={classes.title} variant="display1" gutterBottom>
+        {`${name}님이 작성하신 ${reviews.length}개의 리뷰를 분석했습니다`}
+      </Typography>
+    );
+  }
+
   renderList() {
     const { classes } = this.props;
     const { recommended } = this.state;
@@ -30,16 +50,6 @@ class RecommendPage extends Component {
           <ProductCardVertical key={item.id} product={item} />
         ));
 
-        // let itemList = [];
-        // recommended[c.eng].forEach(item => {
-        //   itemList.push(
-        //     <li key={item.id}>
-        //       <Link to={`/product/${item.id}`}>{item.name}</Link>
-        //       {` / 예상 평점: ${item.score}`}
-        //     </li>
-        //   );
-        // });
-        //
         return (
           <div className={classes.productSection} key={c.eng}>
             <Typography variant="headline" gutterBottom>
@@ -56,8 +66,15 @@ class RecommendPage extends Component {
             <Typography variant="headline" gutterBottom>
               {c.kor}
             </Typography>
-            <div className={classes.listContainer}>
-              아직 추천 상품이 없습니다. 더 많은 리뷰를 등록하세요.
+            <div className={classes.emptyNotice}>
+              리뷰를 더 등록하면 상품을 추천받을 수 있어요!
+              <br />
+              <Button
+                component={Link}
+                to={`/search?q=&category=${c.kor}&order=avgScore`}
+              >
+                더 많은 {`\'${c.kor}\'`} 평가하기
+              </Button>
             </div>
           </div>
         );
@@ -71,9 +88,7 @@ class RecommendPage extends Component {
 
     return (
       <div className={classes.container}>
-        <Typography variant="headline" gutterBottom>
-          추천 상품 목록
-        </Typography>
+        <div className={classes.titleContainer}>{this.renderTitle()}</div>
         {recommended && this.renderList()}
       </div>
     );
@@ -85,6 +100,16 @@ const styles = theme => ({
     width: '100%',
     maxWidth: 1280,
     margin: 'auto'
+  },
+  titleContainer: {
+    textAlign: 'center',
+    marginTop: theme.spacing.unit * 4,
+    marginBottom: theme.spacing.unit * 4
+  },
+  title: {
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 24
+    }
   },
   productSection: {
     margin: 'auto',
@@ -109,7 +134,19 @@ const styles = theme => ({
     display: 'flex',
     flexWrap: 'nowrap',
     width: 0
+  },
+  emptyNotice: {
+    border: '1px solid #ecedef',
+    backgroundColor: 'white',
+    textAlign: 'center',
+    lineHeight: '32px',
+    paddingTop: theme.spacing.unit * 3,
+    paddingBottom: theme.spacing.unit * 3
   }
 });
 
-export default withStyles(styles)(RecommendPage);
+function mapStateToProps({ auth }) {
+  return { auth };
+}
+
+export default withStyles(styles)(connect(mapStateToProps)(RecommendPage));
