@@ -8,8 +8,14 @@ import noImage from '../assets/images/noImage.png';
 
 class ProductCard extends Component {
   render() {
-    const { classes } = this.props;
-    const { _id: id, name, category, avgScore, imageUrl } = this.props.product;
+    const { classes, product } = this.props;
+    const {
+      id = product._id,
+      name,
+      category,
+      avgScore = product.score,
+      imageUrl
+    } = product;
     const s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
 
     return (
