@@ -89,7 +89,13 @@ class RecommendPage extends Component {
     return (
       <div className={classes.container}>
         <div className={classes.titleContainer}>{this.renderTitle()}</div>
-        {recommended && this.renderList()}
+        {recommended == null ? (
+          <div className={classes.progressContainer}>
+            <CircularProgress />
+          </div>
+        ) : (
+          this.renderList()
+        )}
       </div>
     );
   }
@@ -100,6 +106,14 @@ const styles = theme => ({
     width: '100%',
     maxWidth: 1280,
     margin: 'auto'
+  },
+  progressContainer: {
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    height: '100%',
+    width: '100%',
+    zIndex: 9999
   },
   titleContainer: {
     textAlign: 'center',
