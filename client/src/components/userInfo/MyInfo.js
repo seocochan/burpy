@@ -13,36 +13,22 @@ import Divider from '@material-ui/core/Divider';
 import TodayIcon from '@material-ui/icons/Today';
 import FaceIcon from '@material-ui/icons/Face';
 import GenderIcon from '@material-ui/icons/SupervisorAccount';
+import { connect } from 'react-redux';
 class MyInfo extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      info: {}
-    };
-  }
-
-  componentDidMount() {
-    axios.get('/api/myinfo').then(res => {
-      this.setState({ info: res.data });
-    });
-  }
-
-
-
   renderEditButton() {
     return (
       <IconButton
         aria-label="Edit"
         component={Link}
-        to={`/edit/my-info/${this.state.info._id}`}
+        to={`/edit/my-info/${this.props.auth._id}`}
       >
         <Edit />
       </IconButton>
     );
   }
   render() {
-    const { info } = this.state;
     const {classes} = this.props;
+    console.log(this.props.auth)
 
     return (
       <div className = {classes.container}>
@@ -55,21 +41,21 @@ class MyInfo extends Component {
               <Avatar>
                 <FaceIcon/>
               </Avatar>
-              <ListItemText primary = '이름' secondary={info.name}/>
+              <ListItemText primary = '이름' secondary={this.props.auth.name}/>
             </ListItem>
               <Divider inset component="li" />
             <ListItem>
               <Avatar>
                 <GenderIcon/>
               </Avatar>
-              <ListItemText primary='성별' secondary={info.gender}/>
+              <ListItemText primary='성별' secondary={this.props.auth.gender}/>
             </ListItem>
             <Divider inset component="li"/>
             <ListItem>
               <Avatar>
                 <TodayIcon/>
               </Avatar>
-              <ListItemText primary='생일' secondary={info.birthday}/>
+              <ListItemText primary='생일' secondary={this.props.auth.birthday}/>
             </ListItem>
           </List>
         </Paper>
@@ -99,4 +85,12 @@ const styles = theme =>({
 
 })
 
-export default withStyles(styles)(MyInfo);
+function mapStateToProps({ auth }) {
+  return { auth };
+}
+
+export default withStyles(styles)(
+    connect(
+      mapStateToProps
+  )(MyInfo)
+)

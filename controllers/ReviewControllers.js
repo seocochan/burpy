@@ -238,6 +238,7 @@ const fetchTaste = Id =>
             four : 0,
             five : 0
           }
+          console.log(doc)
           resolve(doc);
         } else {
           resolve(doc);

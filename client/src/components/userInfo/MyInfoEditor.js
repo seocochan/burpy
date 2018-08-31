@@ -10,6 +10,8 @@ import DateField from './DateField';
 import { Button,Divider,Typography } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import * as actions from '../../actions'
 
 moment.locale('ko');
 momentLocaliser();
@@ -23,11 +25,11 @@ class MyInfoEditor extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/myinfo').then(res => {
-      const { name, gender, birthday } = res.data;
-      this.userId = res.data._id;
-      this.props.initialize({ name, gender,birthday });
-    });
+    const name = this.props.auth.name;
+    const gender = this.props.auth.gender;
+    const birthday = this.props.auth.birthday;
+    this.userId = this.props.auth._id
+    this.props.initialize({name,gender,birthday})
   }
 
   renderMyInfo() {
@@ -85,6 +87,7 @@ class MyInfoEditor extends Component {
   async onSubmit(values) {
     const res = await axios.put(`/api/myinfo/${this.userId}`, values);
     this.setState({ isDone: true });
+    this.props.fetchUser();
   }
 
   render() {
@@ -150,8 +153,17 @@ function validate(values) {
   return errors;
 }
 
+function mapStateToProps({ auth }) {
+  return { auth };
+}
+
 export default reduxForm({
   validate,
   form: 'infoform',
   destroyOnUnmount: true
-})(withStyles(styles)(MyInfoEditor));
+})(withStyles(styles)(
+  connect(
+    mapStateToProps,
+    actions
+  )(MyInfoEditor)
+));
