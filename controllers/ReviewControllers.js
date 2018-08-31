@@ -1,23 +1,17 @@
 const Review = require('../models/Review');
 const User = require('../models/User');
 const Product = require('../models/Product');
+const mongoose = require('mongoose');
 
 module.exports = {
   fetchReviews(req, res) {
-    const { query } = req;
-    const sortStandard =
-      query.order === undefined || query.order === 'dateAdded'
-        ? { dateAdded: -1 }
-        : { score: -1 };
-    User.findById(req.user._id)
-      .populate({
-        path: 'reviews',
-        populate: { path: 'productId' }
-      })
-      .sort(sortStandard)
+    const userId = req.user._id;
+
+    Review.find({ userId: mongoose.Types.ObjectId(userId) })
+      .populate('productId')
       .sort({ dateAdded: -1 })
       .exec((err, doc) => {
-        res.send(doc.reviews);
+        res.send(doc);
       });
   },
 
