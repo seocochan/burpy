@@ -70,7 +70,7 @@ class Header extends Component {
                     </ListItemIcon>
                     추천음료
                   </ListItem>
-                  <ListItem button component={Link} to="/my-products">
+                  <ListItem button component={Link} to="/my-bar">
                     <ListItemIcon>
                       <LocalBar className={classes.icon} />
                     </ListItemIcon>
@@ -122,7 +122,7 @@ class Header extends Component {
                     <ThumbUp className={classes.icon} />
                     추천음료
                   </Button>
-                  <Button color="secondary" component={Link} to="/my-products">
+                  <Button color="secondary" component={Link} to="/my-bar">
                     <LocalBar className={classes.icon} />
                     마이바
                   </Button>

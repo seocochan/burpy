@@ -9,10 +9,10 @@ import MainPage from './pages/MainPage';
 import SearchResultPage from './pages/SearchResultPage';
 import ProductPage from './pages/ProductPage';
 import RecommendPage from './pages/RecommendPage';
+import MyBarPage from './pages/MyBarPage';
 
 import Header from './components/Header';
 import Wishlist from './components/Wishlist';
-import MyProducts from './components/MyProducts';
 import NewProduct from './components/productEdit/NewProduct';
 import EditProduct from './components/productEdit/EditProduct';
 import NewReview from './components/reviewEdit/NewReview';
@@ -38,7 +38,7 @@ class App extends Component {
               <Route exact path="/search" component={SearchResultPage} />
               <Route exact path="/recommend" component={RecommendPage} />
               <Route exact path="/wishlist" component={Wishlist} />
-              <Route exact path="/my-products" component={MyProducts} />
+              <Route exact path="/my-bar" component={MyBarPage} />
               <Route exact path="/product/:id" component={ProductPage} />
               <Route exact path="/new/product" component={NewProduct} />
               <Route exact path="/edit/product/:id" component={EditProduct} />
@@ -66,7 +66,7 @@ const styles = theme => ({
     width: '100%',
     height: 'calc(100% - 56px)',
     margin: theme.spacing.unit,
-    marginTop: theme.spacing.unit + 56,
+    marginTop: theme.spacing.unit + 56
   }
 });
 
