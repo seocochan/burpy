@@ -153,7 +153,8 @@ const styles = theme => ({
     width: '90%',
     maxWidth: 1280,
     margin: 'auto',
-    textAlign: 'center'
+    textAlign: 'center',
+    wordBreak: 'keep-all'
   },
   contentsContainer: {
     width: '100%',
