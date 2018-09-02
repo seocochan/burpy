@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import axios from 'axios';
 import React, { Component, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import ProductCard from '../components/ProductCard';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
@@ -11,22 +11,12 @@ import {
   CircularProgress
 } from '@material-ui/core';
 
-/**
- * TODO:
- * - 카드 작성
- *   - 출력할 요소:
- *     - 상품: productId._id, name, category, imageUrl
- *     - 리뷰: .comment, score
- *   - 삭제 / 수정 버튼 지우기? 출력?
- */
-
 class MyBarPage extends Component {
   constructor(props) {
     super(props);
     this.state = { reviews: null };
 
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleModify = this.handleModify.bind(this);
   }
 
   async componentDidMount() {
@@ -35,35 +25,37 @@ class MyBarPage extends Component {
   }
 
   async handleDelete(id) {
-    const res = await axios.delete(`/api/review/${id}`);
+    // 버그로 인해 임시 제외
+    // const res = await axios.delete(`/api/review/${id}`);
+    // if (res.status === 200) {
+    //   const newReviews = _.filter(this.state.reviews, item => {
+    //     return !(item._id === res.data);
+    //   });
+    //   this.setState({ reviews: newReviews });
+    // }
 
-    if (res.status === 200) {
-      const newReviews = _.filter(this.state.reviews, item => {
-        return !(item._id === res.data);
-      });
-      this.setState({ reviews: newReviews });
-    }
-  }
-
-  handleModify(id) {
-    this.props.history.push(`/edit/review/${id}`);
+    // FIXME: 위의 코드 버그 수정 후 아래의 테스트용 코드 제거
+    const newReviews = _.filter(this.state.reviews, item => {
+      return !(item._id === id);
+    });
+    this.setState({ reviews: newReviews });
   }
 
   renderList() {
     const { reviews } = this.state;
-    console.log(reviews);
 
     return _.map(reviews, item => {
+      const { productId: product, ...review } = item;
+
       return (
-        <li key={item._id}>
-          <Link to={`/product/${item.productId._id}`}>
-            {item.productId.name}
-          </Link>
-          내 평점: {item.score}
-          코멘트: {item.comment}
-          <button onClick={() => this.handleDelete(item._id)}>삭제</button>
-          <button onClick={() => this.handleModify(item._id)}>수정</button>
-        </li>
+        <Grid item key={product._id} xs={12} md={6}>
+          <ProductCard
+            key={product._id}
+            product={product}
+            review={review}
+            onDeleteReview={this.handleDelete}
+          />
+        </Grid>
       );
     });
   }
@@ -71,7 +63,6 @@ class MyBarPage extends Component {
   render() {
     const { classes } = this.props;
     const { reviews } = this.state;
-    console.log(reviews);
 
     return (
       <div className={classes.container}>
@@ -112,7 +103,7 @@ class MyBarPage extends Component {
             style={{ display: reviews == null ? 'none' : 'flex' }}
           >
             <Grid container spacing={8}>
-              {/* reviews != null && this.renderList() */}
+              {reviews != null && this.renderList()}
             </Grid>
           </div>
         </Fragment>
