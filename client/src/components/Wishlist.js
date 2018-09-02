@@ -10,6 +10,8 @@ import {
   Typography,
   Button
 } from '@material-ui/core';
+import { connect } from 'react-redux';
+import * as actions from '../actions'
 
 class Wishlist extends Component {
   constructor(props) {
@@ -28,6 +30,7 @@ class Wishlist extends Component {
       this.setState({ wishlist: res.data });
       console.log(res.data);
     });
+    this.props.fetchUser();
   }
 
   componentDidMount() {
@@ -85,8 +88,13 @@ class Wishlist extends Component {
   renderSortButtons() {
     return (
       <div>
-        <Button variant="extendedFab" onClick={()=>this.nameSort()} disabled={this.state.name}>이름순</Button>
-        <Button variant="extendedFab" onClick={()=>this.dateSort()} disabled={this.state.date}>날짜순</Button>
+        <Button 
+          variant="extendedFab" 
+          onClick={()=>this.nameSort()} 
+          disabled={this.state.name}>이름순</Button>
+        <Button variant="extendedFab" 
+          onClick={()=>this.dateSort()} 
+          disabled={this.state.date}>날짜순</Button>
       </div>
     );
   }
@@ -153,4 +161,13 @@ const styles = theme =>({
   }
 })
 
-export default withStyles(styles)(Wishlist);
+function mapStateToProps({ auth }) {
+  return { auth };
+}
+
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    actions
+  )(Wishlist)
+)

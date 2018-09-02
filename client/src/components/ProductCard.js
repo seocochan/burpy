@@ -9,15 +9,82 @@ import {
   CardContent,
   CardActions,
   Button,
-  Typography
+  Typography,
+  Snackbar
 } from '@material-ui/core';
 import noImage from '../assets/images/noImage.png';
+import { connect } from 'react-redux';
+import axios from 'axios';
 
 class ProductCard extends Component {
+  constructor(props){
+    super(props);
+    this.state = {isToggleOn : null, open : false};
+    this.handleClick = this.handleClick.bind(this,this.props.product._id)
+    this.currentState = null;
+  }
+  componentWillMount(){
+    this.fetchList();
+  }
+
+  componentDidMount(){
+    this.fetchList();
+  }
+
+  async handleClick(id) {
+    const { isToggleOn } = this.state;
+    this.currentState = isToggleOn;
+    await this.setState({ isToggleOn: null });
+
+    if (this.currentState) {
+      await axios.post(`/api/wishlist/${id}`);
+      this.setState({ isToggleOn: !this.currentState });
+    } else {
+      await axios.delete(`/api/wishlist/${id}`);
+      this.fetchList();
+      this.setState({ isToggleOn: !this.currentState });
+    }
+
+    this.setState({ open: true });
+  }
+
+  fetchList(){
+    if(this.props.auth.wishlist !==[]){
+      for(let i = 0; i < this.props.auth.wishlist.length; i++){
+        if(this.props.auth.wishlist[i].productId === this.props.product._id){
+          this.setState({isToggleOn : false});
+          break;
+        }
+      }
+    }
+    if(this.state.isToggleOn == null){
+      this.setState({isToggleOn : true});
+    }
+  }
+
+  renderSnackBar() {
+    const { open } = this.state;
+
+    return (
+      <Snackbar
+        open={open}
+        autoHideDuration={1000}
+        onClose={() => this.setState({ open: false })}
+        ContentProps={{
+          'aria-describedby': 'message-id'
+        }}
+        message={<span id="message-id">찜목록에 추가!</span>}
+      />
+    );
+  }
+
   render() {
     const { classes } = this.props;
     const { _id: id, name, category, avgScore, imageUrl } = this.props.product;
+    const {isToggleOn} = this.state;
     const s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
+    console.log(id);
+    console.log(this.props.auth.wishlist[0].productId)
 
     return (
       <div className={classes.container}>
@@ -57,9 +124,10 @@ class ProductCard extends Component {
               />
             </CardContent>
             <CardActions className={classes.actions}>
-              <Button size="small" color="primary" disabled>
+              <Button size="small" color="primary" disabled={!isToggleOn} onClick={this.handleClick}>
                 찜
               </Button>
+              {this.renderSnackBar()}
               <Button
                 variant="flat"
                 size="small"
@@ -112,4 +180,12 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(ProductCard);
+function mapStateToProps({ auth }) {
+  return { auth };
+}
+
+export default withStyles(styles)(
+  connect(
+    mapStateToProps
+  )(ProductCard)
+)
