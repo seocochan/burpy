@@ -180,10 +180,10 @@ class Header extends Component {
             ) : (
               auth != null && (
                 <Fragment>
-                  <Button color="secondary" component="a" href="#details">
+                  <Button color="secondary" component="a" href="/#details">
                     Burpy는?
                   </Button>
-                  <Button color="secondary" component="a" href="#top">
+                  <Button color="secondary" component="a" href="/#top">
                     가입하기
                   </Button>
                 </Fragment>

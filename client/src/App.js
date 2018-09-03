@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { withStyles } from '@material-ui/core/styles';
@@ -10,6 +10,7 @@ import SearchResultPage from './pages/SearchResultPage';
 import ProductPage from './pages/ProductPage';
 import RecommendPage from './pages/RecommendPage';
 import MyBarPage from './pages/MyBarPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 import Header from './components/Header';
 import Wishlist from './components/Wishlist';
@@ -34,18 +35,21 @@ class App extends Component {
           <div className={classes.root}>
             <Header />
             <div className={classes.content}>
-              <Route exact path="/" component={MainPage} />
-              <Route exact path="/search" component={SearchResultPage} />
-              <Route exact path="/recommend" component={RecommendPage} />
-              <Route exact path="/wishlist" component={Wishlist} />
-              <Route exact path="/my-bar" component={MyBarPage} />
-              <Route exact path="/product/:id" component={ProductPage} />
-              <Route exact path="/new/product" component={NewProduct} />
-              <Route exact path="/edit/product/:id" component={EditProduct} />
-              <Route exact path="/new/review/:id" component={NewReview} />
-              <Route exact path="/edit/review/:id" component={EditReview} />
-              <Route exact path="/my-info" component={MyInfo} />
-              <Route exact path="/edit/my-info/:id" component={MyInfoEditor} />
+              <Switch>
+                <Route exact path="/" component={MainPage} />
+                <Route exact path="/search" component={SearchResultPage} />
+                <Route exact path="/recommend" component={RecommendPage} />
+                <Route exact path="/wishlist" component={Wishlist} />
+                <Route exact path="/my-bar" component={MyBarPage} />
+                <Route exact path="/product/:id" component={ProductPage} />
+                <Route exact path="/new/product" component={NewProduct} />
+                <Route exact path="/edit/product/:id" component={EditProduct} />
+                <Route exact path="/new/review/:id" component={NewReview} />
+                <Route exact path="/edit/review/:id" component={EditReview} />
+                <Route exact path="/my-info" component={MyInfo} />
+                <Route exact path="/edit/my-info/:id" component={MyInfoEditor} />
+                <Route component={NotFoundPage} />
+              </Switch>
             </div>
           </div>
         </BrowserRouter>
