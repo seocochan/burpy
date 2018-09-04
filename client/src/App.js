@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as actions from './actions';
 import { withStyles } from '@material-ui/core/styles';
 import withRoot from './withRoot';
+import PrivateRoute from './utils/PrivateRoute';
 
 import MainPage from './pages/MainPage';
 import SearchResultPage from './pages/SearchResultPage';
@@ -37,17 +38,17 @@ class App extends Component {
             <div className={classes.content}>
               <Switch>
                 <Route exact path="/" component={MainPage} />
-                <Route exact path="/search" component={SearchResultPage} />
-                <Route exact path="/recommend" component={RecommendPage} />
-                <Route exact path="/wishlist" component={Wishlist} />
-                <Route exact path="/my-bar" component={MyBarPage} />
-                <Route exact path="/product/:id" component={ProductPage} />
-                <Route exact path="/new/product" component={NewProduct} />
+                <PrivateRoute exact path="/search" component={SearchResultPage} />
+                <PrivateRoute exact path="/recommend" component={RecommendPage} />
+                <PrivateRoute exact path="/wishlist" component={Wishlist} />
+                <PrivateRoute exact path="/my-bar" component={MyBarPage} />
+                <PrivateRoute exact path="/product/:id" component={ProductPage} />
+                <PrivateRoute exact path="/new/product" component={NewProduct} />
                 <Route exact path="/edit/product/:id" component={EditProduct} />
-                <Route exact path="/new/review/:id" component={NewReview} />
-                <Route exact path="/edit/review/:id" component={EditReview} />
-                <Route exact path="/my-info" component={MyInfo} />
-                <Route exact path="/edit/my-info/:id" component={MyInfoEditor} />
+                <PrivateRoute exact path="/new/review/:id" component={NewReview} />
+                <PrivateRoute exact path="/edit/review/:id" component={EditReview} />
+                <PrivateRoute exact path="/my-info" component={MyInfo} />
+                <PrivateRoute exact path="/edit/my-info/:id" component={MyInfoEditor} />
                 <Route component={NotFoundPage} />
               </Switch>
             </div>
