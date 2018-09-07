@@ -3,8 +3,8 @@ const autoIncrement = require('mongoose-auto-increment');
 const { Schema } = mongoose;
 
 const productSchema = new Schema({
-  name: String,
-  category: String,
+  name: { type: String, required: true },
+  category: { type: String, required: true },
   shops: { type: [String], default: [] },
   details: String,
   avgScore: { type: Number, default: 0 },

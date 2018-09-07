@@ -4,9 +4,9 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 
 const reviewSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'users' },
-  productId: { type: Number, ref: 'products' },
-  category: String,
+  userId: { type: Schema.Types.ObjectId, ref: 'users', required: true },
+  productId: { type: Number, ref: 'products', required: true },
+  category: { type: String, required: true },
   score: { type: Number, required: true },
   taste: [{ type: Number }],
   comment: String,
