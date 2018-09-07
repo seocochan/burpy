@@ -7,16 +7,35 @@ const url = keys.ICServerURL;
 
 module.exports = {
   async addProduct(req, res) {
-    const newProduct = await new Product(req.body).save();
-    res.send(newProduct);
+    const data = req.body;
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).send({ error: '잘못된 요청입니다.' });
+    }
+
+    new Product(data).save((err, doc) => {
+      if (err) {
+        return res.status(500).send({ error: 'DB 에러: ' + err });
+      }
+
+      return res.send(doc);
+    });
   },
 
   updateProduct(req, res) {
     const { id } = req.params;
-    const { body } = req;
+    const data = req.body;
 
-    Product.findByIdAndUpdate(id, body, { new: true }).exec((err, doc) => {
-      res.send(doc);
+    if (Object.keys(data).length === 0) {
+      return res.status(400).send({ error: '잘못된 요청입니다.' });
+    }
+
+    Product.findByIdAndUpdate(id, data, { new: true }).exec((err, doc) => {
+      if (err) {
+        return res.status(500).send({ error: 'DB 에러: ' + err });
+      }
+
+      return res.send(doc);
     });
   },
 
@@ -56,15 +75,21 @@ module.exports = {
           console.warn(err);
           console.log(JSON.stringify(doc));
         }
-        res.send(doc);
+
+        return res.send(doc);
       });
   },
 
   fetchProductInfo(req, res) {
     const _id = req.params.id;
     Product.findOne({ _id }, (err, product) => {
-      if (err) return res.status(500).json({ error: err });
-      if (!product) return res.status(404).json({ error: 'product not found' });
+      if (err) {
+        return res.status(500).json({ error: err });
+      }
+
+      if (!product) {
+        return res.status(404).json({ error: '상품이 없습니다.' });
+      }
     })
       .populate('reviews')
       .then(product => res.send(product));
@@ -83,19 +108,31 @@ module.exports = {
         console.warn(err);
         console.log(JSON.stringify(doc));
       }
-      res.send({ result: doc });
+
+      return res.send({ result: doc });
     });
   },
 
   async addProductFromIC(req, res) {
-    console.log('### data from unity ###\n', req.body);
-    const { image, name, category } = req.body;
+    const data = req.body;
+    console.log('### data from unity ###\n', data);
 
-    const newProduct = await new Product({ name, category }).save();
-    const id = newProduct._id;
-    console.log('### new product created ###\n', newProduct);
+    if (Object.keys(data).length === 0) {
+      return res.status(400).send({ error: '잘못된 요청입니다.' });
+    }
 
-    res.send({ result: { id } }); // 유니티 클라이언트로 응답 보냄
+    const { image, name, category } = data;
+
+    new Product({ name, category }).save((err, doc) => {
+      if (err) {
+        return res.status(500).send({ error: 'DB 에러: ' + err });
+      }
+
+      console.log('### new product created ###\n', doc);
+
+      const id = doc._id;
+      return res.send({ result: { id } }); // 유니티 클라이언트로 응답 보냄
+    });
   },
 
   async suggestProducts(req, res) {
@@ -103,7 +140,7 @@ module.exports = {
 
     // 검색어가 없거나 공백인 경우
     if (!q) {
-      return res.status(404).send({ result: '검색어를 입력하세요.' });
+      return res.status(400).send({ result: '검색어를 입력하세요.' });
     }
 
     let collection = await Product.find({
@@ -116,7 +153,7 @@ module.exports = {
 
     // 검색 결과가 없는 경우
     if (collection.length === 0) {
-      return res.send({ result: collection });
+      return res.status(404).send({ result: collection });
     }
 
     // 자모 분해한 필드를 collection에 추가
@@ -137,8 +174,7 @@ module.exports = {
     });
     const result = fuse.search(Hangul.disassemble(q).join('')).slice(0, 5);
 
-    console.log(collection);
-    res.send({ result });
+    return res.send({ result });
   },
 
   async fetchFeaturedProduct(req, res) {
@@ -163,8 +199,11 @@ module.exports = {
         if (err) {
           console.warn(err);
           console.log(JSON.stringify(doc));
+
+          return res.status(500).send({ error: 'DB 에러: ' + err });
         }
-        res.send(doc);
+
+        return res.send(doc);
       });
   }
 };

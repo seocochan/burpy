@@ -11,7 +11,11 @@ module.exports = {
       .populate('productId')
       .sort({ dateAdded: -1 })
       .exec((err, doc) => {
-        res.send(doc);
+        if (err) {
+          return res.status(500).send({ error: 'DB 에러: ' + err });
+        }
+
+        return res.send(doc);
       });
   },
 
@@ -133,7 +137,15 @@ module.exports = {
     const { id } = req.params;
 
     Review.findById(id).exec((err, doc) => {
-      res.send(doc);
+      if (err) {
+        return res.status(500).send({ error: 'DB 에러: ' + err });
+      }
+
+      if (!doc) {
+        return res.status(404).json({ error: '리뷰가 없습니다.' });
+      }
+
+      return res.send(doc);
     });
   },
 
