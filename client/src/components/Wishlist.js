@@ -14,7 +14,9 @@ import { connect } from 'react-redux';
 import * as actions from '../actions'
 
 /**
- * cdm fetch 불필요
+ * TODO:
+ * cdm fetch 불필요 xx 필요함 이거안하면 wishlist 못받아옴
+ * 나머진 수정 완료
  */
 
 class Wishlist extends Component {
@@ -22,17 +24,26 @@ class Wishlist extends Component {
     super(props);
     this.state = {
       wishlist: [],
-      name : false,
-      date : true
+      sort : 'name',
+      open : false
     };
-    this.nameSort = this.nameSort.bind(this);
-    this.dateSort = this.dateSort.bind(this);
+
+    this.sortChange = this.sortChange.bind(this);
   }
 
   fetchWishlist() {
     axios.get('/api/wishlist').then(res => {
-      this.setState({ wishlist: res.data });
-      console.log(res.data);
+      const sorted = res.data.concat().sort((a,b)=>{
+        if(a.date > b.date){
+          return -1;
+        }
+        if(a.date < b.date){
+          return 1;
+        }
+        return 0;
+      })
+      this.setState({wishlist : sorted, open : false, sort : 'name'});
+      console.log(this.state.wishlist);
     });
     this.props.fetchUser();
   }
@@ -45,60 +56,42 @@ class Wishlist extends Component {
     axios.delete(`/api/wishlist/${id}`).then(() => this.fetchWishlist());
   }
 
-  buttonOff(){
-    if(this.state.date){
-      this.setState({
-        date : false,
-        name : true
-      })
-    }
-    else{
-      this.setState({
-        date : true,
-        name : false
-      })
-    }
-  }
-
-  nameSort() {
-    this.setState(
-      this.state.wishlist.sort((a,b)=>{
-        if(a.productId.name > b.productId.name){
-          return 1;
-        }
-        if(a.productId.name < b.productId.name){
+  sortChange(){
+    if(this.state.sort =='date'){
+      const sorted = this.state.wishlist.concat().sort((a, b) => {
+        if (a.date > b.date) {
           return -1;
         }
-        return 0;
-      })
-    )
-    this.buttonOff();
-  }
-  dateSort() {
-    this.setState(
-      this.state.wishlist.sort((a,b)=>{
-        if(a.date > b.date){
-          return -1;
-        }
-        if(a.date < b.date){
+        if (a.date < b.date) {
           return 1;
         }
         return 0;
-      })
-    )
-    this.buttonOff();
+      });
+      this.setState({ wishlist : sorted, sort : 'name', open : false});
+    }
+    else if(this.state.sort =='name'){
+      const sorted = this.state.wishlist.concat().sort((a, b) => {
+        if (a.productId.name > b.productId.name) {
+          return 1;
+        }
+        if (a.productId.name < b.productId.name) {
+          return -1;
+        }
+        return 0;
+      });
+      this.setState({ wishlist : sorted, sort : 'date', open : true});
+    }
   }
-
   renderSortButtons() {
     return (
       <div>
         <Button 
           variant="extendedFab" 
-          onClick={()=>this.nameSort()} 
-          disabled={this.state.name}>이름순</Button>
+          onClick={()=>this.sortChange()} 
+          disabled={this.state.open}>이름순</Button>
         <Button variant="extendedFab" 
-          onClick={()=>this.dateSort()} 
-          disabled={this.state.date}>날짜순</Button>
+          onClick={()=>this.sortChange()} 
+          disabled={!this.state.open}>날짜순</Button>
       </div>
     );
   }
@@ -120,6 +113,7 @@ class Wishlist extends Component {
   }
 
   render() {
+    console.log(this.state.wishlist)
     const {classes} = this.props;
     return (
       <div className = {classes.container}>
