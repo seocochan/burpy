@@ -3,14 +3,22 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+/**
+ * TODO:
+ * 초기 정렬
+ * state 1개로 통합
+ * 함수 1개로 통합
+ * wishlist 동일
+ */
+
 class MyProducts extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       reviews: [],
-      date : true,
-      score : false
-     };
+      date: true,
+      score: false
+    };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);
@@ -20,7 +28,7 @@ class MyProducts extends Component {
 
   async componentDidMount() {
     const reviews = await axios.get('api/review');
-    this.setState( { reviews : reviews.data } );
+    this.setState({ reviews: reviews.data });
   }
 
   async handleDelete(id) {
@@ -39,42 +47,42 @@ class MyProducts extends Component {
     this.props.history.push(`/edit/review/${id}`);
   }
 
-  buttonOff(){
-    if(this.state.date){
+  buttonOff() {
+    if (this.state.date) {
       this.setState({
-        date : false,
-        score : true
+        date: false,
+        score: true
       })
     }
-    else{
+    else {
       this.setState({
-        date : true,
-        score : false
+        date: true,
+        score: false
       })
     }
   }
 
   scoreSort() {
-    this.setState(
-      this.state.reviews.sort((a,b)=>{
-        if(a.productId.name > b.productId.name){
-          return 1;
-        }
-        if(a.productId.name < b.productId.name){
-          return -1;
-        }
-        return 0;
-      })
-    )
+    const sorted = this.state.reviews.concat().sort((a, b) => {
+      if (a.productId.name > b.productId.name) {
+        return 1;
+      }
+      if (a.productId.name < b.productId.name) {
+        return -1;
+      }
+      return 0;
+    });
+
+    this.setState({ reviews: sorted });
     this.buttonOff();
   }
   dateSort() {
     this.setState(
-      this.state.reviews.sort((a,b)=>{
-        if(a.dateAdded > b.dateAdded){
+      this.state.reviews.sort((a, b) => {
+        if (a.dateAdded > b.dateAdded) {
           return -1;
         }
-        if(a.dateAdded < b.dateAdded){
+        if (a.dateAdded < b.dateAdded) {
           return 1;
         }
         return 0;
@@ -98,17 +106,18 @@ class MyProducts extends Component {
       );
     });
   }
-  renderSortButton(){
-    return(
+  renderSortButton() {
+    return (
       <div>
-        <button onClick = {()=>this.scoreSort()} disabled={this.state.score}>평점순</button>
-        <button onClick = {()=>this.dateSort()} disabled={this.state.date}>날짜순</button>
+        <button onClick={() => this.scoreSort()} disabled={this.state.score}>평점순</button>
+        <button onClick={() => this.dateSort()} disabled={this.state.date}>날짜순</button>
 
       </div>
     )
   }
 
   render() {
+    console.log(this.state.reviews);
     return (
       <div>
         <h3>내 상품</h3>

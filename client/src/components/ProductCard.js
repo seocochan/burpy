@@ -39,10 +39,6 @@ class ProductCard extends Component {
     if (this.currentState) {
       await axios.post(`/api/wishlist/${id}`);
       this.setState({ isToggleOn: !this.currentState });
-    } else {
-      await axios.delete(`/api/wishlist/${id}`);
-      this.fetchList();
-      this.setState({ isToggleOn: !this.currentState });
     }
 
     this.setState({ open: true });

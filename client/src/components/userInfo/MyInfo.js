@@ -27,8 +27,11 @@ class MyInfo extends Component {
     );
   }
   render() {
-    const {classes} = this.props;
+    const {classes}=this.props;
     console.log(this.props.auth)
+
+    if(this.props.auth==null)
+    return(<div></div>)
 
     return (
       <div className = {classes.container}>
