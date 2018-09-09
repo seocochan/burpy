@@ -127,9 +127,11 @@ const fetchScore = Id =>
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc', doc);
+        console.log('doc1', doc);
         if (doc.length == 0) {
-          resolve(0);
+          score = [{_id : '', scoreavg : 0}]
+          console.log('score',score[0].scoreavg)
+          resolve(score[0].scoreavg);
         } else {
           resolve(doc[0].scoreavg);
         }
@@ -165,17 +167,18 @@ const fetchTaste = Id =>
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc1', doc);
+        console.log('doc2', doc);
         if (doc.length == 0) {
-          doc = {
+          taste = [{
             id : '',
             tasteavg1 : 0,
             tasteavg2 : 0,
             tasteavg3 : 0,
             tasteavg4 : 0,
             tasteavg5 : 0
-          }
-          resolve(0);
+          }]
+          console.log('taste',taste)
+          resolve(taste);
         } else {
           resolve(doc);
         }
@@ -228,18 +231,18 @@ const fetchTaste = Id =>
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc2', doc);
+        console.log('doc3', doc);
         if (doc.length == 0) {
-          doc = {
+          count = [{
             id : '',
             one : 0,
             two : 0,
             three : 0,
             four : 0,
             five : 0
-          }
-          console.log(doc)
-          resolve(doc);
+          }]
+          console.log('count',count)
+          resolve(count);
         } else {
           resolve(doc);
         }

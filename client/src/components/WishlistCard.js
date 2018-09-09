@@ -82,7 +82,6 @@ const styles = theme => ({
     margin: theme.spacing.unit,
   },
   card: {
-    maxWidth : 400
   },
   media: {
     paddingTop : '66%'
