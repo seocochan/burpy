@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { reduxForm, Field, FieldArray, initialize } from 'redux-form';
+import { reduxForm, Field, FieldArray } from 'redux-form';
 import { Redirect } from 'react-router';
 import category from '../../assets/datas/productCategoryDict';
 import CommentField from './CommentField';
@@ -177,6 +177,9 @@ const styles = theme => ({
   starIcon: {
     fontSize: 48
   },
+  error: {
+    color: theme.palette.error.main
+  },
   commentField: {
     width: '100%',
     maxWidth: 480
@@ -196,7 +199,12 @@ const styles = theme => ({
 
 function validate(values) {
   const errors = {};
-  // TODO: 여기에 validation 구현
+
+  ['score', 'taste', 'comment'].forEach(field => {
+    if (!values[field]) {
+      errors[field] = '필수항목입니다';
+    }
+  });
 
   return errors;
 }
