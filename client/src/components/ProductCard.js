@@ -15,6 +15,7 @@ import {
 import noImage from '../assets/images/noImage.png';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import * as actions from '../actions'
 
 class ProductCard extends Component {
   constructor(props){
@@ -40,8 +41,8 @@ class ProductCard extends Component {
       await axios.post(`/api/wishlist/${id}`);
       this.setState({ isToggleOn: !this.currentState });
     }
-
     this.setState({ open: true });
+    this.props.fetchUser();
   }
 
   fetchList(){
@@ -182,6 +183,7 @@ function mapStateToProps({ auth }) {
 
 export default withStyles(styles)(
   connect(
-    mapStateToProps
+    mapStateToProps,
+    actions
   )(ProductCard)
 )
