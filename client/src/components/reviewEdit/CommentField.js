@@ -11,6 +11,7 @@ export default ({ classes, input, label, meta: { error, touched } }) => {
         multiline
         rows="4"
         error={touched && Boolean(error)}
+        helperText={touched && error}
         InputProps={{
           disableUnderline: true,
           classes: {
