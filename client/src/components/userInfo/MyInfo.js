@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import {Paper,Typography} from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -14,6 +13,7 @@ import TodayIcon from '@material-ui/icons/Today';
 import FaceIcon from '@material-ui/icons/Face';
 import GenderIcon from '@material-ui/icons/SupervisorAccount';
 import { connect } from 'react-redux';
+
 class MyInfo extends Component {
   renderEditButton() {
     return (
@@ -26,39 +26,38 @@ class MyInfo extends Component {
       </IconButton>
     );
   }
-  render() {
-    const {classes}=this.props;
-    console.log(this.props.auth)
 
-    if(this.props.auth==null)
-    return(<div></div>)
+  render() {
+    const { classes, auth } = this.props;
+
+    if (auth == null) return <div />;
 
     return (
-      <div className = {classes.container}>
-        <Typography variant='headline' component='h2'>
-        내 정보 조회
+      <div className={classes.container}>
+        <Typography variant="headline" component="h2">
+          내 정보 조회
         </Typography>
-        <Paper className = {classes.paperSize}>
+        <Paper className={classes.paperSize}>
           <List>
             <ListItem>
               <Avatar>
-                <FaceIcon/>
+                <FaceIcon />
               </Avatar>
-              <ListItemText primary = '이름' secondary={this.props.auth.name}/>
+              <ListItemText primary="이름" secondary={auth.name} />
             </ListItem>
-              <Divider inset component="li" />
+            <Divider inset component="li" />
             <ListItem>
               <Avatar>
-                <GenderIcon/>
+                <GenderIcon />
               </Avatar>
-              <ListItemText primary='성별' secondary={this.props.auth.gender}/>
+              <ListItemText primary="성별" secondary={auth.gender} />
             </ListItem>
-            <Divider inset component="li"/>
+            <Divider inset component="li" />
             <ListItem>
               <Avatar>
-                <TodayIcon/>
+                <TodayIcon />
               </Avatar>
-              <ListItemText primary='생일' secondary={this.props.auth.birthday}/>
+              <ListItemText primary="생일" secondary={auth.birthday} />
             </ListItem>
           </List>
         </Paper>
@@ -68,32 +67,26 @@ class MyInfo extends Component {
   }
 }
 
-const styles = theme =>({
-  container : {
-    justifyContent : 'center',
-    width : '100%',
-    margin : 'auto',
-    maxWidth : '960px'
+const styles = theme => ({
+  container: {
+    justifyContent: 'center',
+    width: '100%',
+    margin: 'auto',
+    maxWidth: '960px'
   },
-  paperSize : {
-    padding : theme.spacing.unit,
-    marginTop : '20px'
+  paperSize: {
+    padding: theme.spacing.unit,
+    marginTop: '20px'
   },
-  userInfo : {
-    fontSize : 20,
-    padding : 'center'
+  userInfo: {
+    fontSize: 20,
+    padding: 'center'
   },
-  tableRow : {
-  }
-
-})
+  tableRow: {}
+});
 
 function mapStateToProps({ auth }) {
   return { auth };
 }
 
-export default withStyles(styles)(
-    connect(
-      mapStateToProps
-  )(MyInfo)
-)
+export default withStyles(styles)(connect(mapStateToProps)(MyInfo));

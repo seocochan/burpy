@@ -4,8 +4,8 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
   Id: String,
   credits: { type: Number, default: 0 },
-  name : String,
-  provider : String,
+  name: String,
+  provider: String,
   wishlist: [
     {
       productId: { type: Number, ref: 'products' },
@@ -13,8 +13,8 @@ const userSchema = new Schema({
     }
   ],
   reviews: [{ type: Schema.Types.ObjectId, ref: 'reviews' }],
-  birthday : {type : Date, default : null},
-  gender : {type : String, default : null}
+  birthday: { type: String, default: null },
+  gender: { type: String, default: null }
 });
 
 const User = mongoose.model('users', userSchema);
