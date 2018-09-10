@@ -18,7 +18,8 @@ import {
   Divider,
   Grid,
   Zoom,
-  CircularProgress
+  CircularProgress,
+  Snackbar
 } from '@material-ui/core';
 
 const SIZE_UNIT = 10;
@@ -26,7 +27,12 @@ const SIZE_UNIT = 10;
 class SearchResultPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { nextData: [], isPending: true, isInitFetchDone: false };
+    this.state = {
+      nextData: [],
+      isPending: true,
+      isInitFetchDone: false,
+      open: false
+    };
 
     this.isInitFetchDone = false;
     this.size = SIZE_UNIT * 2;
@@ -216,11 +222,31 @@ class SearchResultPage extends Component {
       return (
         <Zoom key={item._id} in={Boolean(item)}>
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <ProductCard key={item._id} product={item} />
+            <ProductCard
+              key={item._id}
+              product={item}
+              onButtonClick={() => this.setState({ open: true })}
+            />
           </Grid>
         </Zoom>
       );
     });
+  }
+
+  renderSnackBar() {
+    const { open } = this.state;
+
+    return (
+      <Snackbar
+        open={open}
+        autoHideDuration={1000}
+        onClose={() => this.setState({ open: false })}
+        ContentProps={{
+          'aria-describedby': 'message-id'
+        }}
+        message={<span id="message-id">찜목록에 추가!</span>}
+      />
+    );
   }
 
   render() {
@@ -228,63 +254,66 @@ class SearchResultPage extends Component {
     const { nextData, isPending, isInitFetchDone } = this.state;
 
     return (
-      <div className={classes.container}>
-        <Typography
-          className={classes.title}
-          variant="title"
-          component="h2"
-          gutterBottom
-        >
-          <span className={classes.titleSpan}>'{this.word}'</span>에 대한 검색
-          결과
-        </Typography>
-        <div className={classes.controlSection}>
-          <div className={classes.filterSection}>
-            {this.renderCategoryFilter()}
-            {this.renderSortSelect()}
-          </div>
-          <Button
-            className={classes.newButton}
-            classes={{ sizeSmall: classes.newButtonSizeSmall }}
-            size="small"
-            component={Link}
-            to="/new/product"
+      <Fragment>
+        <div className={classes.container}>
+          <Typography
+            className={classes.title}
+            variant="title"
+            component="h2"
+            gutterBottom
           >
-            상품 등록
-          </Button>
-        </div>
-        <Divider />
-        <Fragment>
-          {!isInitFetchDone && (
-            <div className={classes.progressContainer}>
-              <CircularProgress />
+            <span className={classes.titleSpan}>'{this.word}'</span>에 대한 검색
+            결과
+          </Typography>
+          <div className={classes.controlSection}>
+            <div className={classes.filterSection}>
+              {this.renderCategoryFilter()}
+              {this.renderSortSelect()}
             </div>
-          )}
-
-          <div
-            className={classes.productsSection}
-            style={{ display: !isInitFetchDone ? 'none' : 'flex' }}
-          >
-            <Grid container spacing={8}>
-              {this.renderList()}
-            </Grid>
-            {nextData.length !== 0 ? (
-              <Button
-                className={classes.loadMoreButton}
-                variant="outlined"
-                onClick={() => this.fetchMoreSearchItems(this.query)}
-                disabled={isPending}
-              >
-                {isPending ? <CircularProgress size={20} /> : '결과 더 보기'}
-              </Button>
-            ) : (
-              <Button className={classes.loadMoreButton} disabled>
-                이게 다예요.
-              </Button>
-            )}
+            <Button
+              className={classes.newButton}
+              classes={{ sizeSmall: classes.newButtonSizeSmall }}
+              size="small"
+              component={Link}
+              to="/new/product"
+            >
+              상품 등록
+            </Button>
           </div>
-        </Fragment>
-      </div>
+          <Divider />
+          <Fragment>
+            {!isInitFetchDone && (
+              <div className={classes.progressContainer}>
+                <CircularProgress />
+              </div>
+            )}
+
+            <div
+              className={classes.productsSection}
+              style={{ display: !isInitFetchDone ? 'none' : 'flex' }}
+            >
+              <Grid container spacing={8}>
+                {this.renderList()}
+              </Grid>
+              {nextData.length !== 0 ? (
+                <Button
+                  className={classes.loadMoreButton}
+                  variant="outlined"
+                  onClick={() => this.fetchMoreSearchItems(this.query)}
+                  disabled={isPending}
+                >
+                  {isPending ? <CircularProgress size={20} /> : '결과 더 보기'}
+                </Button>
+              ) : (
+                <Button className={classes.loadMoreButton} disabled>
+                  이게 다예요.
+                </Button>
+              )}
+            </div>
+          </Fragment>
+        </div>
+        {this.renderSnackBar()}
+      </Fragment>
     );
   }
 }

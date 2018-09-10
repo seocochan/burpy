@@ -36,6 +36,7 @@ class ProductPage extends Component {
     this.fetchData(id);
   }
 
+
   componentWillReceiveProps(nextProps) {
     const { id } = nextProps.match.params;
 

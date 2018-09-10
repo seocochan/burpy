@@ -19,11 +19,61 @@ import {
   Typography
 } from '@material-ui/core';
 import noImage from '../assets/images/noImage.png';
+import { connect } from 'react-redux';
+import axios from 'axios';
+import * as actions from '../actions';
 
 class ProductCard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { isToggleOn: null };
+
+    this.handleClick = this.handleClick.bind(this, this.props.product._id);
+    this.currentState = null;
+  }
+
+  componentWillMount() {
+    this.fetchList();
+  }
+
+  componentDidMount() {
+    this.fetchList();
+  }
+
+  async handleClick(id) {
+    const { isToggleOn } = this.state;
+    this.currentState = isToggleOn;
+
+    await this.setState({ isToggleOn: null });
+
+    if (this.currentState) {
+      await axios.post(`/api/wishlist/${id}`);
+      this.setState({ isToggleOn: !this.currentState });
+    }
+
+    this.props.onButtonClick();
+    this.props.fetchUser();
+  }
+
+  fetchList() {
+    if (this.props.auth.wishlist !== []) {
+      for (let i = 0; i < this.props.auth.wishlist.length; i++) {
+        if (this.props.auth.wishlist[i].productId === this.props.product._id) {
+          this.setState({ isToggleOn: false });
+          break;
+        }
+      }
+    }
+
+    if (this.state.isToggleOn == null) {
+      this.setState({ isToggleOn: true });
+    }
+  }
+
   render() {
     const { classes, product, review, onDeleteReview } = this.props;
     const { _id: productId, name, category, avgScore, imageUrl } = product;
+    const { isToggleOn } = this.state;
     const s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
 
     let reviewId, score, comment, dateAdded;
@@ -112,6 +162,8 @@ class ProductCard extends Component {
                   <IconButton
                     className={classes.iconButton}
                     aria-label="Favorite"
+                    disabled={!isToggleOn}
+                    onClick={this.handleClick}
                   >
                     <FavoriteBorder className={classes.icon} />
                   </IconButton>
@@ -200,4 +252,13 @@ const styles = theme => ({
   }
 });
 
-export default withStyles(styles)(ProductCard);
+function mapStateToProps({ auth }) {
+  return { auth };
+}
+
+export default withStyles(styles)(
+  connect(
+    mapStateToProps,
+    actions
+  )(ProductCard)
+);

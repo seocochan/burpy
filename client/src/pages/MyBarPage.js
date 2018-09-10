@@ -14,14 +14,28 @@ import {
 class MyBarPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { reviews: null };
+    this.state = { reviews: null, sort: 'score' };
 
     this.handleDelete = this.handleDelete.bind(this);
+    this.sortChange = this.sortChange.bind(this);
   }
 
   async componentDidMount() {
     const reviews = await axios.get('/api/review');
-    this.setState({ reviews: reviews.data });
+
+    const sorted = reviews.data.concat().sort((a, b) => {
+      if (a.dateAdded > b.dateAdded) {
+        return -1;
+      }
+
+      if (a.dateAdded < b.dateAdded) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    this.setState({ reviews: sorted });
   }
 
   async handleDelete(id) {
@@ -39,6 +53,38 @@ class MyBarPage extends Component {
       return !(item._id === id);
     });
     this.setState({ reviews: newReviews });
+  }
+
+  sortChange() {
+    if (this.state.sort == 'dateAdded') {
+      const sorted = this.state.reviews.concat().sort((a, b) => {
+        if (a.dateAdded > b.dateAdded) {
+          return -1;
+        }
+
+        if (a.dateAdded < b.dateAdded) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      this.setState({ reviews: sorted, sort: 'score' });
+    } else if (this.state.sort == 'score') {
+      const sorted = this.state.reviews.concat().sort((a, b) => {
+        if (a.score > b.score) {
+          return -1;
+        }
+
+        if (a.score < b.score) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      this.setState({ reviews: sorted, sort: 'dateAdded' });
+    }
   }
 
   renderList() {
@@ -62,7 +108,7 @@ class MyBarPage extends Component {
 
   render() {
     const { classes } = this.props;
-    const { reviews } = this.state;
+    const { reviews, sort } = this.state;
 
     return (
       <div className={classes.container}>
@@ -79,6 +125,8 @@ class MyBarPage extends Component {
             className={classes.button}
             classes={{ sizeSmall: classes.buttonSizeSmall }}
             size="small"
+            onClick={() => this.sortChange()}
+            disabled={sort === 'score'}
           >
             날짜순
           </Button>
@@ -86,6 +134,8 @@ class MyBarPage extends Component {
             className={classes.button}
             classes={{ sizeSmall: classes.buttonSizeSmall }}
             size="small"
+            onClick={() => this.sortChange()}
+            disabled={sort === 'dateAdded'}
           >
             평점순
           </Button>
