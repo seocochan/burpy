@@ -29,9 +29,30 @@ module.exports = {
     const avgScore = await fetchScore(newReview.productId);
     const avgTaste = await fetchTaste(newReview.productId);
     const reviewCount = await fetchScoreCount(newReview.productId);
-    const count = [reviewCount[0].one,reviewCount[0].two,reviewCount[0].three,reviewCount[0].four,reviewCount[0].five];
-    const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-    const productScore = await fetchProduct(newReview.productId, avgScore,taste,count);
+
+    const count = [
+      reviewCount[0].one,
+      reviewCount[0].two,
+      reviewCount[0].three,
+      reviewCount[0].four,
+      reviewCount[0].five
+    ];
+
+    const taste = [
+      avgTaste[0].tasteavg1,
+      avgTaste[0].tasteavg2,
+      avgTaste[0].tasteavg3,
+      avgTaste[0].tasteavg4,
+      avgTaste[0].tasteavg5
+    ];
+
+    const productScore = await fetchProduct(
+      newReview.productId,
+      avgScore,
+      taste,
+      count
+    );
+
     res.send(productScore);
   },
 
@@ -43,10 +64,32 @@ module.exports = {
     });
     const avgScore = await fetchScore(updatedReview.productId);
     const reviewCount = await fetchScoreCount(updatedReview.productId);
-    const count = [reviewCount[0].one,reviewCount[0].two,reviewCount[0].three,reviewCount[0].four,reviewCount[0].five];
+
+    const count = [
+      reviewCount[0].one,
+      reviewCount[0].two,
+      reviewCount[0].three,
+      reviewCount[0].four,
+      reviewCount[0].five
+    ];
+
     const avgTaste = await fetchTaste(updatedReview.productId);
-    const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-    const productScore = await fetchProduct(updatedReview.productId, avgScore,taste,count);
+    
+    const taste = [
+      avgTaste[0].tasteavg1,
+      avgTaste[0].tasteavg2,
+      avgTaste[0].tasteavg3,
+      avgTaste[0].tasteavg4,
+      avgTaste[0].tasteavg5
+    ];
+
+    const productScore = await fetchProduct(
+      updatedReview.productId,
+      avgScore,
+      taste,
+      count
+    );
+
     res.send(productScore);
   },
 
@@ -59,13 +102,35 @@ module.exports = {
           console.warn(err);
           res.status(410).send('리뷰 제거 실패');
         }
-        //res.status(200).send(id);
+
         const Avg = await fetchScore(doc.productId);
         const reviewCount = await fetchScoreCount(doc.productId);
-        const count = [reviewCount[0].one,reviewCount[0].two,reviewCount[0].three,reviewCount[0].four,reviewCount[0].five];
+
+        const count = [
+          reviewCount[0].one,
+          reviewCount[0].two,
+          reviewCount[0].three,
+          reviewCount[0].four,
+          reviewCount[0].five
+        ];
+
         const avgTaste = await fetchTaste(doc.productId);
-        const taste = [avgTaste[0].tasteavg1, avgTaste[0].tasteavg2,avgTaste[0].tasteavg3,avgTaste[0].tasteavg4,avgTaste[0].tasteavg5];
-        const productScore = await fetchProduct(doc.productId, Avg,taste,count);
+
+        const taste = [
+          avgTaste[0].tasteavg1,
+          avgTaste[0].tasteavg2,
+          avgTaste[0].tasteavg3,
+          avgTaste[0].tasteavg4,
+          avgTaste[0].tasteavg5
+        ];
+
+        const productScore = await fetchProduct(
+          doc.productId,
+          Avg,
+          taste,
+          count
+        );
+
         res.send(productScore);
       });
     });
@@ -127,10 +192,8 @@ const fetchScore = Id =>
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc1', doc);
         if (doc.length == 0) {
-          score = [{_id : '', scoreavg : 0}]
-          console.log('score',score[0].scoreavg)
+          score = [{ _id: '', scoreavg: 0 }];
           resolve(score[0].scoreavg);
         } else {
           resolve(doc[0].scoreavg);
@@ -151,6 +214,7 @@ const fetchProduct = (Id, score, taste, count) =>
       }
     });
   });
+
 const fetchTaste = Id =>
   new Promise(resolve => {
     Review.aggregate([
@@ -167,17 +231,18 @@ const fetchTaste = Id =>
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc2', doc);
-        if (doc.length == 0) {
-          taste = [{
-            id : '',
-            tasteavg1 : 0,
-            tasteavg2 : 0,
-            tasteavg3 : 0,
-            tasteavg4 : 0,
-            tasteavg5 : 0
-          }]
-          console.log('taste',taste)
+        if (doc.length === 0) {
+          taste = [
+            {
+              id: '',
+              tasteavg1: 0,
+              tasteavg2: 0,
+              tasteavg3: 0,
+              tasteavg4: 0,
+              tasteavg5: 0
+            }
+          ];
+
           resolve(taste);
         } else {
           resolve(doc);
@@ -185,63 +250,55 @@ const fetchTaste = Id =>
       }
     });
   });
-  const fetchScoreCount = (Id)=>
+
+const fetchScoreCount = Id =>
   new Promise(resolve => {
     Review.aggregate([
-      { $match:  {productId : Id} },
+      { $match: { productId: Id } },
       {
-        $group : {
-          _id : '',
-          one : {
-            $sum : {
-              $cond : [
-                {$eq : ["$score",1]},1,0
-              ]
+        $group: {
+          _id: '',
+          one: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 1] }, 1, 0]
             }
           },
-          two : {
-            $sum : {
-              $cond : [
-                {$eq : ["$score",2]},1,0
-              ]
+          two: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 2] }, 1, 0]
             }
           },
-          three : {
-            $sum : {
-              $cond : [
-                {$eq : ["$score",3]},1,0
-              ]
+          three: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 3] }, 1, 0]
             }
           },
-          four : {
-            $sum : {
-              $cond : [
-                {$eq : ["$score",4]},1,0
-              ]
+          four: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 4] }, 1, 0]
             }
           },
-          five : {
-            $sum : {
-              $cond : [
-                {$eq : ["$score",5]},1,0
-              ]
+          five: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 5] }, 1, 0]
             }
           }
         }
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc3', doc);
         if (doc.length == 0) {
-          count = [{
-            id : '',
-            one : 0,
-            two : 0,
-            three : 0,
-            four : 0,
-            five : 0
-          }]
-          console.log('count',count)
+          count = [
+            {
+              id: '',
+              one: 0,
+              two: 0,
+              three: 0,
+              four: 0,
+              five: 0
+            }
+          ];
+
           resolve(count);
         } else {
           resolve(doc);
@@ -249,4 +306,3 @@ const fetchTaste = Id =>
       }
     });
   });
-

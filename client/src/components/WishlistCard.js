@@ -35,7 +35,7 @@ class ProductCard extends Component {
                 {category}
               </Typography>
               <Typography
-                className = {classes.name}
+                className={classes.name}
                 gutterBottom
                 variant="title"
                 component="h3"
@@ -56,8 +56,12 @@ class ProductCard extends Component {
                 }
               />
             </CardContent>
-            <CardActions className = {classes.actions} >
-              <Button size="small" color="primary" onClick={()=>onDelete(_id)}>
+            <CardActions className={classes.actions}>
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => onDelete(_id)}
+              >
                 삭제
               </Button>
               <Button
@@ -79,28 +83,26 @@ class ProductCard extends Component {
 
 const styles = theme => ({
   container: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit
   },
-  card: {
-  },
+  card: {},
   media: {
-    paddingTop : '66%'
+    paddingTop: '66%'
     // height: 0, // 세로
     // paddingTop: '150%' // 2:3 // 세로
   },
-  name : {
+  name: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     width: '100%'
   },
-  actions : {
-      display : 'flex',
-      alignItems : 'center',
-      paddingBottom : theme.spacing.unit,
-      marginLeft : 'auto'
+  actions: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingBottom: theme.spacing.unit,
+    marginLeft: 'auto'
   }
-
 });
 
 export default withStyles(styles)(ProductCard);
