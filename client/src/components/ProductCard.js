@@ -7,7 +7,8 @@ import {
   FavoriteBorder,
   MoreHoriz,
   Edit,
-  Delete
+  Delete,
+  Favorite
 } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import {
@@ -49,6 +50,10 @@ class ProductCard extends Component {
     if (this.currentState) {
       await axios.post(`/api/wishlist/${id}`);
       this.setState({ isToggleOn: !this.currentState });
+    } else {
+      await axios.delete(`/api/wishlist/${id}`);
+      this.fetchList();
+      this.setState({ isToggleOn: !this.currentState })
     }
 
     this.props.onButtonClick();
@@ -79,6 +84,12 @@ class ProductCard extends Component {
     let reviewId, score, comment, dateAdded;
     if (review) {
       ({ _id: reviewId, score, comment, dateAdded } = review);
+    }
+    let icon;
+    if (isToggleOn == true) {
+      icon = <FavoriteBorder className={classes.icon} />
+    } else {
+      icon = <Favorite className={classes.icon} />
     }
 
     return (
@@ -158,24 +169,23 @@ class ProductCard extends Component {
                   </IconButton>
                 </Fragment>
               ) : (
-                <Fragment>
-                  <IconButton
-                    className={classes.iconButton}
-                    aria-label="Favorite"
-                    disabled={!isToggleOn}
-                    onClick={this.handleClick}
-                  >
-                    <FavoriteBorder className={classes.icon} />
-                  </IconButton>
-                  <IconButton
-                    className={classes.iconButton}
-                    component={Link}
-                    to={`/product/${productId}`}
-                  >
-                    <MoreHoriz className={classes.icon} />
-                  </IconButton>
-                </Fragment>
-              )}
+                  <Fragment>
+                    <IconButton
+                      className={classes.iconButton}
+                      aria-label="Favorite"
+                      onClick={this.handleClick}
+                    >
+                      {icon}
+                    </IconButton>
+                    <IconButton
+                      className={classes.iconButton}
+                      component={Link}
+                      to={`/product/${productId}`}
+                    >
+                      <MoreHoriz className={classes.icon} />
+                    </IconButton>
+                  </Fragment>
+                )}
             </CardActions>
           </div>
         </Card>

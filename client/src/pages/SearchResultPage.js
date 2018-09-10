@@ -232,6 +232,11 @@ class SearchResultPage extends Component {
       );
     });
   }
+  /**
+   * TODO:
+   * 스낵바 메시지 istoggleon을 기준으로 추가인지 제거인지 해야되는데 밖으로
+   * 빼버려서 어쩌지..
+   */
 
   renderSnackBar() {
     const { open } = this.state;
