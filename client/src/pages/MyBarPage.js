@@ -39,20 +39,15 @@ class MyBarPage extends Component {
   }
 
   async handleDelete(id) {
-    // 버그로 인해 임시 제외
-    // const res = await axios.delete(`/api/review/${id}`);
-    // if (res.status === 200) {
-    //   const newReviews = _.filter(this.state.reviews, item => {
-    //     return !(item._id === res.data);
-    //   });
-    //   this.setState({ reviews: newReviews });
-    // }
+    const res = await axios.delete(`/api/review/${id}`);
 
-    // FIXME: 위의 코드 버그 수정 후 아래의 테스트용 코드 제거
-    const newReviews = _.filter(this.state.reviews, item => {
-      return !(item._id === id);
-    });
-    this.setState({ reviews: newReviews });
+    if (res.status === 200) {
+      const newReviews = _.filter(this.state.reviews, item => {
+        return !(item._id === id);
+      });
+
+      this.setState({ reviews: newReviews });
+    }
   }
 
   sortChange() {
