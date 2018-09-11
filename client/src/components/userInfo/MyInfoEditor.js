@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
-import momentLocaliser from 'react-widgets-moment';
 import axios from 'axios';
-import moment from 'moment';
 import InfoField from './InfoField';
 import SelectField from './SelectField';
 import DateField from './DateField';
@@ -12,9 +10,6 @@ import { Send } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
-
-moment.locale('ko');
-momentLocaliser();
 
 class MyInfoEditor extends Component {
   constructor(props) {
