@@ -37,8 +37,10 @@ class SearchResultPage extends Component {
     this.isInitFetchDone = false;
     this.size = SIZE_UNIT * 2;
     this.count = 1;
+    this.isToggleOn = null;
 
     this.fetchMoreSearchItems = this.fetchMoreSearchItems.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 
   // 이 컴포넌트가 mount, update 됐을 때 url 쿼리를 값으로 가져오는 함수.
@@ -225,12 +227,21 @@ class SearchResultPage extends Component {
             <ProductCard
               key={item._id}
               product={item}
-              onButtonClick={() => this.setState({ open: true })}
+              onButtonClick={toggle => this.handleButtonClick(toggle)}
             />
           </Grid>
         </Zoom>
       );
     });
+  }
+
+  handleButtonClick(toggle) {
+    if (toggle === true) {
+      this.isToggleOn = true;
+    } else if (toggle === false) {
+      this.isToggleOn = false;
+    }
+    this.setState({ open: true });
   }
 
   renderSnackBar() {
@@ -244,7 +255,11 @@ class SearchResultPage extends Component {
         ContentProps={{
           'aria-describedby': 'message-id'
         }}
-        message={<span id="message-id">찜목록에 추가!</span>}
+        message={
+          <span id="message-id">
+            {this.isToggleOn ? '찜목록에 추가!' : '찜목록에서 제거!'}
+          </span>
+        }
       />
     );
   }
