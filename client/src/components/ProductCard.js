@@ -56,7 +56,7 @@ class ProductCard extends Component {
       this.setState({ isToggleOn: !this.currentState })
     }
 
-    this.props.onButtonClick();
+    this.props.onButtonClick(isToggleOn);
     this.props.fetchUser();
   }
 
@@ -86,7 +86,7 @@ class ProductCard extends Component {
       ({ _id: reviewId, score, comment, dateAdded } = review);
     }
     let icon;
-    if (isToggleOn == true) {
+    if (isToggleOn === true) {
       icon = <FavoriteBorder className={classes.icon} />
     } else {
       icon = <Favorite className={classes.icon} />
