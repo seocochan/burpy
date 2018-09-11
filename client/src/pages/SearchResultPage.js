@@ -37,10 +37,10 @@ class SearchResultPage extends Component {
     this.isInitFetchDone = false;
     this.size = SIZE_UNIT * 2;
     this.count = 1;
-    this.isToggleOn=null;
+    this.isToggleOn = null;
 
     this.fetchMoreSearchItems = this.fetchMoreSearchItems.bind(this);
-    this.buttonClick = this.buttonClick.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
   }
 
   // 이 컴포넌트가 mount, update 됐을 때 url 쿼리를 값으로 가져오는 함수.
@@ -227,26 +227,21 @@ class SearchResultPage extends Component {
             <ProductCard
               key={item._id}
               product={item}
-              onButtonClick={(toggle) => this.buttonClick(toggle)}
+              onButtonClick={toggle => this.handleButtonClick(toggle)}
             />
           </Grid>
         </Zoom>
       );
     });
   }
-  /**
-   * TODO:
-   * 스낵바 메시지 istoggleon을 기준으로 추가인지 제거인지 해야되는데 밖으로
-   * 빼버려서 어쩌지..
-   */
-  buttonClick(toggle){
-    if(toggle===true){
-      this.isToggleOn = true
+
+  handleButtonClick(toggle) {
+    if (toggle === true) {
+      this.isToggleOn = true;
+    } else if (toggle === false) {
+      this.isToggleOn = false;
     }
-    else if(toggle===false){
-      this.isToggleOn = false
-    }
-    this.setState({open : true})
+    this.setState({ open: true });
   }
 
   renderSnackBar() {
@@ -260,8 +255,11 @@ class SearchResultPage extends Component {
         ContentProps={{
           'aria-describedby': 'message-id'
         }}
-        message={<span id="message-id">
-        {this.isToggleOn ? '찜목록에 추가!':'찜목록에서 제거!'}</span>}
+        message={
+          <span id="message-id">
+            {this.isToggleOn ? '찜목록에 추가!' : '찜목록에서 제거!'}
+          </span>
+        }
       />
     );
   }

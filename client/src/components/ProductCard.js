@@ -53,7 +53,7 @@ class ProductCard extends Component {
     } else {
       await axios.delete(`/api/wishlist/${id}`);
       this.fetchList();
-      this.setState({ isToggleOn: !this.currentState })
+      this.setState({ isToggleOn: !this.currentState });
     }
 
     this.props.onButtonClick(isToggleOn);
@@ -87,9 +87,9 @@ class ProductCard extends Component {
     }
     let icon;
     if (isToggleOn === true) {
-      icon = <FavoriteBorder className={classes.icon} />
+      icon = <FavoriteBorder className={classes.icon} />;
     } else {
-      icon = <Favorite className={classes.icon} />
+      icon = <Favorite className={classes.icon} />;
     }
 
     return (
@@ -169,23 +169,23 @@ class ProductCard extends Component {
                   </IconButton>
                 </Fragment>
               ) : (
-                  <Fragment>
-                    <IconButton
-                      className={classes.iconButton}
-                      aria-label="Favorite"
-                      onClick={this.handleClick}
-                    >
-                      {icon}
-                    </IconButton>
-                    <IconButton
-                      className={classes.iconButton}
-                      component={Link}
-                      to={`/product/${productId}`}
-                    >
-                      <MoreHoriz className={classes.icon} />
-                    </IconButton>
-                  </Fragment>
-                )}
+                <Fragment>
+                  <IconButton
+                    className={classes.iconButton}
+                    aria-label="Favorite"
+                    onClick={this.handleClick}
+                  >
+                    {icon}
+                  </IconButton>
+                  <IconButton
+                    className={classes.iconButton}
+                    component={Link}
+                    to={`/product/${productId}`}
+                  >
+                    <MoreHoriz className={classes.icon} />
+                  </IconButton>
+                </Fragment>
+              )}
             </CardActions>
           </div>
         </Card>
