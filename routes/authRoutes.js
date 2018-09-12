@@ -6,7 +6,9 @@ module.exports = app => {
     '/auth/google',
     passport.authenticate('google', {
       // GoogleStrategy에 내장된 id인 'google'을 참조함.
-      scope: ['profile', 'email']
+      scope: ['profile', 'email'],
+      accessType: 'offline',
+      prompt: 'consent'
     })
   );
   app.get(
