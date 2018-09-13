@@ -23,7 +23,10 @@ module.exports = {
     const userId = req.user._id;
     const values = { userId, ...req.body };
 
+    // DB에 리뷰를 저장
     const newReview = await new Review(values).save();
+
+    // 통계 수치 계산
     const avgScore = await fetchScore(newReview.productId);
     const avgTaste = await fetchTaste(newReview.productId);
     const reviewCount = await fetchScoreCount(newReview.productId);
@@ -44,6 +47,7 @@ module.exports = {
       avgTaste[0].tasteavg5
     ];
 
+    // 계산된 통계값으로 상품을 업데이트
     const productScore = await fetchProduct(
       newReview.productId,
       avgScore,
@@ -51,7 +55,10 @@ module.exports = {
       count
     );
 
-    res.send(productScore);
+    // 포인트 지급
+    await givePoint(userId, newReview.productId);
+
+    return res.send(productScore);
   },
 
   async updateReview(req, res) {
@@ -72,7 +79,7 @@ module.exports = {
     ];
 
     const avgTaste = await fetchTaste(updatedReview.productId);
-    
+
     const taste = [
       avgTaste[0].tasteavg1,
       avgTaste[0].tasteavg2,
@@ -309,6 +316,33 @@ const fetchScoreCount = Id =>
         } else {
           resolve(doc);
         }
+      }
+    });
+  });
+
+const givePoint = (userId, productId) =>
+  new Promise(resolve => {
+    User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { reviewedProducts: productId } },
+      { new: false }
+    ).exec((err, doc) => {
+      if (err) {
+        return res.status(500).send({ error: 'DB 에러: ' + err });
+      }
+
+      if (!doc.reviewedProducts.includes(productId)) {
+        User.findByIdAndUpdate(userId, { $inc: { points: 5 } }).exec(
+          (err, doc) => {
+            if (err) {
+              return res.status(500).send({ error: 'DB 에러: ' + err });
+            }
+
+            resolve(doc);
+          }
+        );
+      } else {
+        resolve(doc);
       }
     });
   });
