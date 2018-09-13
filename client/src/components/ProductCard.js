@@ -17,7 +17,8 @@ import {
   CardContent,
   CardActions,
   IconButton,
-  Typography
+  Typography,
+  CircularProgress
 } from '@material-ui/core';
 import noImage from '../assets/images/noImage.png';
 import { connect } from 'react-redux';
@@ -86,7 +87,9 @@ class ProductCard extends Component {
       ({ _id: reviewId, score, comment, dateAdded } = review);
     }
     let icon;
-    if (isToggleOn === true) {
+    if (isToggleOn == null) {
+      icon = <CircularProgress size={24} color="secondary" />
+    } else if (isToggleOn == true) {
       icon = <FavoriteBorder className={classes.icon} />;
     } else {
       icon = <Favorite className={classes.icon} />;
@@ -169,23 +172,24 @@ class ProductCard extends Component {
                   </IconButton>
                 </Fragment>
               ) : (
-                <Fragment>
-                  <IconButton
-                    className={classes.iconButton}
-                    aria-label="Favorite"
-                    onClick={this.handleClick}
-                  >
-                    {icon}
-                  </IconButton>
-                  <IconButton
-                    className={classes.iconButton}
-                    component={Link}
-                    to={`/product/${productId}`}
-                  >
-                    <MoreHoriz className={classes.icon} />
-                  </IconButton>
-                </Fragment>
-              )}
+                  <Fragment>
+                    <IconButton
+                      className={classes.iconButton}
+                      aria-label="Favorite"
+                      onClick={this.handleClick}
+                      disabled={isToggleOn == null}
+                    >
+                      {icon}
+                    </IconButton>
+                    <IconButton
+                      className={classes.iconButton}
+                      component={Link}
+                      to={`/product/${productId}`}
+                    >
+                      <MoreHoriz className={classes.icon} />
+                    </IconButton>
+                  </Fragment>
+                )}
             </CardActions>
           </div>
         </Card>

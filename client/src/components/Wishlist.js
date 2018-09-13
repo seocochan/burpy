@@ -48,6 +48,7 @@ class Wishlist extends Component {
   }
 
   sortChange() {
+    console.log(this.state.sort)
     if (this.state.sort == 'date') {
       const sorted = this.state.wishlist.concat().sort((a, b) => {
         if (a.date > b.date) {
@@ -79,19 +80,20 @@ class Wishlist extends Component {
     }
   }
   renderSortButtons() {
+    const {sort} = this.state
     return (
       <div>
         <Button
           variant="extendedFab"
           onClick={() => this.sortChange()}
-          disabled={this.state.sort === 'date'}
+          disabled={sort === 'date'}
         >
           이름순
         </Button>
         <Button
           variant="extendedFab"
           onClick={() => this.sortChange()}
-          disabled={this.state.sort === 'name'}
+          disabled={sort === 'name'}
         >
           날짜순
         </Button>
