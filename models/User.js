@@ -15,8 +15,7 @@ const userSchema = new Schema({
   birthday: { type: String, default: null },
   gender: { type: String, default: null },
   points: { type: Number, default: 0 },
-  reviewedProducts: { type: [Number], default: [] },
-  imageUploads: { type: [Number], default: [] }
+  reviewedProducts: { type: [Number], default: [] }
 });
 
 const User = mongoose.model('users', userSchema);
