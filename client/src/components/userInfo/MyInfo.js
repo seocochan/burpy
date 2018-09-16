@@ -34,9 +34,15 @@ class MyInfo extends Component {
 
     return (
       <div className={classes.container}>
+      <div className={classes.titleContainer}>
+      <div className = {classes.title}>
         <Typography variant="headline" component="h2">
           내 정보 조회
         </Typography>
+        </div>
+        <p>{this.renderEditButton()}</p>
+        </div>
+        <Divider/>
         <Paper className={classes.paperSize}>
           <List>
             <ListItem>
@@ -61,7 +67,6 @@ class MyInfo extends Component {
             </ListItem>
           </List>
         </Paper>
-        <p>{this.renderEditButton()}</p>
       </div>
     );
   }
@@ -72,7 +77,7 @@ const styles = theme => ({
     justifyContent: 'center',
     width: '100%',
     margin: 'auto',
-    maxWidth: '960px'
+    maxWidth: '1280px'
   },
   paperSize: {
     padding: theme.spacing.unit,
@@ -82,7 +87,16 @@ const styles = theme => ({
     fontSize: 20,
     padding: 'center'
   },
-  tableRow: {}
+  title : {
+    marginLeft: theme.spacing.unit,
+    marginRight: 'auto'
+  },
+  titleContainer : {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: theme.spacing.unit * 3
+  }
 });
 
 function mapStateToProps({ auth }) {
