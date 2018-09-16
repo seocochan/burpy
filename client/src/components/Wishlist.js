@@ -80,18 +80,21 @@ class Wishlist extends Component {
     }
   }
   renderSortButtons() {
-    const {sort} = this.state
+    const { sort } = this.state;
+    const { classes } = this.props;
     return (
       <div>
         <Button
-          variant="extendedFab"
+        size='small'
+          className={classes.sortButton}
           onClick={() => this.sortChange()}
           disabled={sort === 'date'}
         >
           이름순
         </Button>
         <Button
-          variant="extendedFab"
+        size='small'
+          className={classes.sortButton}
           onClick={() => this.sortChange()}
           disabled={sort === 'name'}
         >
@@ -108,6 +111,7 @@ class Wishlist extends Component {
           <WishlistCard
             key={item.productId._id}
             product={item.productId}
+            date={item}
             onDelete={id => {
               this.onDeleteClick(id);
             }}
@@ -119,10 +123,10 @@ class Wishlist extends Component {
 
   render() {
     const { classes } = this.props;
-    
+
     return (
       <div className={classes.container}>
-        <div>
+        <div className={classes.titleContainer}>
           <Typography className={classes.title} variant="title" component="h2">
             Wishlist
           </Typography>
@@ -150,12 +154,17 @@ const styles = theme => ({
     margin: 'center'
   },
   title: {
-    marginTop: theme.spacing.unit * 4,
-    marginLeft: theme.spacing.unit
+    marginLeft: theme.spacing.unit,
+    marginRight: 'auto'
   },
   sortButton: {
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2
+    margin: theme.spacing.unit
+  },
+  titleContainer : {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: theme.spacing.unit * 4
   }
 });
 

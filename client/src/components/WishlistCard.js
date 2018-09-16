@@ -17,6 +17,7 @@ class ProductCard extends Component {
   render() {
     const { classes, onDelete } = this.props;
     const { _id, name, category, avgScore, imageUrl } = this.props.product;
+    const { date } = this.props.date
     const s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
 
     return (
@@ -31,9 +32,16 @@ class ProductCard extends Component {
           />
           <div>
             <CardContent>
-              <Typography variant="caption" component="p">
-                {category}
-              </Typography>
+              <div className={classes.subContainer}>
+                <div className={classes.text}>
+                  <Typography variant="caption" component="p">
+                    {category}
+                  </Typography>
+                </div>
+                <Typography variant="caption">
+                  {date.substring(0, 10)}
+                </Typography>
+              </div>
               <Typography
                 className={classes.name}
                 gutterBottom
@@ -88,8 +96,6 @@ const styles = theme => ({
   card: {},
   media: {
     paddingTop: '66%'
-    // height: 0, // 세로
-    // paddingTop: '150%' // 2:3 // 세로
   },
   name: {
     overflow: 'hidden',
@@ -102,6 +108,13 @@ const styles = theme => ({
     alignItems: 'center',
     paddingBottom: theme.spacing.unit,
     marginLeft: 'auto'
+  },
+  subContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  text: {
+    marginRight: 'auto'
   }
 });
 
