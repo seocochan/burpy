@@ -114,7 +114,7 @@ class MyInfoEditor extends Component {
     if (this.props.auth == null) return <div />;
 
     const { classes } = this.props;
-    
+
     return (
       <div className={classes.container}>
         <h3>내정보 수정</h3>
@@ -128,8 +128,8 @@ class MyInfoEditor extends Component {
               color="primary"
               type="submit"
             >
+              <Send className={classes.sendIcon}/>
               완료
-              <Send />
             </Button>
             {this.state.isDone && <Redirect to={'/my-info'} />}
           </form>
@@ -143,7 +143,8 @@ const styles = theme => ({
   container: {
     width: '100%',
     maxWidth: '1280px',
-    margin: 'auto'
+    margin: 'auto',
+    marginTop : theme.spacing.unit *2
   },
   userInfo: {
     marginRight: theme.spacing.unit * 4
@@ -151,30 +152,38 @@ const styles = theme => ({
   nameField: {
     marginTop: theme.spacing.unit,
     width: '100%',
-    maxWidth: 640
+    maxWidth: 320
   },
   genderField: {
     marginTop: theme.spacing.unit * 2,
     width: '100%',
-    maxWidth: 640
   },
   dateField: {
     marginTop: theme.spacing.unit * 2,
     width: '100%',
-    maxWidth: 640
   },
   button: {
-    marginTop: theme.spacing.unit * 2
+    marginTop: theme.spacing.unit * 2,
+    float : 'right'
   },
   gap: {
     marginBottom: theme.spacing.unit,
     marginTop: theme.spacing.unit * 2
+  },
+  sendIcon : {
+    marginRight : theme.spacing.unit,
+    fontSize: 20
   }
 });
 
 function validate(values) {
   const errors = {};
-  // TODO: 여기에 validation 구현
+
+  ['name', 'gender', 'birthday'].forEach(field => {
+    if (!values[field]) {
+      errors[field] = '필수항목입니다.';
+    }
+  })
 
   return errors;
 }

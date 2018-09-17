@@ -16,7 +16,7 @@ class Wishlist extends Component {
       sort: 'name'
     };
 
-    this.sortChange = this.sortChange.bind(this);
+    this.changeSort = this.changeSort.bind(this);
   }
 
   fetchWishlist() {
@@ -47,7 +47,7 @@ class Wishlist extends Component {
     axios.delete(`/api/wishlist/${id}`).then(() => this.fetchWishlist());
   }
 
-  sortChange() {
+  changeSort() {
     if (this.state.sort == 'date') {
       const sorted = this.state.wishlist.concat().sort((a, b) => {
         if (a.date > b.date) {
@@ -78,20 +78,25 @@ class Wishlist extends Component {
       this.setState({ wishlist: sorted, sort: 'date' });
     }
   }
+
   renderSortButtons() {
+    const { sort } = this.state;
+    const { classes } = this.props;
     return (
       <div>
         <Button
-          variant="extendedFab"
-          onClick={() => this.sortChange()}
-          disabled={this.state.sort === 'date'}
+          size="small"
+          className={classes.sortButton}
+          onClick={() => this.changeSort()}
+          disabled={sort === 'date'}
         >
           이름순
         </Button>
         <Button
-          variant="extendedFab"
-          onClick={() => this.sortChange()}
-          disabled={this.state.sort === 'name'}
+          size="small"
+          className={classes.sortButton}
+          onClick={() => this.changeSort()}
+          disabled={sort === 'name'}
         >
           날짜순
         </Button>
@@ -106,6 +111,7 @@ class Wishlist extends Component {
           <WishlistCard
             key={item.productId._id}
             product={item.productId}
+            date={item}
             onDelete={id => {
               this.onDeleteClick(id);
             }}
@@ -117,10 +123,10 @@ class Wishlist extends Component {
 
   render() {
     const { classes } = this.props;
-    
+
     return (
       <div className={classes.container}>
-        <div>
+        <div className={classes.titleContainer}>
           <Typography className={classes.title} variant="title" component="h2">
             Wishlist
           </Typography>
@@ -148,12 +154,17 @@ const styles = theme => ({
     margin: 'center'
   },
   title: {
-    marginTop: theme.spacing.unit * 4,
-    marginLeft: theme.spacing.unit
+    marginLeft: theme.spacing.unit,
+    marginRight: 'auto'
   },
   sortButton: {
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2
+    margin: theme.spacing.unit
+  },
+  titleContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: theme.spacing.unit * 4
   }
 });
 
