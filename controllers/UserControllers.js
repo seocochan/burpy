@@ -1,19 +1,29 @@
 const User = require('../models/User');
+const Product = require('../models/Product');
 
 module.exports = {
   fetchWishlist(req, res) {
     const sortWishlist = req.order ? req.order : 'wishlist.date';
+
     User.findById(req.user._id)
       .populate('wishlist.productId')
       .sort(sortWishlist)
       .exec((err, doc) => {
-        res.send(doc.wishlist);
+        if (err) {
+          return res.status(500).send({ error: 'DB 에러: ' + err });
+        }
+
+        return res.send(doc.wishlist);
       });
   },
 
   deleteWishlistItem(req, res) {
     const userId = req.user._id;
     const productId = req.params.id;
+
+    if (!productId) {
+      return res.status(400).send({ error: '잘못된 요청입니다.' });
+    }
 
     User.findByIdAndUpdate(
       userId,
@@ -25,14 +35,21 @@ module.exports = {
       if (err) {
         console.warn(err);
         console.log(JSON.stringify(doc));
+
+        return res.status(500).send({ error: 'DB 에러: ' + err });
       }
-      res.send(doc.wishlist);
+
+      return res.send(doc.wishlist);
     });
   },
 
   addWishlist(req, res) {
-    const userId = req.user._id; //User객채의 ._id를 조회할떄 사용함
-    const productId = req.params.id; //url의 id를 받아온다.
+    const userId = req.user._id;
+    const productId = req.params.id;
+
+    if (!productId) {
+      return res.status(400).send({ error: '잘못된 요청입니다.' });
+    }
 
     User.findByIdAndUpdate(
       userId,
@@ -47,8 +64,12 @@ module.exports = {
     ).then((doc, err) => {
       if (err) {
         console.warn(err);
+        console.log(JSON.stringify(doc));
+
+        return res.status(500).send({ error: 'DB 에러: ' + err });
       }
-      res.send(doc.wishlist);
+
+      return res.send(doc.wishlist);
     });
   },
 

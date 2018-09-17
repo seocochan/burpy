@@ -1,18 +1,20 @@
 import React, { Component, Fragment } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import { withStyles } from '@material-ui/core/styles';
 import withRoot from './withRoot';
+import PrivateRoute from './utils/PrivateRoute';
 
 import MainPage from './pages/MainPage';
 import SearchResultPage from './pages/SearchResultPage';
 import ProductPage from './pages/ProductPage';
 import RecommendPage from './pages/RecommendPage';
+import MyBarPage from './pages/MyBarPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 import Header from './components/Header';
 import Wishlist from './components/Wishlist';
-import MyProducts from './components/MyProducts';
 import NewProduct from './components/productEdit/NewProduct';
 import EditProduct from './components/productEdit/EditProduct';
 import NewReview from './components/reviewEdit/NewReview';
@@ -34,18 +36,21 @@ class App extends Component {
           <div className={classes.root}>
             <Header />
             <div className={classes.content}>
-              <Route exact path="/" component={MainPage} />
-              <Route exact path="/search" component={SearchResultPage} />
-              <Route exact path="/recommend" component={RecommendPage} />
-              <Route exact path="/wishlist" component={Wishlist} />
-              <Route exact path="/my-products" component={MyProducts} />
-              <Route exact path="/product/:id" component={ProductPage} />
-              <Route exact path="/new/product" component={NewProduct} />
-              <Route exact path="/edit/product/:id" component={EditProduct} />
-              <Route exact path="/new/review/:id" component={NewReview} />
-              <Route exact path="/edit/review/:id" component={EditReview} />
-              <Route exact path="/my-info" component={MyInfo} />
-              <Route exact path="/edit/my-info/:id" component={MyInfoEditor} />
+              <Switch>
+                <Route exact path="/" component={MainPage} />
+                <PrivateRoute exact path="/search" component={SearchResultPage} />
+                <PrivateRoute exact path="/recommend" component={RecommendPage} />
+                <PrivateRoute exact path="/wishlist" component={Wishlist} />
+                <PrivateRoute exact path="/my-bar" component={MyBarPage} />
+                <PrivateRoute exact path="/product/:id" component={ProductPage} />
+                <PrivateRoute exact path="/new/product" component={NewProduct} />
+                <Route exact path="/edit/product/:id" component={EditProduct} />
+                <PrivateRoute exact path="/new/review/:id" component={NewReview} />
+                <PrivateRoute exact path="/edit/review/:id" component={EditReview} />
+                <PrivateRoute exact path="/my-info" component={MyInfo} />
+                <PrivateRoute exact path="/edit/my-info/:id" component={MyInfoEditor} />
+                <Route component={NotFoundPage} />
+              </Switch>
             </div>
           </div>
         </BrowserRouter>
@@ -66,7 +71,7 @@ const styles = theme => ({
     width: '100%',
     height: 'calc(100% - 56px)',
     margin: theme.spacing.unit,
-    marginTop: theme.spacing.unit + 56,
+    marginTop: theme.spacing.unit + 56
   }
 });
 

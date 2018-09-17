@@ -1,23 +1,21 @@
 const Review = require('../models/Review');
 const User = require('../models/User');
 const Product = require('../models/Product');
+const mongoose = require('mongoose');
 
 module.exports = {
   fetchReviews(req, res) {
-    const { query } = req;
-    const sortStandard =
-      query.order === undefined || query.order === 'dateAdded'
-        ? { dateAdded: -1 }
-        : { score: -1 };
-    User.findById(req.user._id)
-      .populate({
-        path: 'reviews',
-        populate: { path: 'productId' }
-      })
-      .sort(sortStandard)
+    const userId = req.user._id;
+
+    Review.find({ userId: mongoose.Types.ObjectId(userId) })
+      .populate('productId')
       .sort({ dateAdded: -1 })
       .exec((err, doc) => {
-        res.send(doc.reviews);
+        if (err) {
+          return res.status(500).send({ error: 'DB 에러: ' + err });
+        }
+
+        return res.send(doc);
       });
   },
 
@@ -25,22 +23,22 @@ module.exports = {
     const userId = req.user._id;
     const values = { userId, ...req.body };
 
+    // DB에 리뷰를 저장
     const newReview = await new Review(values).save();
+
+    // 통계 수치 계산
     const avgScore = await fetchScore(newReview.productId);
     const avgTaste = await fetchTaste(newReview.productId);
-    const reviewCount_1 = await fetchScoreCount(newReview.productId, 0, 1);
-    const reviewCount_2 = await fetchScoreCount(newReview.productId, 1, 2);
-    const reviewCount_3 = await fetchScoreCount(newReview.productId, 2, 3);
-    const reviewCount_4 = await fetchScoreCount(newReview.productId, 3, 4);
-    const reviewCount_5 = await fetchScoreCount(newReview.productId, 4, 5);
+    const reviewCount = await fetchScoreCount(newReview.productId);
+
     const count = [
-      reviewCount_1[0].count,
-      reviewCount_2[0].count,
-      reviewCount_3[0].count,
-      reviewCount_4[0].count,
-      reviewCount_5[0].count
+      reviewCount[0].one,
+      reviewCount[0].two,
+      reviewCount[0].three,
+      reviewCount[0].four,
+      reviewCount[0].five
     ];
-    console.log(count);
+
     const taste = [
       avgTaste[0].tasteavg1,
       avgTaste[0].tasteavg2,
@@ -48,13 +46,19 @@ module.exports = {
       avgTaste[0].tasteavg4,
       avgTaste[0].tasteavg5
     ];
+
+    // 계산된 통계값으로 상품을 업데이트
     const productScore = await fetchProduct(
       newReview.productId,
       avgScore,
       taste,
       count
     );
-    res.send(productScore);
+
+    // 포인트 지급
+    await givePoint(userId, newReview.productId);
+
+    return res.send(productScore);
   },
 
   async updateReview(req, res) {
@@ -64,19 +68,18 @@ module.exports = {
       new: true
     });
     const avgScore = await fetchScore(updatedReview.productId);
-    const avgTaste = await fetchTaste(updatedReview.productId);
-    const reviewCount_1 = await fetchScoreCount(updatedReview.productId, 0, 1);
-    const reviewCount_2 = await fetchScoreCount(updatedReview.productId, 1, 2);
-    const reviewCount_3 = await fetchScoreCount(updatedReview.productId, 2, 3);
-    const reviewCount_4 = await fetchScoreCount(updatedReview.productId, 3, 4);
-    const reviewCount_5 = await fetchScoreCount(updatedReview.productId, 4, 5);
+    const reviewCount = await fetchScoreCount(updatedReview.productId);
+
     const count = [
-      reviewCount_1[0].count,
-      reviewCount_2[0].count,
-      reviewCount_3[0].count,
-      reviewCount_4[0].count,
-      reviewCount_5[0].count
+      reviewCount[0].one,
+      reviewCount[0].two,
+      reviewCount[0].three,
+      reviewCount[0].four,
+      reviewCount[0].five
     ];
+
+    const avgTaste = await fetchTaste(updatedReview.productId);
+
     const taste = [
       avgTaste[0].tasteavg1,
       avgTaste[0].tasteavg2,
@@ -84,12 +87,14 @@ module.exports = {
       avgTaste[0].tasteavg4,
       avgTaste[0].tasteavg5
     ];
+
     const productScore = await fetchProduct(
       updatedReview.productId,
       avgScore,
       taste,
       count
     );
+
     res.send(productScore);
   },
 
@@ -102,14 +107,20 @@ module.exports = {
           console.warn(err);
           res.status(410).send('리뷰 제거 실패');
         }
-        //res.status(200).send(id);
+
         const Avg = await fetchScore(doc.productId);
+        const reviewCount = await fetchScoreCount(doc.productId);
+
+        const count = [
+          reviewCount[0].one,
+          reviewCount[0].two,
+          reviewCount[0].three,
+          reviewCount[0].four,
+          reviewCount[0].five
+        ];
+
         const avgTaste = await fetchTaste(doc.productId);
-        const reviewCount_1 = await fetchScoreCount(doc.productId, 0, 1);
-        const reviewCount_2 = await fetchScoreCount(doc.productId, 1, 2);
-        const reviewCount_3 = await fetchScoreCount(doc.productId, 2, 3);
-        const reviewCount_4 = await fetchScoreCount(doc.productId, 3, 4);
-        const reviewCount_5 = await fetchScoreCount(doc.productId, 4, 5);
+
         const taste = [
           avgTaste[0].tasteavg1,
           avgTaste[0].tasteavg2,
@@ -117,19 +128,14 @@ module.exports = {
           avgTaste[0].tasteavg4,
           avgTaste[0].tasteavg5
         ];
-        const count = [
-          reviewCount_1[0].count,
-          reviewCount_2[0].count,
-          reviewCount_3[0].count,
-          reviewCount_4[0].count,
-          reviewCount_5[0].count
-        ];
+
         const productScore = await fetchProduct(
           doc.productId,
           Avg,
           taste,
           count
         );
+
         res.send(productScore);
       });
     });
@@ -139,7 +145,15 @@ module.exports = {
     const { id } = req.params;
 
     Review.findById(id).exec((err, doc) => {
-      res.send(doc);
+      if (err) {
+        return res.status(500).send({ error: 'DB 에러: ' + err });
+      }
+
+      if (!doc) {
+        return res.status(404).json({ error: '리뷰가 없습니다.' });
+      }
+
+      return res.send(doc);
     });
   },
 
@@ -191,9 +205,9 @@ const fetchScore = Id =>
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc', doc);
         if (doc.length == 0) {
-          resolve(0);
+          score = [{ _id: '', scoreavg: 0 }];
+          resolve(score[0].scoreavg);
         } else {
           resolve(doc[0].scoreavg);
         }
@@ -213,6 +227,7 @@ const fetchProduct = (Id, score, taste, count) =>
       }
     });
   });
+
 const fetchTaste = Id =>
   new Promise(resolve => {
     Review.aggregate([
@@ -229,9 +244,19 @@ const fetchTaste = Id =>
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc1', doc);
-        if (doc.length == 0) {
-          resolve(0);
+        if (doc.length === 0) {
+          taste = [
+            {
+              id: '',
+              tasteavg1: 0,
+              tasteavg2: 0,
+              tasteavg3: 0,
+              tasteavg4: 0,
+              tasteavg5: 0
+            }
+          ];
+
+          resolve(taste);
         } else {
           resolve(doc);
         }
@@ -239,30 +264,85 @@ const fetchTaste = Id =>
     });
   });
 
-const fetchScoreCount = (Id, a, b) =>
+const fetchScoreCount = Id =>
   new Promise(resolve => {
     Review.aggregate([
+      { $match: { productId: Id } },
       {
-        $match: {
-          $and: [
-            { productId: Id },
-            { score: { $gt: a } },
-            { score: { $lte: b } }
-          ]
+        $group: {
+          _id: '',
+          one: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 1] }, 1, 0]
+            }
+          },
+          two: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 2] }, 1, 0]
+            }
+          },
+          three: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 3] }, 1, 0]
+            }
+          },
+          four: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 4] }, 1, 0]
+            }
+          },
+          five: {
+            $sum: {
+              $cond: [{ $eq: ['$score', 5] }, 1, 0]
+            }
+          }
         }
-      },
-      {
-        $count: 'count'
       }
     ]).exec((err, doc) => {
       if (!err) {
-        console.log('doc2', doc);
         if (doc.length == 0) {
-          doc = [{ count: 0 }];
-          resolve(doc);
+          count = [
+            {
+              id: '',
+              one: 0,
+              two: 0,
+              three: 0,
+              four: 0,
+              five: 0
+            }
+          ];
+
+          resolve(count);
         } else {
           resolve(doc);
         }
+      }
+    });
+  });
+
+const givePoint = (userId, productId) =>
+  new Promise(resolve => {
+    User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { reviewedProducts: productId } },
+      { new: false }
+    ).exec((err, doc) => {
+      if (err) {
+        return res.status(500).send({ error: 'DB 에러: ' + err });
+      }
+
+      if (!doc.reviewedProducts.includes(productId)) {
+        User.findByIdAndUpdate(userId, { $inc: { points: 5 } }).exec(
+          (err, doc) => {
+            if (err) {
+              return res.status(500).send({ error: 'DB 에러: ' + err });
+            }
+
+            resolve(doc);
+          }
+        );
+      } else {
+        resolve(doc);
       }
     });
   });

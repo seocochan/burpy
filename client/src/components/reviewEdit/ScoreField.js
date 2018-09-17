@@ -8,10 +8,15 @@ import { Star, StarBorder } from '@material-ui/icons';
 // https://redux-form.com/7.2.3/docs/api/field.md/#usage
 // https://stackoverflow.com/questions/45157197/how-to-integrate-react-rating-w-redux-form
 
-export default ({ classes, input, label }) => {
+export default ({ classes, input, label, meta: { error, touched } }) => {
   return (
     <div>
-      <Typography variant="body2">{label}</Typography>
+      <Typography
+        className={touched && error ? classes.error : null}
+        variant="body2"
+      >
+        {label}
+      </Typography>
       <div>
         <Rating
           {...input}
@@ -25,6 +30,11 @@ export default ({ classes, input, label }) => {
           }
         />
       </div>
+      {touched && (
+        <Typography className={classes.error} variant="caption">
+          {error}
+        </Typography>
+      )}
     </div>
   );
 };

@@ -1,16 +1,19 @@
 import React from 'react';
-import DatePicker from 'react-widgets/lib/DateTimePicker';
-import 'react-widgets/dist/css/react-widgets.css';
+import { TextField } from '@material-ui/core';
 
-export default ({ input: { onChange, value }, showTime }) => {
+export default ({ input: { value, onChange }, meta: { error, touched } }) => {
   return (
-    <div>
-      <DatePicker
-        onChange={onChange}
-        format="DD MMM YYYY"
-        time={showTime}
-        value={!value ? null : new Date(value)}
-      />
-    </div>
+    <TextField
+      id="birthday"
+      label="생일"
+      type="date"
+      InputLabelProps={{
+        shrink: true
+      }}
+      value={value.slice(0, 10)}
+      onChange={onChange}
+      error={touched && Boolean(error)}
+      helperText={touched && error}
+    />
   );
 };

@@ -7,7 +7,12 @@ import TextViewer from './TextViewer';
 
 class ProductDetails extends Component {
   renderDetails() {
-    const { classes, productId, product } = this.props;
+    const { classes, productId } = this.props;
+    let { product: { details } } = this.props;
+
+    if (!details || details === '') {
+      details = '_아직 상세정보가 없습니다._';
+    }
 
     return (
       <div className={classes.container}>
@@ -24,7 +29,7 @@ class ProductDetails extends Component {
             <Edit className={classes.icon} />
           </IconButton>
         </div>
-        <TextViewer value={product.details} />
+        <TextViewer value={details} />
       </div>
     );
   }

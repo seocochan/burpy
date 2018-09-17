@@ -1,11 +1,47 @@
-import React from 'react';
-import SelectList from 'react-widgets/lib/SelectList';
-import 'react-widgets/dist/css/react-widgets.css';
+import React, { Fragment } from 'react';
+import {
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  Radio,
+  FormControlLabel,
+  FormHelperText
+} from '@material-ui/core';
 
-export default ({ input, data }) => {
+export default ({ input, label, meta: { touched, error } }) => {
+  console.log(error);
   return (
-    <div>
-      <SelectList {...input} onBlur={() => input.onBlur()} data={data} />
-    </div>
+    <Fragment>
+      <FormControl component="fieldset">
+        <FormLabel component="legend" error={Boolean(touched && error)}>
+          {label}
+        </FormLabel>
+        <RadioGroup aria-label="Gender" name="gender" {...input}>
+          <FormControlLabel
+            value="남자"
+            control={<Radio color="primary" />}
+            label="남자"
+          />
+          <FormControlLabel
+            value="여자"
+            control={<Radio color="primary" />}
+            label="여자"
+          />
+          <FormControlLabel
+            value="고르고 싶지 않다"
+            control={<Radio color="primary" />}
+            label="고르고 싶지 않다"
+          />
+        </RadioGroup>
+      </FormControl>
+      {touched &&
+        Boolean(error) && (
+          <FormHelperText
+            error={touched && Boolean(error)}
+          >
+            {error}
+          </FormHelperText>
+        )}
+    </Fragment>
   );
 };

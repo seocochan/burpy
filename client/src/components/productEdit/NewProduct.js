@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { reduxForm, Field } from 'redux-form';
 import { Redirect } from 'react-router';
 import ProductNameField from './ProductNameField';
@@ -76,11 +76,14 @@ class NewProduct extends Component {
 
     return (
       <div className={classes.inputContainer}>
+        <Typography variant="caption" component="span">
+          선택사항
+        </Typography>
         <Typography variant="title" gutterBottom>
           어디에서 구매할 수 있나요?
         </Typography>
         <Typography variant="body1" gutterBottom>
-          이 상품을 구매할 수 있는 판매처를 알려주세요. (1개 이상 선택)
+          이 상품을 구매할 수 있는 판매처를 알려주세요. (복수 선택 가능)
         </Typography>
         <Field
           classes={classes}
@@ -155,7 +158,7 @@ class NewProduct extends Component {
 
   async onSubmit(values) {
     const { file } = this.state;
-    const { name, category, shops, details } = values;
+    const { name, category, shops = {}, details } = values;
 
     // 이미지 등록 과정
     let uploadConfig;
@@ -280,9 +283,9 @@ const styles = theme => ({
 function validate(values) {
   const errors = {};
 
-  ['name', 'category', 'details'].forEach(field => {
+  ['name', 'category'].forEach(field => {
     if (!values[field]) {
-      errors[field] = 'Required';
+      errors[field] = '필수항목입니다';
     }
   });
 

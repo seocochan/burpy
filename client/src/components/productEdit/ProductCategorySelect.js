@@ -1,13 +1,14 @@
 import React, { Fragment } from 'react';
-import { InputLabel, FormControl, Select, MenuItem } from '@material-ui/core';
+import {
+  InputLabel,
+  FormControl,
+  FormHelperText,
+  Select,
+  MenuItem
+} from '@material-ui/core';
 import category from '../../assets/datas/productCategoryDict';
 
-export default ({
-  classes,
-  input,
-  label,
-  meta: { error, touched }
-}) => {
+export default ({ classes, input, label, meta: { error, touched } }) => {
   let menuItems = [];
   for (const c of Object.keys(category)) {
     menuItems.push(
@@ -28,6 +29,15 @@ export default ({
           {menuItems}
         </Select>
       </FormControl>
+      {touched &&
+        Boolean(error) && (
+          <FormHelperText
+            error={touched && Boolean(error)}
+            style={{ marginLeft: 8 }}
+          >
+            {error}
+          </FormHelperText>
+        )}
     </Fragment>
   );
 };

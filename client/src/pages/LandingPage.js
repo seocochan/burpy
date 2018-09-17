@@ -238,6 +238,7 @@ const styles = theme => ({
     }
   },
   phrase: {
+    wordBreak: 'keep-all',
     [theme.breakpoints.down('sm')]: {
       textAlign: 'center'
     },
@@ -308,6 +309,7 @@ const styles = theme => ({
     }
   },
   infoTitle: {
+    wordBreak: 'keep-all',
     [theme.breakpoints.down('sm')]: {
       textAlign: 'center',
       marginBottom: theme.spacing.unit * 2

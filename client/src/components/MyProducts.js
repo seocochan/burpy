@@ -6,14 +6,33 @@ import { Link } from 'react-router-dom';
 class MyProducts extends Component {
   constructor(props) {
     super(props);
-    this.state = { reviews: [] };
+
+    this.state = {
+      reviews: [],
+      sort: 'score'
+    };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.handleModify = this.handleModify.bind(this);
+    this.sortChange = this.sortChange.bind(this);
   }
 
-  componentDidMount() {
-    axios.get('/api/review').then(res => this.setState({ reviews: res.data }));
+  async componentDidMount() {
+    const reviews = await axios.get('api/review');
+
+    const sorted = reviews.data.concat().sort((a, b) => {
+      if (a.dateAdded > b.dateAdded) {
+        return -1;
+      }
+
+      if (a.dateAdded < b.dateAdded) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    this.setState({ reviews: sorted });
   }
 
   async handleDelete(id) {
@@ -28,8 +47,39 @@ class MyProducts extends Component {
   }
 
   handleModify(id) {
-    console.log(id);
     this.props.history.push(`/edit/review/${id}`);
+  }
+
+  sortChange() {
+    if (this.state.sort == 'date') {
+      const sorted = this.state.reviews.concat().sort((a, b) => {
+        if (a.dateAdded > b.dateAdded) {
+          return -1;
+        }
+
+        if (a.dateAdded < b.dateAdded) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      this.setState({ reviews: sorted, sort: 'score' });
+    } else if (this.state.sort == 'score') {
+      const sorted = this.state.reviews.concat().sort((a, b) => {
+        if (a.score > b.score) {
+          return -1;
+        }
+
+        if (a.score < b.score) {
+          return 1;
+        }
+
+        return 0;
+      });
+
+      this.setState({ reviews: sorted, sort: 'date' });
+    }
   }
 
   renderList() {
@@ -47,11 +97,30 @@ class MyProducts extends Component {
       );
     });
   }
+  renderSortButton() {
+    return (
+      <div>
+        <button
+          onClick={() => this.sortChange()}
+          disabled={this.state.sort === 'date'}
+        >
+          평점순
+        </button>
+        <button
+          onClick={() => this.sortChange()}
+          disabled={this.state.sort === 'score'}
+        >
+          날짜순
+        </button>
+      </div>
+    );
+  }
 
   render() {
     return (
       <div>
         <h3>내 상품</h3>
+        {this.renderSortButton()}
         <ul>{this.renderList()}</ul>
       </div>
     );
