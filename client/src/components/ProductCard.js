@@ -34,12 +34,8 @@ class ProductCard extends Component {
     this.currentState = null;
   }
 
-  componentWillMount() {
-    this.fetchList();
-  }
-
   componentDidMount() {
-    this.fetchList();
+    this.checkList();
   }
 
   async handleClick(id) {
@@ -53,7 +49,7 @@ class ProductCard extends Component {
       this.setState({ isToggleOn: !this.currentState });
     } else {
       await axios.delete(`/api/wishlist/${id}`);
-      this.fetchList();
+      this.checkList();
       this.setState({ isToggleOn: !this.currentState });
     }
 
@@ -61,18 +57,17 @@ class ProductCard extends Component {
     this.props.fetchUser();
   }
 
-  fetchList() {
-    if (this.props.auth.wishlist !== []) {
-      for (let i = 0; i < this.props.auth.wishlist.length; i++) {
-        if (this.props.auth.wishlist[i].productId === this.props.product._id) {
-          this.setState({ isToggleOn: false });
-          break;
-        }
-      }
-    }
+  checkList() {
+    const { auth, product } = this.props;
 
-    if (this.state.isToggleOn == null) {
-      this.setState({ isToggleOn: true });
+    if (auth.wishlist !== []) {
+      const list = auth.wishlist.map(item => item.productId);
+
+      if (list.includes(product._id)) {
+        this.setState({ isToggleOn: false });
+      } else {
+        this.setState({ isToggleOn: true });
+      }
     }
   }
 
@@ -86,10 +81,11 @@ class ProductCard extends Component {
     if (review) {
       ({ _id: reviewId, score, comment, dateAdded } = review);
     }
+
     let icon;
     if (isToggleOn == null) {
-      icon = <CircularProgress size={24} color="secondary" />
-    } else if (isToggleOn == true) {
+      icon = <CircularProgress size={24} color="secondary" />;
+    } else if (isToggleOn === true) {
       icon = <FavoriteBorder className={classes.icon} />;
     } else {
       icon = <Favorite className={classes.icon} />;
@@ -172,24 +168,24 @@ class ProductCard extends Component {
                   </IconButton>
                 </Fragment>
               ) : (
-                  <Fragment>
-                    <IconButton
-                      className={classes.iconButton}
-                      aria-label="Favorite"
-                      onClick={this.handleClick}
-                      disabled={isToggleOn == null}
-                    >
-                      {icon}
-                    </IconButton>
-                    <IconButton
-                      className={classes.iconButton}
-                      component={Link}
-                      to={`/product/${productId}`}
-                    >
-                      <MoreHoriz className={classes.icon} />
-                    </IconButton>
-                  </Fragment>
-                )}
+                <Fragment>
+                  <IconButton
+                    className={classes.iconButton}
+                    aria-label="Favorite"
+                    onClick={this.handleClick}
+                    disabled={isToggleOn == null}
+                  >
+                    {icon}
+                  </IconButton>
+                  <IconButton
+                    className={classes.iconButton}
+                    component={Link}
+                    to={`/product/${productId}`}
+                  >
+                    <MoreHoriz className={classes.icon} />
+                  </IconButton>
+                </Fragment>
+              )}
             </CardActions>
           </div>
         </Card>

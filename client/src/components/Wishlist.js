@@ -16,7 +16,7 @@ class Wishlist extends Component {
       sort: 'name'
     };
 
-    this.sortChange = this.sortChange.bind(this);
+    this.changeSort = this.changeSort.bind(this);
   }
 
   fetchWishlist() {
@@ -47,8 +47,7 @@ class Wishlist extends Component {
     axios.delete(`/api/wishlist/${id}`).then(() => this.fetchWishlist());
   }
 
-  sortChange() {
-    console.log(this.state.sort)
+  changeSort() {
     if (this.state.sort == 'date') {
       const sorted = this.state.wishlist.concat().sort((a, b) => {
         if (a.date > b.date) {
@@ -79,23 +78,24 @@ class Wishlist extends Component {
       this.setState({ wishlist: sorted, sort: 'date' });
     }
   }
+
   renderSortButtons() {
     const { sort } = this.state;
     const { classes } = this.props;
     return (
       <div>
         <Button
-        size='small'
+          size="small"
           className={classes.sortButton}
-          onClick={() => this.sortChange()}
+          onClick={() => this.changeSort()}
           disabled={sort === 'date'}
         >
           이름순
         </Button>
         <Button
-        size='small'
+          size="small"
           className={classes.sortButton}
-          onClick={() => this.sortChange()}
+          onClick={() => this.changeSort()}
           disabled={sort === 'name'}
         >
           날짜순
@@ -160,7 +160,7 @@ const styles = theme => ({
   sortButton: {
     margin: theme.spacing.unit
   },
-  titleContainer : {
+  titleContainer: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
