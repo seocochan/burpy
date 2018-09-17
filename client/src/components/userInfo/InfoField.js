@@ -8,6 +8,7 @@ export default ({ classes, input, label, meta: { error, touched } }) => {
       className={classes.nameField}
       placeholder={label}
       error={touched && Boolean(error)}
+      helperText={touched && error}
       {...input}
     />
   );
