@@ -15,7 +15,14 @@ const userSchema = new Schema({
   birthday: { type: String, default: null },
   gender: { type: String, default: null },
   points: { type: Number, default: 0 },
-  reviewedProducts: { type: [Number], default: [] },
+  reviewedProducts: {
+    '맥주': { type: [Number], default: [] },
+    '탄산 음료': { type: [Number], default: [] },
+    '커피': { type: [Number], default: [] },
+    '위스키': { type: [Number], default: [] },
+    '기타 음료': { type: [Number], default: [] },
+    '기타 주류': { type: [Number], default: [] }
+  },
   imageUploadCount: { type: Number, default: 0 }
 });
 

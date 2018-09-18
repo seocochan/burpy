@@ -56,7 +56,7 @@ module.exports = {
     );
 
     // 포인트 지급
-    await givePoint(userId, newReview.productId);
+    await givePoint(userId, newReview.productId, newReview.category);
 
     return res.send(productScore);
   },
@@ -320,18 +320,18 @@ const fetchScoreCount = Id =>
     });
   });
 
-const givePoint = (userId, productId) =>
+const givePoint = (userId, productId, category) =>
   new Promise(resolve => {
     User.findByIdAndUpdate(
       userId,
-      { $addToSet: { reviewedProducts: productId } },
+      { $addToSet: { [`reviewedProducts.${category}`]: productId } },
       { new: false }
     ).exec((err, doc) => {
       if (err) {
         return res.status(500).send({ error: 'DB 에러: ' + err });
       }
 
-      if (!doc.reviewedProducts.includes(productId)) {
+      if (!doc.reviewedProducts[category].includes(productId)) {
         User.findByIdAndUpdate(userId, { $inc: { points: 5 } }).exec(
           (err, doc) => {
             if (err) {
