@@ -22,13 +22,13 @@ module.exports = {
 
     // 이미지가 없던 상품에 새로 등록되는 경우
     if (!key) {
-      User.findByIdAndUpdate(user.id, { $inc: { points: 3 } }).exec(
-        (err, doc) => {
-          if (err) {
-            return res.status(500).send({ error: 'DB 에러: ' + err });
-          }
+      User.findByIdAndUpdate(user.id, {
+        $inc: { points: 3, imageUploadCount: 1 }
+      }).exec((err, doc) => {
+        if (err) {
+          return res.status(500).send({ error: 'DB 에러: ' + err });
         }
-      );
+      });
 
       key = `${category}/${name}/${uuid()}.jpeg`;
     }
