@@ -14,7 +14,7 @@ import FaceIcon from '@material-ui/icons/Face';
 import GenderIcon from '@material-ui/icons/SupervisorAccount';
 import { connect } from 'react-redux';
 
-class MyInfo extends Component {
+class MyInfoPage extends Component {
   renderEditButton() {
     return (
       <IconButton
@@ -103,4 +103,4 @@ function mapStateToProps({ auth }) {
   return { auth };
 }
 
-export default withStyles(styles)(connect(mapStateToProps)(MyInfo));
+export default withStyles(styles)(connect(mapStateToProps)(MyInfoPage));

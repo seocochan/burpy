@@ -11,6 +11,7 @@ import SearchResultPage from './pages/SearchResultPage';
 import ProductPage from './pages/ProductPage';
 import RecommendPage from './pages/RecommendPage';
 import MyBarPage from './pages/MyBarPage';
+import MyInfoPage from './pages/MyInfoPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 import Header from './components/Header';
@@ -19,7 +20,6 @@ import NewProduct from './components/productEdit/NewProduct';
 import EditProduct from './components/productEdit/EditProduct';
 import NewReview from './components/reviewEdit/NewReview';
 import EditReview from './components/reviewEdit/EditReview';
-import MyInfo from './components/userInfo/MyInfo';
 import MyInfoEditor from './components/userInfo/MyInfoEditor';
 
 class App extends Component {
@@ -47,7 +47,7 @@ class App extends Component {
                 <Route exact path="/edit/product/:id" component={EditProduct} />
                 <PrivateRoute exact path="/new/review/:id" component={NewReview} />
                 <PrivateRoute exact path="/edit/review/:id" component={EditReview} />
-                <PrivateRoute exact path="/my-info" component={MyInfo} />
+                <PrivateRoute exact path="/my-info" component={MyInfoPage} />
                 <PrivateRoute exact path="/edit/my-info/:id" component={MyInfoEditor} />
                 <Route component={NotFoundPage} />
               </Switch>
