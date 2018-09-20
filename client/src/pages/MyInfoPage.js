@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
@@ -13,6 +14,7 @@ import TodayIcon from '@material-ui/icons/Today';
 import FaceIcon from '@material-ui/icons/Face';
 import GenderIcon from '@material-ui/icons/SupervisorAccount';
 import { connect } from 'react-redux';
+import category from '../assets/datas/productCategoryDict';
 
 class MyInfoPage extends Component {
   renderEditButton() {
@@ -27,6 +29,30 @@ class MyInfoPage extends Component {
     );
   }
 
+  renderPoint() {
+    const { points = 0 } = this.props.auth;
+
+    return <Typography>{points}점</Typography>;
+  }
+
+  renderReviewCount() {
+    const { reviewedProducts = {} } = this.props.auth;
+
+    return _.map(category, c => {
+      return (
+        <Typography key={c.eng}>
+          {c.kor}: {reviewedProducts[c.kor].length}개
+        </Typography>
+      );
+    });
+  }
+
+  renderImageUploadCount() {
+    const { imageUploadCount = 0 } = this.props.auth;
+
+    return <Typography>{imageUploadCount}개</Typography>;
+  }
+
   render() {
     const { classes, auth } = this.props;
 
@@ -34,15 +60,15 @@ class MyInfoPage extends Component {
 
     return (
       <div className={classes.container}>
-      <div className={classes.titleContainer}>
-      <div className = {classes.title}>
-        <Typography variant="headline" component="h2">
-          내 정보 조회
-        </Typography>
+        <div className={classes.titleContainer}>
+          <div className={classes.title}>
+            <Typography variant="headline" component="h2">
+              내 정보 조회
+            </Typography>
+          </div>
+          <p>{this.renderEditButton()}</p>
         </div>
-        <p>{this.renderEditButton()}</p>
-        </div>
-        <Divider/>
+        <Divider />
         <Paper className={classes.paperSize}>
           <List>
             <ListItem>
@@ -67,6 +93,19 @@ class MyInfoPage extends Component {
             </ListItem>
           </List>
         </Paper>
+        <Typography variant="headline" component="h2">
+          내 참여
+        </Typography>
+        <Divider />
+        <Paper className={classes.paperSize}>포인트 {this.renderPoint()}</Paper>
+        <Paper className={classes.paperSize}>
+          작성한 리뷰 {this.renderReviewCount()}
+        </Paper>
+        <Paper className={classes.paperSize}>
+          업로드한 이미지 {this.renderImageUploadCount()}
+        </Paper>
+
+        {/*TODO: 뱃지 조회하고 출력*/}
       </div>
     );
   }
@@ -87,11 +126,11 @@ const styles = theme => ({
     fontSize: 20,
     padding: 'center'
   },
-  title : {
+  title: {
     marginLeft: theme.spacing.unit,
     marginRight: 'auto'
   },
-  titleContainer : {
+  titleContainer: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
