@@ -342,14 +342,17 @@ const givePoint = (userId, productId, category) =>
             return res.status(500).send({ error: 'DB 에러: ' + err });
           }
 
-          if (doc.reviewedProducts[category].length >= 10) {
+          if (
+            ['맥주', '탄산 음료', '커피', '위스키'].includes(category) &&
+            doc.reviewedProducts[category].length >= 10
+          ) {
             User.findByIdAndUpdate(userId, {
               $addToSet: { badges: category }
             }).exec((err, doc) => {
               if (err) {
                 return res.status(500).send({ error: 'DB 에러: ' + err });
               }
-              
+
               resolve(doc);
             });
           }
