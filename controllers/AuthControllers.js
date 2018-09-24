@@ -5,8 +5,13 @@ module.exports = {
 
   logout(req, res) {
     req.logout();
-    // logout은 passport 미들웨어에 의해 정의됨.
-    res.redirect('/');
+
+    req.session = null;
+    res
+      .status(200)
+      .clearCookie('session', { path: '/' })
+      .clearCookie('session.sig', { path: '/' })
+      .redirect('/');
   },
 
   currentUser(req, res) {
