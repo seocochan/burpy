@@ -20,6 +20,10 @@ module.exports = {
   },
 
   async addReview(req, res) {
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).send({ error: '잘못된 요청입니다.' });
+    }
+
     const userId = req.user._id;
     const values = { userId, ...req.body };
 
@@ -64,6 +68,11 @@ module.exports = {
   async updateReview(req, res) {
     const { id } = req.params;
     const { body } = req;
+
+    if (Object.keys(body).length === 0) {
+      return res.status(400).send({ error: '잘못된 요청입니다.' });
+    }
+
     const updatedReview = await Review.findByIdAndUpdate(id, body, {
       new: true
     });
@@ -101,11 +110,14 @@ module.exports = {
   removeReview(req, res) {
     const { id } = req.params;
 
-    Review.findOne({ _id: id }, (err, doc) => {
+    Review.findOne({ _id: id, userId: req.user.id }, (err, doc) => {
+      if (err) {
+        res.status(404).send({ error: '리뷰를 찾을 수 없습니다' });
+      }
+
       doc.remove(async err => {
         if (err) {
-          console.warn(err);
-          res.status(410).send('리뷰 제거 실패');
+          return res.status(500).send({ error: 'DB 에러: ' + err });
         }
 
         const Avg = await fetchScore(doc.productId);
@@ -136,7 +148,7 @@ module.exports = {
           count
         );
 
-        res.send(productScore);
+        return res.send(productScore);
       });
     });
   },
@@ -321,14 +333,14 @@ const fetchScoreCount = Id =>
   });
 
 const givePoint = (userId, productId, category) =>
-  new Promise(resolve => {
+  new Promise((resolve, reject) => {
     User.findByIdAndUpdate(
       userId,
       { $addToSet: { [`reviewedProducts.${category}`]: productId } },
       { new: false }
     ).exec((err, doc) => {
       if (err) {
-        return res.status(500).send({ error: 'DB 에러: ' + err });
+        reject(err);
       }
 
       // 현재 사용자가 해당 상품에 처음 리뷰를 작성하는 경우
@@ -339,7 +351,7 @@ const givePoint = (userId, productId, category) =>
           { new: true }
         ).exec((err, doc) => {
           if (err) {
-            return res.status(500).send({ error: 'DB 에러: ' + err });
+            reject(err);
           }
 
           if (
@@ -350,7 +362,7 @@ const givePoint = (userId, productId, category) =>
               $addToSet: { badges: category }
             }).exec((err, doc) => {
               if (err) {
-                return res.status(500).send({ error: 'DB 에러: ' + err });
+                reject(err);
               }
 
               resolve(doc);
