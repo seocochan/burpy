@@ -1,7 +1,8 @@
 import _ from 'lodash';
+import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Button } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
@@ -24,6 +25,15 @@ import {
 } from '../assets/icons';
 
 class MyInfoPage extends Component {
+  async handleCloseAccountClick() {
+    const res = await axios.delete('/api/auth');
+    console.log(res);
+
+    if (res.status === 200) {
+      window.location.replace('/');
+    }
+  }
+
   renderEditButton() {
     return (
       <IconButton
@@ -131,6 +141,9 @@ class MyInfoPage extends Component {
           나의 뱃지
           <div className={classes.badgeContainer}>{this.renderBadges()}</div>
         </Paper>
+        <Button onClick={() => this.handleCloseAccountClick()}>
+          회원 탈퇴
+        </Button>
       </div>
     );
   }
