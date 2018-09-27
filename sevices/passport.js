@@ -32,7 +32,7 @@ passport.use(
       if (existingUser) {
         return done(null, existingUser);
       }
-      console.log(profile._json);
+
       const user = await new User({
         Id: profile.id,
         name: profile.displayName,
@@ -56,7 +56,7 @@ passport.use(
       if (existingUser) {
         return cb(null, existingUser);
       }
-      console.log(profile._json);
+
       const user = await new User({
         Id: profile.id,
         name: profile.displayName,
@@ -76,12 +76,11 @@ passport.use(
       proxy: true
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log('hi');
       const existingUser = await User.findOne({ Id: profile.id });
       if (existingUser) {
         return done(null, existingUser);
       }
-      console.log(profile._json);
+
       const user = await new User({
         Id: profile.id,
         name: profile.displayName,

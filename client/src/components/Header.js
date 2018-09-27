@@ -20,7 +20,7 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { ThumbUp, LocalBar, AccountCircle } from '@material-ui/icons';
-import LogoIcon from './LogoIcon';
+import LogoIcon from '../assets/icons/LogoIcon';
 
 class Header extends Component {
   state = {

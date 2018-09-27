@@ -1,7 +1,8 @@
 import _ from 'lodash';
+import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Button } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
@@ -15,8 +16,24 @@ import FaceIcon from '@material-ui/icons/Face';
 import GenderIcon from '@material-ui/icons/SupervisorAccount';
 import { connect } from 'react-redux';
 import category from '../assets/datas/productCategoryDict';
+import {
+  PhotoIcon,
+  BeerIcon,
+  SodaIcon,
+  CoffeeIcon,
+  WhiskeyIcon
+} from '../assets/icons';
 
 class MyInfoPage extends Component {
+  async handleCloseAccountClick() {
+    const res = await axios.delete('/api/auth');
+    console.log(res);
+
+    if (res.status === 200) {
+      window.location.replace('/');
+    }
+  }
+
   renderEditButton() {
     return (
       <IconButton
@@ -45,6 +62,22 @@ class MyInfoPage extends Component {
         </Typography>
       );
     });
+  }
+
+  renderBadges() {
+    const {
+      classes,
+      auth: { badges = [] }
+    } = this.props;
+
+    return badges.map(name => (
+      <div className={classes.badgeItem} key={name}>
+        {badgeDict[name].icon}
+        <Typography className={classes.badgeText} variant="caption">
+          {badgeDict[name].label}
+        </Typography>
+      </div>
+    ));
   }
 
   renderImageUploadCount() {
@@ -104,12 +137,25 @@ class MyInfoPage extends Component {
         <Paper className={classes.paperSize}>
           업로드한 이미지 {this.renderImageUploadCount()}
         </Paper>
-
-        {/*TODO: 뱃지 조회하고 출력*/}
+        <Paper className={classes.paperSize}>
+          나의 뱃지
+          <div className={classes.badgeContainer}>{this.renderBadges()}</div>
+        </Paper>
+        <Button onClick={() => this.handleCloseAccountClick()}>
+          회원 탈퇴
+        </Button>
       </div>
     );
   }
 }
+
+const badgeDict = {
+  image: { label: '버프그래퍼', icon: <PhotoIcon /> },
+  맥주: { label: '버피', icon: <BeerIcon /> },
+  '탄산 음료': { label: '버프라이트', icon: <SodaIcon /> },
+  커피: { label: '버피스타', icon: <CoffeeIcon /> },
+  위스키: { label: '버스키', icon: <WhiskeyIcon /> }
+};
 
 const styles = theme => ({
   container: {
@@ -135,6 +181,20 @@ const styles = theme => ({
     justifyContent: 'flex-end',
     alignItems: 'center',
     marginTop: theme.spacing.unit * 3
+  },
+  badgeContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  badgeItem: {
+    maxWidth: '20%',
+    padding: theme.spacing.unit,
+    textAlign: 'center'
+  },
+  badgeText: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
   }
 });
 
