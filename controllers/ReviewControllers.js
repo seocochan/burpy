@@ -331,16 +331,31 @@ const givePoint = (userId, productId, category) =>
         return res.status(500).send({ error: 'DB 에러: ' + err });
       }
 
+      // 현재 사용자가 해당 상품에 처음 리뷰를 작성하는 경우
       if (!doc.reviewedProducts[category].includes(productId)) {
-        User.findByIdAndUpdate(userId, { $inc: { points: 5 } }).exec(
-          (err, doc) => {
-            if (err) {
-              return res.status(500).send({ error: 'DB 에러: ' + err });
-            }
-
-            resolve(doc);
+        User.findByIdAndUpdate(
+          userId,
+          { $inc: { points: 5 } },
+          { new: true }
+        ).exec((err, doc) => {
+          if (err) {
+            return res.status(500).send({ error: 'DB 에러: ' + err });
           }
-        );
+
+          if (doc.reviewedProducts[category].length >= 10) {
+            User.findByIdAndUpdate(userId, {
+              $addToSet: { badges: category }
+            }).exec((err, doc) => {
+              if (err) {
+                return res.status(500).send({ error: 'DB 에러: ' + err });
+              }
+              
+              resolve(doc);
+            });
+          }
+
+          resolve(doc);
+        });
       } else {
         resolve(doc);
       }

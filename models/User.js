@@ -23,7 +23,8 @@ const userSchema = new Schema({
     '기타 음료': { type: [Number], default: [] },
     '기타 주류': { type: [Number], default: [] }
   },
-  imageUploadCount: { type: Number, default: 0 }
+  imageUploadCount: { type: Number, default: 0 },
+  badges: { type: [String], default: [] }
 });
 
 const User = mongoose.model('users', userSchema);
