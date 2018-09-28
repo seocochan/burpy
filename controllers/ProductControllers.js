@@ -103,7 +103,7 @@ module.exports = {
       { $match: { _id: { $in: list } } },
       { $addFields: { __order: { $indexOfArray: [list, '$_id'] } } },
       { $sort: { __order: 1 } },
-      { $project: { _id: 1, name: 1, category: 1, avgScore: 1 } }
+      { $project: { _id: 1, name: 1, category: 1, avgScore: 1, imageUrl: 1 } }
     ]).exec((err, doc) => {
       if (err) {
         console.warn(err);
