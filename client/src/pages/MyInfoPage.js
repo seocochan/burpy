@@ -2,8 +2,8 @@ import _ from 'lodash';
 import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { IconButton, Button } from '@material-ui/core';
-import { Edit } from '@material-ui/icons';
+import { IconButton, Button, Icon } from '@material-ui/core';
+import { Edit, Today, Face, Wc, PhotoCamera, Comment,LocalParking,Star,Warning } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -11,9 +11,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
-import TodayIcon from '@material-ui/icons/Today';
-import FaceIcon from '@material-ui/icons/Face';
-import GenderIcon from '@material-ui/icons/SupervisorAccount';
+
 import { connect } from 'react-redux';
 import category from '../assets/datas/productCategoryDict';
 import {
@@ -64,6 +62,7 @@ class MyInfoPage extends Component {
     });
   }
 
+
   renderBadges() {
     const {
       classes,
@@ -71,13 +70,23 @@ class MyInfoPage extends Component {
     } = this.props;
 
     return badges.map(name => (
-      <div className={classes.badgeItem} key={name}>
+      <div key={name}>
         {badgeDict[name].icon}
-        <Typography className={classes.badgeText} variant="caption">
+        <Typography className={classes.badgeText} variant="caption" align='center'>
           {badgeDict[name].label}
         </Typography>
       </div>
     ));
+  }
+
+  Badge(){
+    const { classes } = this.props
+
+    return(
+      <div className={classes.badgeContainer}>
+        {this.renderBadges()}
+      </div>
+    )
   }
 
   renderImageUploadCount() {
@@ -96,7 +105,7 @@ class MyInfoPage extends Component {
         <div className={classes.titleContainer}>
           <div className={classes.title}>
             <Typography variant="headline" component="h2">
-              내 정보 조회
+              내 정보
             </Typography>
           </div>
           <p>{this.renderEditButton()}</p>
@@ -106,42 +115,58 @@ class MyInfoPage extends Component {
           <List>
             <ListItem>
               <Avatar>
-                <FaceIcon />
+                <Face />
               </Avatar>
               <ListItemText primary="이름" secondary={auth.name} />
             </ListItem>
             <Divider inset component="li" />
             <ListItem>
               <Avatar>
-                <GenderIcon />
+                <Wc />
               </Avatar>
               <ListItemText primary="성별" secondary={auth.gender} />
             </ListItem>
             <Divider inset component="li" />
             <ListItem>
               <Avatar>
-                <TodayIcon />
+                <Today />
               </Avatar>
               <ListItemText primary="생일" secondary={auth.birthday} />
             </ListItem>
+            <Divider inset component="li" />
+            <ListItem>
+              <Avatar>
+                <LocalParking />
+              </Avatar>
+              <ListItemText primary="포인트" secondary={this.renderPoint()} />
+            </ListItem>
+            <Divider inset component="li" />
+            <ListItem>
+              <Avatar>
+                <PhotoCamera />
+              </Avatar>
+              <ListItemText primary="업로드한 이미지" secondary={this.renderImageUploadCount()} />
+            </ListItem>
+            <Divider inset component="li" />
+            <ListItem>
+              <Avatar>
+                <Star />
+              </Avatar>
+              <ListItemText primary="나의 뱃지" secondary={this.Badge()} />
+            </ListItem>
+            <Divider inset component="li" />
+            <ListItem>
+              <Avatar>
+                <Comment />
+              </Avatar>
+              <ListItemText primary="작성한 리뷰" secondary={this.renderReviewCount()} />
+            </ListItem>
           </List>
         </Paper>
-        <Typography variant="headline" component="h2">
-          내 참여
-        </Typography>
-        <Divider />
-        <Paper className={classes.paperSize}>포인트 {this.renderPoint()}</Paper>
-        <Paper className={classes.paperSize}>
-          작성한 리뷰 {this.renderReviewCount()}
-        </Paper>
-        <Paper className={classes.paperSize}>
-          업로드한 이미지 {this.renderImageUploadCount()}
-        </Paper>
-        <Paper className={classes.paperSize}>
-          나의 뱃지
-          <div className={classes.badgeContainer}>{this.renderBadges()}</div>
-        </Paper>
-        <Button onClick={() => this.handleCloseAccountClick()}>
+        <Button 
+        onClick={() => this.handleCloseAccountClick()}
+        className={classes.cancelButton}>
+        <Warning  className={classes.cancelIcon}/>
           회원 탈퇴
         </Button>
       </div>
@@ -195,6 +220,13 @@ const styles = theme => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
+  },
+  cancelButton : {
+    float : 'right'
+  },
+  cancelIcon: {
+    marginRight: theme.spacing.unit,
+    fontSize: 20
   }
 });
 
