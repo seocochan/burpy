@@ -8,25 +8,37 @@ import {
   Typography,
   Divider,
   Grid,
-  CircularProgress
+  CircularProgress,
+  Snackbar
 } from '@material-ui/core';
 
 class MyBarPage extends Component {
   constructor(props) {
     super(props);
-    this.state = { reviews: null, sort: 'dateAdded' };
+    this.state = {
+      reviews: null,
+      sort: 'dateAdded',
+      open: false,
+      isToggleOn: null
+    };
 
     this.handleDelete = this.handleDelete.bind(this);
     this.changeSort = this.changeSort.bind(this);
+    this.currentState = null;
   }
 
   async componentDidMount() {
     const reviews = await axios.get('/api/review');
 
     this.changeSort(reviews.data, 'dateAdded');
+    this.setState({ isToggleOn: true });
   }
 
   async handleDelete(id) {
+    const { isToggleOn } = this.state;
+    this.currentState = isToggleOn;
+
+    await this.setState({ isToggleOn: null });
     const res = await axios.delete(`/api/review/${id}`);
 
     if (res.status === 200) {
@@ -34,7 +46,7 @@ class MyBarPage extends Component {
         return !(item._id === id);
       });
 
-      this.setState({ reviews: newReviews });
+      this.setState({ reviews: newReviews, open: true, isToggleOn: true });
     }
   }
 
@@ -54,6 +66,22 @@ class MyBarPage extends Component {
     this.setState({ reviews: sorted, sort: standard });
   }
 
+  renderSnackBar() {
+    const { open } = this.state;
+
+    return (
+      <Snackbar
+        open={open}
+        autoHideDuration={1000}
+        onClose={() => this.setState({ open: false })}
+        ContentProps={{
+          'aria-describedby': 'message-id'
+        }}
+        message={<span id="message-id">마이바에서 제거</span>}
+      />
+    );
+  }
+
   renderList() {
     const { reviews } = this.state;
 
@@ -67,6 +95,7 @@ class MyBarPage extends Component {
             product={product}
             review={review}
             onDeleteReview={this.handleDelete}
+            reviewOn={this.state.isToggleOn}
           />
         </Grid>
       );
@@ -78,53 +107,56 @@ class MyBarPage extends Component {
     const { reviews, sort } = this.state;
 
     return (
-      <div className={classes.container}>
-        <div className={classes.titleContainer}>
-          <Typography
-            className={classes.title}
-            variant="title"
-            component="h2"
-            gutterBottom
-          >
-            마이바
-          </Typography>
-          <Button
-            className={classes.button}
-            classes={{ sizeSmall: classes.buttonSizeSmall }}
-            size="small"
-            onClick={() => this.changeSort(reviews, 'dateAdded')}
-            disabled={sort === 'dateAdded'}
-          >
-            날짜순
-          </Button>
-          <Button
-            className={classes.button}
-            classes={{ sizeSmall: classes.buttonSizeSmall }}
-            size="small"
-            onClick={() => this.changeSort(reviews, 'score')}
-            disabled={sort === 'score'}
-          >
-            평점순
-          </Button>
-        </div>
-        <Divider />
-        <Fragment>
-          {reviews == null && (
-            <div className={classes.progressContainer}>
-              <CircularProgress />
-            </div>
-          )}
-
-          <div
-            className={classes.productsSection}
-            style={{ display: reviews == null ? 'none' : 'flex' }}
-          >
-            <Grid container spacing={8}>
-              {reviews != null && this.renderList()}
-            </Grid>
+      <Fragment>
+        <div className={classes.container}>
+          <div className={classes.titleContainer}>
+            <Typography
+              className={classes.title}
+              variant="title"
+              component="h2"
+              gutterBottom
+            >
+              마이바
+            </Typography>
+            <Button
+              className={classes.button}
+              classes={{ sizeSmall: classes.buttonSizeSmall }}
+              size="small"
+              onClick={() => this.changeSort(reviews, 'dateAdded')}
+              disabled={sort === 'dateAdded'}
+            >
+              날짜순
+            </Button>
+            <Button
+              className={classes.button}
+              classes={{ sizeSmall: classes.buttonSizeSmall }}
+              size="small"
+              onClick={() => this.changeSort(reviews, 'score')}
+              disabled={sort === 'score'}
+            >
+              평점순
+            </Button>
           </div>
-        </Fragment>
-      </div>
+          <Divider />
+          <Fragment>
+            {reviews == null && (
+              <div className={classes.progressContainer}>
+                <CircularProgress />
+              </div>
+            )}
+
+            <div
+              className={classes.productsSection}
+              style={{ display: reviews == null ? 'none' : 'flex' }}
+            >
+              <Grid container spacing={8}>
+                {reviews != null && this.renderList()}
+              </Grid>
+            </div>
+          </Fragment>
+        </div>
+        {this.renderSnackBar()}
+      </Fragment>
     );
   }
 }

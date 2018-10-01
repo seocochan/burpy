@@ -72,7 +72,7 @@ class ProductCard extends Component {
   }
 
   render() {
-    const { classes, product, review, onDeleteReview } = this.props;
+    const { classes, product, review, onDeleteReview, reviewOn } = this.props;
     const { _id: productId, name, category, avgScore, imageUrl } = product;
     const { isToggleOn } = this.state;
     const s3Url = 'https://s3.ap-northeast-2.amazonaws.com/burpy-app/';
@@ -89,6 +89,13 @@ class ProductCard extends Component {
       icon = <FavoriteBorder className={classes.icon} />;
     } else {
       icon = <Favorite className={classes.icon} />;
+    }
+
+    let reviewIcon;
+    if (reviewOn == null) {
+      reviewIcon = <CircularProgress size={24} color="secondary" />;
+    } else if (reviewOn === true) {
+      reviewIcon = <Delete className={classes.icon} />;
     }
 
     return (
@@ -164,7 +171,7 @@ class ProductCard extends Component {
                     aria-label="Delete"
                     onClick={() => onDeleteReview(reviewId)}
                   >
-                    <Delete className={classes.icon} />
+                    {reviewIcon}
                   </IconButton>
                 </Fragment>
               ) : (

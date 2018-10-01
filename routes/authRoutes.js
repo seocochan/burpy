@@ -1,5 +1,6 @@
 const passport = require('passport');
 const AuthControllers = require('../controllers/AuthControllers');
+const requireLogin = require('../middlewares/requireLogin');
 
 module.exports = app => {
   app.get(
@@ -38,4 +39,5 @@ module.exports = app => {
 
   app.get('/api/logout', AuthControllers.logout);
   app.get('/api/current_user', AuthControllers.currentUser);
+  app.delete('/api/auth', requireLogin, AuthControllers.closeUser);
 };
