@@ -2,8 +2,18 @@ import _ from 'lodash';
 import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { IconButton, Button, Icon } from '@material-ui/core';
-import { Edit, Today, Face, Wc, PhotoCamera, Comment,LocalParking,Star,Warning } from '@material-ui/icons';
+import { IconButton, Button } from '@material-ui/core';
+import {
+  Edit,
+  Today,
+  Face,
+  Wc,
+  PhotoCamera,
+  Comment,
+  LocalParking,
+  Star,
+  Warning
+} from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import List from '@material-ui/core/List';
@@ -62,7 +72,6 @@ class MyInfoPage extends Component {
     });
   }
 
-
   renderBadges() {
     const {
       classes,
@@ -70,23 +79,23 @@ class MyInfoPage extends Component {
     } = this.props;
 
     return badges.map(name => (
-      <div key={name}>
+      <div className={classes.badgeItem} key={name}>
         {badgeDict[name].icon}
-        <Typography className={classes.badgeText} variant="caption" align='center'>
+        <Typography
+          className={classes.badgeText}
+          variant="caption"
+          align="center"
+        >
           {badgeDict[name].label}
         </Typography>
       </div>
     ));
   }
 
-  Badge(){
-    const { classes } = this.props
+  Badge() {
+    const { classes } = this.props;
 
-    return(
-      <div className={classes.badgeContainer}>
-        {this.renderBadges()}
-      </div>
-    )
+    return <div className={classes.badgeContainer}>{this.renderBadges()}</div>;
   }
 
   renderImageUploadCount() {
@@ -145,7 +154,10 @@ class MyInfoPage extends Component {
               <Avatar>
                 <PhotoCamera />
               </Avatar>
-              <ListItemText primary="업로드한 이미지" secondary={this.renderImageUploadCount()} />
+              <ListItemText
+                primary="업로드한 이미지"
+                secondary={this.renderImageUploadCount()}
+              />
             </ListItem>
             <Divider inset component="li" />
             <ListItem>
@@ -159,14 +171,18 @@ class MyInfoPage extends Component {
               <Avatar>
                 <Comment />
               </Avatar>
-              <ListItemText primary="작성한 리뷰" secondary={this.renderReviewCount()} />
+              <ListItemText
+                primary="작성한 리뷰"
+                secondary={this.renderReviewCount()}
+              />
             </ListItem>
           </List>
         </Paper>
-        <Button 
-        onClick={() => this.handleCloseAccountClick()}
-        className={classes.cancelButton}>
-        <Warning  className={classes.cancelIcon}/>
+        <Button
+          onClick={() => this.handleCloseAccountClick()}
+          className={classes.cancelButton}
+        >
+          <Warning className={classes.cancelIcon} />
           회원 탈퇴
         </Button>
       </div>
@@ -212,17 +228,21 @@ const styles = theme => ({
     alignItems: 'center'
   },
   badgeItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     maxWidth: '20%',
     padding: theme.spacing.unit,
     textAlign: 'center'
   },
   badgeText: {
+    width: '100%',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
   },
-  cancelButton : {
-    float : 'right'
+  cancelButton: {
+    float: 'right'
   },
   cancelIcon: {
     marginRight: theme.spacing.unit,
