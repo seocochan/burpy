@@ -32,7 +32,12 @@ import {
   WhiskeyIcon
 } from '../assets/icons';
 
+import {
+  BarChart, Bar, LabelList, XAxis, Cell
+} from 'recharts';
+
 class MyInfoPage extends Component {
+  colors = ['#ffda00', , , , , ,].fill('#ede9d5', 1);
   async handleCloseAccountClick() {
     const res = await axios.delete('/api/auth');
     console.log(res);
@@ -60,16 +65,50 @@ class MyInfoPage extends Component {
     return <Typography>{points}점</Typography>;
   }
 
-  renderReviewCount() {
+  processData() {
     const { reviewedProducts = {} } = this.props.auth;
 
     return _.map(category, c => {
       return (
-        <Typography key={c.eng}>
-          {c.kor}: {reviewedProducts[c.kor].length}개
-        </Typography>
+        {
+          name: c.kor,
+          value: reviewedProducts[c.kor].length
+        }
       );
     });
+  }
+
+  renderChart() {
+    const data = this.processData()
+    console.log(data);
+
+    return (
+      <BarChart
+        width={480}
+        height={250}
+        data={data}
+        margin={{ top: 32, right: 16, left: 16, bottom: 8 }}
+      >
+        <XAxis
+          dataKey="name"
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 12 }}
+        />
+        <Bar dataKey="value" fill="#8884d8" minPointSize={8}>
+          <LabelList
+            dataKey="value"
+            position="top"
+            fill={'#666666'}
+            fontSize={12}
+          />
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={this.colors[index]} />
+          ))}
+        </Bar>
+      </BarChart>
+
+    );
   }
 
   renderBadges() {
@@ -173,7 +212,7 @@ class MyInfoPage extends Component {
               </Avatar>
               <ListItemText
                 primary="작성한 리뷰"
-                secondary={this.renderReviewCount()}
+                secondary={this.renderChart()}
               />
             </ListItem>
           </List>
