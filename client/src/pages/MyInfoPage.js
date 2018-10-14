@@ -21,6 +21,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
+import {Chart} from 'react-google-charts';
 
 import { connect } from 'react-redux';
 import category from '../assets/datas/productCategoryDict';
@@ -70,14 +71,15 @@ class MyInfoPage extends Component {
 
     return _.map(category, c => {
       return (
-        {
-          name: c.kor,
-          value: reviewedProducts[c.kor].length
-        }
+        [
+          c.kor,
+          reviewedProducts[c.kor].length
+        ]
       );
     });
   }
 
+  /*
   renderChart() {
     const data = this.processData()
     console.log(data);
@@ -109,6 +111,29 @@ class MyInfoPage extends Component {
       </BarChart>
 
     );
+  }
+  */
+ 
+  renderChart(){
+    const header = [['종류','리뷰']];
+    const data = this.processData()
+    Array.prototype.push.apply(header,data);
+
+    return(
+      <Chart
+        width={'100%'}
+        height={'300px'}
+        chartType="BarChart"
+        loader={<div>Loading Chart</div>}
+        data={header}
+        options={
+          {
+            colors:['#ffda00'],
+            bar: { groupWidth: '50%' }
+          }
+        }
+        rootProps={{ 'data-testid': '1' }}/>
+    )
   }
 
   renderBadges() {

@@ -35,6 +35,7 @@
     "passport-naver": "^1.0.6",
     "passport-twitter": "^1.0.4",
     "path-parser": "^3.0.1",
+    "react-google-charts": "^3.0.8",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
