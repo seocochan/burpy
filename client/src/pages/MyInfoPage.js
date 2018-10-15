@@ -78,6 +78,10 @@ class MyInfoPage extends Component {
     const header = [['종류','리뷰']];
     const data = this.processData()
     Array.prototype.push.apply(header,data);
+  
+    const values = data.map( item => item[1]);
+    let maxValue = Math.max(...values);
+    maxValue = maxValue <= 8 ? 8 : Math.ceil(maxValue / 4) * 4;
 
     return(
       <Chart
@@ -90,7 +94,11 @@ class MyInfoPage extends Component {
           {
             colors:['#ffda00'],
             bar: { groupWidth: '50%' },
-            hAxis: { minValue: 0 }
+            hAxis: { 
+              minValue: 0,
+              maxValue,
+              ticks: [0, parseInt(maxValue/4), parseInt(maxValue*2/4), parseInt(maxValue*3/4), parseInt(maxValue)]
+            },
           }
         }
         rootProps={{ 'data-testid': '1' }}/>
