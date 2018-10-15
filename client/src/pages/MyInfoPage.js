@@ -21,6 +21,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
+import { Chart } from 'react-google-charts';
 
 import { connect } from 'react-redux';
 import category from '../assets/datas/productCategoryDict';
@@ -60,16 +61,40 @@ class MyInfoPage extends Component {
     return <Typography>{points}점</Typography>;
   }
 
-  renderReviewCount() {
+  processData() {
     const { reviewedProducts = {} } = this.props.auth;
 
     return _.map(category, c => {
       return (
-        <Typography key={c.eng}>
-          {c.kor}: {reviewedProducts[c.kor].length}개
-        </Typography>
+        [
+          c.kor,
+          reviewedProducts[c.kor].length
+        ]
       );
     });
+  }
+ 
+  renderChart(){
+    const header = [['종류','리뷰']];
+    const data = this.processData()
+    Array.prototype.push.apply(header,data);
+
+    return(
+      <Chart
+        width={'100%'}
+        height={'300px'}
+        chartType="BarChart"
+        loader={<div>Loading Chart</div>}
+        data={header}
+        options={
+          {
+            colors:['#ffda00'],
+            bar: { groupWidth: '50%' },
+            hAxis: { minValue: 0 }
+          }
+        }
+        rootProps={{ 'data-testid': '1' }}/>
+    )
   }
 
   renderBadges() {
@@ -173,7 +198,7 @@ class MyInfoPage extends Component {
               </Avatar>
               <ListItemText
                 primary="작성한 리뷰"
-                secondary={this.renderReviewCount()}
+                secondary={this.renderChart()}
               />
             </ListItem>
           </List>
